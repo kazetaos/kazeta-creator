@@ -200,6 +200,24 @@
        include: data/noarch/game/*
        exclude: data/noarch/game/goggame*
 
+ - name: "Shovel Knight: Treasure Trove"
+   id: shovel-knight-treasure-trove
+   provider: humble
+   platform: linux
+   xxh3sum: 14591f40d40d46a7
+   exec: ./64/ShovelKnight
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/250760/ff0210a7bc3e76c3f3dc7c98010e91947dfdd7e2.zip"
+       xxh3sum: 6b2d1f319e7fccdd
+       include: 32x32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://ShovelKnight_4.1B.tar.tar"
+       xxh3sum: 6108cf5eeee3d132
+       include:
+         - shovelknight/64
+         - shovelknight/data
+
  - name: "Xeno Crisis"
    id: xeno-crisis
    provider: gog
