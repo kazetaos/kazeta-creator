@@ -56,6 +56,27 @@
          - CyberShadow/icon.bmp
          - CyberShadow/run.sh
 
+ - name: "ElecHead"
+   id: elechead
+   provider: gog
+   platform: windows
+   xxh3sum: d180d999772f936f
+   exec: ElecHead.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1456880/0fe9b14577f1f5c30b183fb50e7954e0fae041e4.ico"
+       xxh3sum: d2a7c2bb57815298
+       include: 3
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_elechead_1.0.5.1_(52689).exe"
+       xxh3sum: 4e23dde308b2d8ad
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Mina the Hollower"
    id: mina-the-hollower
    provider: humble
