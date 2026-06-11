@@ -140,6 +140,26 @@
      - uri: "https://github.com/jorio/OttoMatic/releases/download/4.0.1/OttoMatic-4.0.1-linux-x86_64.AppImage"
        xxh3sum: 3633498a84def4a1
 
+ - name: "Pepper Grinder"
+   id: pepper-grinder
+   provider: gog
+   platform: linux
+   xxh3sum: e0d821c1e577c1b2
+   exec: ./bin64/Chowdren
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2076580/41ec403c6b55c678d9b64fa9117cd4010325fe4a.ico"
+       xxh3sum: d2e124ccf3f83207
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://peppergrinder_v392_full_release_72763.sh"
+       xxh3sum: 1887982d790619fe
+       include: data/noarch/game/*
+       exclude:
+         - data/noarch/game/goggame*
+         - data/noarch/game/icon.bmp
+         - data/noarch/game/run.sh
+
  - name: "Sea of Stars"
    id: sea-of-stars
    provider: gog
