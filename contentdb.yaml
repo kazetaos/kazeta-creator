@@ -70,6 +70,21 @@
          - data
          - MinaTheHollower
 
+ - name: Monster Trampoline
+   id: monster-trampoline
+   provider: itch
+   platform: windows
+   xxh3sum: be9ce82c7b7b4b9e
+   exec: '"Monster Trampoline.exe"'
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/939560/f7748289b1f12cd2a5815c7c52027a09c9b657c3.zip"
+       xxh3sum: 3556be7ff29e8065
+       include: "Monster Trampoline 32.png"
+       destination: org.kazeta.icon.png
+     - uri: "file://Monster Trampoline 29.4 (DRM-Free Windows).zip"
+       xxh3sum: cc8771c7e976f3c9
+
  - name: "Sea of Stars"
    id: sea-of-stars
    provider: gog
