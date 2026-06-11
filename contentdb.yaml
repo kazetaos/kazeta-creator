@@ -85,6 +85,20 @@
      - uri: "file://Monster Trampoline 29.4 (DRM-Free Windows).zip"
        xxh3sum: cc8771c7e976f3c9
 
+ - name: "Otto Matic"
+   id: otto-matic
+   provider: github
+   platform: linux
+   xxh3sum: 3753e06b6eb45f2a
+   exec: ./OttoMatic-4.0.1-linux-x86_64.AppImage
+   runtime: none
+   sources:
+     - uri: "https://raw.githubusercontent.com/kazetaos/icons/refs/heads/main/otto-matic.png"
+       xxh3sum: 22144c3eb190171c
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/jorio/OttoMatic/releases/download/4.0.1/OttoMatic-4.0.1-linux-x86_64.AppImage"
+       xxh3sum: 3633498a84def4a1
+
  - name: "Sea of Stars"
    id: sea-of-stars
    provider: gog
