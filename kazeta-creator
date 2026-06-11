@@ -127,6 +127,9 @@ for source in game['sources']:
         subprocess.run(["unzip", "-q", path, "-d", staging_dir])
     elif path.endswith('.exe'):
         subprocess.run(["innoextract", "--silent", "--progress=1", path, "-d", staging_dir])
+    elif path.endswith('.ico') and 'include' in source and 'destination' in source:
+        subprocess.run(["magick", path + '[' + str(source['include']) + ']', "-strip",  os.path.join(dst_dir, source['destination'])])
+        continue
     elif os.path.isdir(path):
         src_files = glob.glob(path + '/*')
         for f in src_files:
