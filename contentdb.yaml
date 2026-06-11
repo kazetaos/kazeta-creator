@@ -36,6 +36,26 @@
          - Celeste.png
          - lib
 
+ - name: "Cyber Shadow"
+   id: cyber-shadow
+   provider: humble
+   platform: linux
+   xxh3sum: 9cc5a146445dfd03
+   exec: ./bin64/CyberShadow
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/861250/9fa3ad01aeb2131d0686eca6b3e5ab674da15f24.ico"
+       xxh3sum: 67302431a880a852
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://CyberShadow_1.04.tar.tar"
+       xxh3sum: 115d9d9c1ebb94ed
+       include: CyberShadow/*
+       exclude:
+         - CyberShadow/bin32
+         - CyberShadow/icon.bmp
+         - CyberShadow/run.sh
+
  - name: "Mina the Hollower"
    id: mina-the-hollower
    provider: humble
