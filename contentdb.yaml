@@ -1,0 +1,129 @@
+ - name: "Balatro"
+   id: balatro
+   provider: steam
+   platform: windows
+   xxh3sum: e4d31e122df5beca
+   exec: ./love-11.5-x86_64.AppImage Balatro.love
+   runtime: none
+   sources:
+     - uri: "steam://Balatro"
+       include: Balatro.exe
+       destination: Balatro.love
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2379780/009def349f66e28ced791e2f7df33387179abdbb.zip"
+       xxh3sum: e4ab81b556c6858a
+       include: icon.png
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/love2d/love/releases/download/11.5/love-11.5-x86_64.AppImage"
+       xxh3sum: 905ef6ac23cb6603
+
+ - name: "Celeste"
+   id: celeste
+   provider: itch
+   platform: linux
+   xxh3sum: 4eb2ed4246591b7b
+   exec: ./Celeste.bin.x86_64
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/504230/57e73c9872f0340159aa8ff41a8f84f33f686189.zip"
+       xxh3sum: d5d7b600d077697f
+       include: 32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://celeste-linux.zip"
+       xxh3sum: 37d7a1f69234c0c8
+       exclude:
+         - Celeste
+         - Celeste.bin.x86
+         - Celeste.png
+         - lib
+
+ - name: "Mina the Hollower"
+   id: mina-the-hollower
+   provider: humble
+   platform: linux
+   xxh3sum: b3078749c48eb2a2
+   exec: ./MinaTheHollower
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1875580/ef5b553a0ff5e8e06f59d15e86c2f06180717e9c.zip"
+       xxh3sum: efba3766032dd497
+       include: clientIcon32x32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://minathehollower.tar.tar"
+       xxh3sum: 792c44778ce8f41b
+       exclude: libsteam_api.so
+
+ - name: "Mina the Hollower"
+   id: mina-the-hollower
+   provider: steam
+   platform: linux
+   xxh3sum: 5a968737abf35c88
+   exec: ./MinaTheHollower
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1875580/ef5b553a0ff5e8e06f59d15e86c2f06180717e9c.zip"
+       xxh3sum: efba3766032dd497
+       include: clientIcon32x32.png
+       destination: org.kazeta.icon.png
+     - uri: "steam://Mina the Hollower"
+       xxh3sum: 792c44778ce8f41b
+       include:
+         - data
+         - MinaTheHollower
+
+ - name: "Sea of Stars"
+   id: sea-of-stars
+   provider: gog
+   platform: windows
+   xxh3sum: 776f3928059208a3
+   exec: SeaOfStars.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1244090/436ea884e17a3a81d6d68d7cca19fae0312ff53d.zip"
+       xxh3sum: 45d2b452a89aac40
+       include: steam-linux-icon32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_sea_of_stars_3.0.60151-master_(64bit)_(91169)-1.bin"
+       xxh3sum: 12c9af56f5a58362
+       process: false
+     - uri: "file://setup_sea_of_stars_3.0.60151-master_(64bit)_(91169).exe"
+       xxh3sum: 61f5d49d36ffbe24
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
+ - name: A Short Hike
+   id: a-short-hike
+   provider: gog
+   platform: linux
+   xxh3sum: d8fd123665697d15
+   exec: ./AShortHike.x86_64
+   runtime: none
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/c9da7aa90f9dfa139a420a4478dbcc45/32/32x32.png"
+       xxh3sum: 0e4bdc805068bd51
+       destination: org.kazeta.icon.png
+     - uri: "file://a_short_hike_1_10_1_patched_85630.sh"
+       xxh3sum: dd1bcfffe93f0801
+       include: data/noarch/game/*
+       exclude: data/noarch/game/goggame*
+
+ - name: "Xeno Crisis"
+   id: xeno-crisis
+   provider: gog
+   platform: linux
+   xxh3sum: 68d7e0bf1651fbe4
+   exec: ./'Xeno Crisis.x86_64'
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/464260/e7d24d66039f26f82c0384331b35808f3bf4e7ae.zip"
+       xxh3sum: 7f8b09ee152dd587
+       include: xeno_crisis_icon_32x32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://xeno_crisis_1_0_4_40433.sh"
+       xxh3sum: a6e43809bec735a1
+       include:
+         - data/noarch/game/Xeno Crisis.x86_64
+         - data/noarch/game/Xeno Crisis_Data

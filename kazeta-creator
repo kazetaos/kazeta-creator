@@ -1,0 +1,197 @@
+#! /usr/bin/env python3
+
+import os
+import re
+import sys
+import glob
+import uuid
+import yaml
+import subprocess
+
+from pathlib import Path
+
+def xxh3sum(path):
+    result = subprocess.run(["xxh3sum", path], capture_output=True, text=True)
+    return result.stdout[5:21]
+
+def xxh3_check(path, expected):
+    actual = xxh3sum(path)
+    if actual != expected:
+        print("ERROR: xxh3sum mismatch: {}".format(os.path.basename(path)))
+        print("Expect: {}".format(expected))
+        print("Actual: {}".format(actual))
+        return False
+    return True
+
+
+
+FILE_DIR=os.path.join(Path.home(), 'Downloads')
+STEAM_DIR=os.path.join(Path.home(), '.steam/steam/steamapps/common')
+
+
+try:
+    with open('contentdb.yaml') as yaml_file:
+        games = yaml.load(yaml_file, Loader=yaml.FullLoader)
+
+except:
+    print('ERROR: Failed to load game database')
+
+if len(sys.argv) < 2:
+    for game in games:
+        print('{} | {}:{}:{}'.format(game['name'], game['id'], game['provider'], game['platform']))
+
+    sys.exit()
+
+entry_id = sys.argv[1]
+args = entry_id.split(':')
+game_id = args[0]
+provider = '.*'
+platform = '.*'
+
+if len(args) >= 2:
+    provider = args[1]
+
+if len(args) >= 3:
+    platform = args[1]
+
+results = []
+for g in games:
+    if g['id'] == game_id and re.match(provider, g['provider']) and re.match(platform, g['platform']):
+        results.append(g)
+
+if len(results) == 0:
+    print('ERROR: \'{}\' not found'.format(entry_id))
+    sys.exit(1)
+
+if len(results) > 1:
+    print('ERROR: Matched more than one entry, please include the provider and/or the platform, e.g. game-name:steam:linux')
+    sys.exit(1)
+
+game = results[0]
+
+dst_dir = game['id']
+download_dir = dst_dir + '_download'
+staging_dir = dst_dir + '_staging'
+
+subprocess.run(["rm", "-rf", dst_dir])
+subprocess.run(["mkdir", dst_dir])
+
+if 'sources' not in game:
+    print('No sources found, exiting')
+    sys.exit(1)
+
+for source in game['sources']:
+    if 'uri' not in source:
+        print('Missing `uri` key in source')
+        sys.exit(1)
+
+    uri = source['uri']
+    subprocess.run(["rm", "-rf", download_dir])
+    subprocess.run(["rm", "-rf", staging_dir])
+    subprocess.run(["mkdir", download_dir])
+    subprocess.run(["mkdir", staging_dir])
+
+    # find/fetch files
+    basename = os.path.basename(uri)
+    if uri.startswith('file://'):
+        path = os.path.join(FILE_DIR, basename)
+    elif uri.startswith('steam://'):
+        path = os.path.join(STEAM_DIR, basename)
+    elif uri.startswith('https://'):
+        subprocess.run(["curl", "--progress-bar", "-LO", "--output-dir", download_dir,  uri])
+        path = os.path.join(download_dir, basename)
+
+        # allow execution of app images
+        if path.endswith('.AppImage'):
+            subprocess.run(["chmod", "+x", path])
+    else:
+        print('Unknown URI: {}'.format(uri))
+        sys.exit(1)
+
+    if not os.path.exists(path):
+        print("ERROR: File or directory not found: {}".format(basename))
+        sys.exit(1)
+
+    # check hash
+    if 'xxh3sum' in source and os.path.isfile(path):
+        if not xxh3_check(path, source['xxh3sum']):
+            sys.exit(1)
+
+    if 'process' in source and source['process'] == False:
+        continue
+
+    # extract files
+    if path.endswith('.tar') or '.tar.' in path:
+        subprocess.run(["tar", "-xf", path, "-C", staging_dir])
+    elif path.endswith('.zip') or path.endswith('.sh'):
+        subprocess.run(["unzip", "-q", path, "-d", staging_dir])
+    elif path.endswith('.exe'):
+        subprocess.run(["innoextract", "--silent", "--progress=1", path, "-d", staging_dir])
+    elif os.path.isdir(path):
+        src_files = glob.glob(path + '/*')
+        for f in src_files:
+            subprocess.run(["cp", "-r", f, staging_dir + '/'])
+    else:
+        subprocess.run(["cp", path, staging_dir + '/'])
+
+    # exclude filter
+    if 'exclude' in source:
+        excludes = source['exclude']
+        if not isinstance(excludes, list):
+            excludes = [ excludes ]
+
+        for e in excludes:
+            files = glob.glob(os.path.join(staging_dir, e))
+            for f in files:
+                subprocess.run(["rm", "-rf", f])
+
+    final_dst = dst_dir
+    if 'destination' in source:
+        final_dst = os.path.join(dst_dir, source['destination'])
+
+    # include filter - include all remaining files by default
+    includes = '*'
+    if 'include' in source:
+        includes = source['include']
+
+    if not isinstance(includes, list):
+        includes = [ includes ]
+
+    for e in includes:
+        src_files = glob.glob(os.path.join(staging_dir, e))
+        for f in src_files:
+            subprocess.run(["mv", f, final_dst])
+
+
+# clean up
+subprocess.run(["rm", "-rf", download_dir])
+subprocess.run(["rm", "-rf", staging_dir])
+
+icon_path=os.path.join(game['id'], 'org.kazeta.icon.png')
+if not os.path.exists(icon_path):
+    print("WARNING: no icon found")
+
+with open(os.path.join(game['id'], 'org.kazeta.cart.kzi'), 'w', encoding='utf-8') as file:
+    file.write('Name={}\n'.format(game['name']))
+    file.write('Id={}\n'.format(game['id']))
+    file.write('Exec={}\n'.format(game['exec']))
+    file.write('Icon={}\n'.format('org.kazeta.icon.png'))
+    if 'runtime' in game and game['runtime'] != 'none':
+        file.write('Runtime={}\n'.format(game['runtime']))
+
+if 'steam_app_id' in game:
+    with open(os.path.join(game['id'], 'steam_appid.txt'), 'w', encoding='utf-8') as file:
+        file.write(str(game['steam_app_id']))
+
+kzp = game['id'] + '.kzp'
+subprocess.run(["rm", "-rf", kzp])
+uuid=str(uuid.uuid5(uuid.NAMESPACE_DNS, 'org.kazeta.' + game['id']))
+subprocess.run(["mkfs.erofs", "-T", "0", "-U", uuid, "-zlz4", kzp, game['id']])
+subprocess.run(["rm", "-rf", game['id']])
+
+if 'xxh3sum' in game:
+    xxh3_check(game['id'] + '.kzp', game['xxh3sum'])
+
+xxh3 = xxh3sum(kzp)[:5]
+final_dst = game['id'] + '_' + xxh3 + '.kzp'
+subprocess.run(["mv", kzp, final_dst])
