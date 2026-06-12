@@ -145,12 +145,12 @@
    id: otto-matic
    provider: github
    platform: linux
-   xxh3sum: 3753e06b6eb45f2a
+   xxh3sum: eee5d893c0aa32a1
    exec: ./OttoMatic-4.0.1-linux-x86_64.AppImage
    runtime: none
    sources:
-     - uri: "https://raw.githubusercontent.com/kazetaos/icons/refs/heads/main/otto-matic.png"
-       xxh3sum: 22144c3eb190171c
+     - uri: "https://cdn2.steamgriddb.com/icon/542c1200379c699b97c65ca9539feee7.png"
+       xxh3sum: 23d63ab9c02eac00
        destination: org.kazeta.icon.png
      - uri: "https://github.com/jorio/OttoMatic/releases/download/4.0.1/OttoMatic-4.0.1-linux-x86_64.AppImage"
        xxh3sum: 3633498a84def4a1
