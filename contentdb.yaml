@@ -36,6 +36,21 @@
          - Celeste.png
          - lib
 
+ - name: "Cuphead"
+   id: cuphead
+   provider: steam
+   platform: windows
+   xxh3sum: f2a991014ebb110d
+   exec: Cuphead.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/b6b265ec09d1d1b9ea935bd5d6b0f28a.ico"
+       xxh3sum: 20843ee03cea3a76
+       include: 7
+       destination: org.kazeta.icon.png
+     - uri: "steam://Cuphead"
+       exclude: steam_api64.dll
+
  - name: "Cyber Shadow"
    id: cyber-shadow
    provider: humble
