@@ -261,6 +261,27 @@
      - uri: "steam://Stardew Valley"
        exclude: StardewValley
 
+ - name: "Tiny Thor"
+   id: tiny-thor
+   provider: gog
+   platform: windows
+   xxh3sum: 505b7ae9d159d539
+   exec: TinyThor.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/541310/308f1c3a03ed9ecf78ebb4d44b369cb0961e389e.ico"
+       xxh3sum: 3fc41a6d11a63075
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_tiny_thor_6125_(1b5392be)_(66811).exe"
+       xxh3sum: a6dc91b728138abc
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Xeno Crisis"
    id: xeno-crisis
    provider: gog
