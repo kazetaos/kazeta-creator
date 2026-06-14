@@ -121,12 +121,11 @@
        include: clientIcon32x32.png
        destination: org.kazeta.icon.png
      - uri: "steam://Mina the Hollower"
-       xxh3sum: 792c44778ce8f41b
        include:
          - data
          - MinaTheHollower
 
- - name: Monster Trampoline
+ - name: "Monster Trampoline"
    id: monster-trampoline
    provider: itch
    platform: windows
@@ -199,7 +198,7 @@
          - __redist
          - tmp
 
- - name: A Short Hike
+ - name: "A Short Hike"
    id: a-short-hike
    provider: gog
    platform: linux

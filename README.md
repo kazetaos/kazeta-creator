@@ -21,6 +21,7 @@ NOTE: The self-contained `.kzp` cart format is not supported in the current stab
    - curl
    - unzip
    - innoextract
+   - magick (ImageMagick)
 
 
 ## Usage
