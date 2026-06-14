@@ -214,6 +214,20 @@
        include: data/noarch/game/*
        exclude: data/noarch/game/goggame*
 
+ - name: "A Short Hike"
+   id: a-short-hike
+   provider: itch
+   platform: linux
+   xxh3sum: 6b405979d9df0adc
+   exec: ./AShortHike.x86_64
+   runtime: none
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/c9da7aa90f9dfa139a420a4478dbcc45/32/32x32.png"
+       xxh3sum: 0e4bdc805068bd51
+       destination: org.kazeta.icon.png
+     - uri: "file://a-short-hike-linux-latest.zip"
+       xxh3sum: 980a3413d751ba35
+
  - name: "Shovel Knight: Treasure Trove"
    id: shovel-knight-treasure-trove
    provider: humble
