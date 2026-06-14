@@ -246,6 +246,21 @@
          - shovelknight/64
          - shovelknight/data
 
+ - name: "Stardew Valley"
+   id: stardew-valley
+   provider: steam
+   platform: linux
+   xxh3sum: f664fee3e5f4a571
+   exec: ./'Stardew Valley'
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/413150/6b0c6ca4298b12d4df16782502ada7858a06c62e.zip"
+       xxh3sum: 85c1ba21f40ce8c3
+       include: icon_32px.png
+       destination: org.kazeta.icon.png
+     - uri: "steam://Stardew Valley"
+       exclude: StardewValley
+
  - name: "Xeno Crisis"
    id: xeno-crisis
    provider: gog
