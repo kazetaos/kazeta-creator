@@ -282,6 +282,24 @@
          - __redist
          - tmp
 
+ - name: "Transistor"
+   id: transistor
+   provider: steam
+   platform: linux
+   xxh3sum: 6ef1a0a13ab1e310
+   exec: ./Transistor.bin.x86_64
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/237930/4bcfd75b561a46302bd6d59759e31e8938ca22b9.ico"
+       xxh3sum: 3fa3a9c82a234e68
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://Transistor"
+       exclude:
+         - lib
+         - Transistor
+         - Transistor.bin.x86
+
  - name: "Xeno Crisis"
    id: xeno-crisis
    provider: gog
