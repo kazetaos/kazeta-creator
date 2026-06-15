@@ -106,6 +106,20 @@
          - __redist
          - tmp
 
+ - name: "Little Kitty, Big City"
+   id: little-kitty-big-city
+   provider: steam
+   platform: windows
+   xxh3sum: b0a916162ecb3c8a
+   exec: '"Little Kitty, Big City.exe"'
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1177980/f44eb237ea7787fd963c6ef220c74a05afdb7440.ico"
+       xxh3sum: ebe3c67bd2c0e224
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://LittleKittyBigCity"
+
  - name: "Mina the Hollower"
    id: mina-the-hollower
    provider: humble
