@@ -36,6 +36,20 @@
          - Celeste.png
          - lib
 
+ - name: "Celeste 64"
+   id: celeste-64
+   provider: github
+   platform: linux
+   xxh3sum: ba410d0c4cacf4a0
+   exec: ./Celeste64
+   runtime: none
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/6309ff4befccf8ba77b16141fab763c6.png"
+       xxh3sum: 5fa753d9fa803182
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/EXOK/Celeste64/releases/download/v1.1.1/Celeste64-v1.1.1-Linux-x64.zip"
+       xxh3sum: aabafab1f5ba8e69
+
  - name: "Cuphead"
    id: cuphead
    provider: steam
