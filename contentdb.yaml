@@ -106,6 +106,22 @@
          - __redist
          - tmp
 
+ - name: "Ooo"
+   id: ooo
+   provider: steam
+   platform: windows
+   xxh3sum: af99d8271c57a6f4
+   exec: Ooo.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2721890/8f09827eacf1315f537a1e67f874588d49e5f323.ico"
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "steam://Ooo"
+       exclude:
+         - steam_api64.dll
+         - Steamworks_x64.dll
+
  - name: "Mina the Hollower"
    id: mina-the-hollower
    provider: humble
