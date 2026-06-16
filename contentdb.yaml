@@ -1,3 +1,18 @@
+ - name: "Assault Android Cactus"
+   id: assault-android-cactus
+   provider: steam
+   platform: linux
+   xxh3sum: 63cb337b43e87b07
+   exec: ./cactus.x86_64
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/250110/1f6baf4f10281171ce933c9ed5fc2d2f61eac848.ico"
+       xxh3sum: 5a20d0bc57746928
+       include: 4
+       destination: org.kazeta.icon.png
+     - uri: "steam://Assault Android Cactus"
+       exclude: cactus.x86
+
  - name: "Baba Is You"
    id: baba-is-you
    provider: steam
