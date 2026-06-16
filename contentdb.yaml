@@ -34,6 +34,27 @@
      - uri: "https://github.com/love2d/love/releases/download/11.5/love-11.5-x86_64.AppImage"
        xxh3sum: 905ef6ac23cb6603
 
+ - name: "Bastion"
+   id: bastion
+   provider: gog
+   platform: linux
+   xxh3sum: 6a1b538924accf96
+   exec: ./Bastion.bin.x86_64
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/107100/ad7f9414231a7a5bb96d74e21893a84972dcbee8.ico"
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://bastion_1_0_1747_initial_test_33876.sh"
+       xxh3sum: 65c208df5c76b434
+       include: data/noarch/game/*
+       exclude:
+         - data/noarch/game/goggame*
+         - data/noarch/game/Bastion
+         - data/noarch/game/Bastion.bin.x86
+         - data/noarch/game/Bastion.bmp
+         - data/noarch/game/lib
+
  - name: "Celeste"
    id: celeste
    provider: itch
