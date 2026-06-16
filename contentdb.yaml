@@ -1,3 +1,21 @@
+ - name: "Baba Is You"
+   id: baba-is-you
+   provider: steam
+   platform: linux
+   xxh3sum: dc8e404ff3d0bff1
+   exec: ./bin64/Chowdren
+   runtime: none
+   sources:
+     - uri: "steam://Baba Is You"
+       exclude:
+         - bin64/libsteam_api.so
+         - icon.bmp
+         - run.sh
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/736260/98f1a878b55d72b91abe526562099cb6a377a322.zip"
+       xxh3sum: 6f9eb8da8e1a4ce3
+       include: icon_32.png
+       destination: org.kazeta.icon.png
+
  - name: "Balatro"
    id: balatro
    provider: steam
