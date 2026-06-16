@@ -164,6 +164,24 @@
          - data/FEZ.bin.x86
          - data/lib
 
+ - name: "Hollow Knight"
+   id: hollow-knight
+   provider: gog
+   platform: linux
+   xxh3sum: d3dd108935c8634a
+   exec: ./'Hollow Knight'
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/367520/e1d12f1c38986b8e6611bd1a2cf1ad86693553d4.zip"
+       xxh3sum: cd092aba87f43150
+       include: 32x32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://hollow_knight_1_5_12620_89720.sh"
+       xxh3sum: 3e6ad31b8b148010
+       include: data/noarch/game/*
+       exclude:
+         - data/noarch/game/goggame*
+
  - name: "Little Kitty, Big City"
    id: little-kitty-big-city
    provider: steam
