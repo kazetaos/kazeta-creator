@@ -123,7 +123,7 @@ for source in game['sources']:
     # extract files
     if path.endswith('.tar') or '.tar.' in path:
         subprocess.run(["tar", "-xf", path, "-C", staging_dir])
-    elif path.endswith('.zip') or path.endswith('.sh'):
+    elif path.endswith('.zip') or path.endswith('.sh') or path.endswith('-bin'):
         subprocess.run(["unzip", "-q", path, "-d", staging_dir])
     elif path.endswith('.exe'):
         subprocess.run(["innoextract", "--silent", "--progress=1", path, "-d", staging_dir])
