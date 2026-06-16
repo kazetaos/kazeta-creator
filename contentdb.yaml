@@ -124,6 +124,25 @@
          - __redist
          - tmp
 
+ - name: "FEZ"
+   id: fez
+   provider: humble
+   platform: linux
+   xxh3sum: 4e8c54301fc94e5f
+   exec: ./FEZ.bin.x86_64
+   runtime: none
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/8d5a7d3f7856e668c7fa20336f9a97bc/32/32x32.png"
+       xxh3sum: 3a35205b6269c6c7
+       destination: org.kazeta.icon.png
+     - uri: "file://fez-11282016-bin"
+       xxh3sum: df874f692f1b882d
+       include: data/*
+       exclude:
+         - data/FEZ
+         - data/FEZ.bin.x86
+         - data/lib
+
  - name: "Little Kitty, Big City"
    id: little-kitty-big-city
    provider: steam
