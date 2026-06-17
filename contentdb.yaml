@@ -70,6 +70,20 @@
          - data/noarch/game/Bastion.bmp
          - data/noarch/game/lib
 
+ - name: "BOMCAT"
+   id: bomcat
+   provider: steam
+   platform: windows
+   xxh3sum: 62ed5a8ce5638731
+   exec: BOMCAT.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/3923130/5c66cf06ed486aec9de3327fca1e13499e345764.ico"
+       xxh3sum: d225a466e25e8ca2
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "steam://BOMCAT"
+
  - name: "Celeste"
    id: celeste
    provider: itch
