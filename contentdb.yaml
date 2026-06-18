@@ -225,6 +225,24 @@
        exclude:
          - data/noarch/game/goggame*
 
+ - name: "Horizon Chase Turbo"
+   id: horizon-chase-turbo
+   steam_app_id: 389140
+   provider: steam
+   platform: linux
+   xxh3sum: a64c402c7a13ff4c
+   exec: ./HorizonChase.x86_64
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/389140/d59c99a62ca0c4abf7611e4325115b5036cefffa.zip"
+       xxh3sum: b77bce8efc6211e3
+       include: game_icon_pc_32x32.png
+       destination: org.kazeta.icon.png
+     - uri: "steam://Horizon Chase"
+       include:
+         - HorizonChase_Data
+         - HorizonChase.x86_64
+
  - name: "Little Kitty, Big City"
    id: little-kitty-big-city
    provider: steam
