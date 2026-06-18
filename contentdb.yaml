@@ -442,6 +442,26 @@
      - uri: "steam://Stardew Valley"
        exclude: StardewValley
 
+ - name: "Terraria"
+   id: terraria
+   provider: gog
+   platform: linux
+   xxh3sum: c01f76a81ff5be0c
+   exec: ./Terraria.bin.x86_64
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/105600/a4ce7b163832f35ffcbf560ca40974bccd5d4cd5.ico"
+       xxh3sum: 6626369ddfce033a
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://terraria_v1_4_5_6_89299.sh"
+       xxh3sum: f4373a0a3d5df535
+       include: data/noarch/game/*
+       exclude:
+         - data/noarch/game/goggame*
+         - data/noarch/game/Terraria
+         - data/noarch/game/Terraria.png
+
  - name: "Tiny Thor"
    id: tiny-thor
    provider: gog
