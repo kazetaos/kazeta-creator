@@ -427,6 +427,20 @@
          - shovelknight/64
          - shovelknight/data
 
+ - name: "Sonic the Hedgehog 2"
+   id: sonic-the-hedgehog-2
+   provider: steam
+   platform: windows
+   xxh3sum: 331cbbb0ea26a907
+   exec: SONIC2_W.68K
+   runtime: megadrive-1.1
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/ca810d7772367ff95527e3f9ab5e6814/32/32x32.png"
+       xxh3sum: 5401944c188e10a5
+       destination: org.kazeta.icon.png
+     - uri: "steam://Sega Classics"
+       include: "uncompressed ROMs/SONIC2_W.68K"
+
  - name: "Stardew Valley"
    id: stardew-valley
    provider: steam
