@@ -193,6 +193,26 @@
          - data/FEZ.bin.x86
          - data/lib
 
+ - name: "Flower"
+   id: flower
+   provider: gog
+   platform: windows
+   xxh3sum: d32be7c84fa757c4
+   exec: Flower.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/f72a850f3c3cf816872370e6a6e583c2/32/32x32.png"
+       xxh3sum: 1ffc7259f7ee8152
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_flower_1.45_(64bit)_(35425).exe"
+       xxh3sum: ebd97fa90ef94f25
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Freedom Planet 2"
    id: freedom-planet-2
    provider: steam
