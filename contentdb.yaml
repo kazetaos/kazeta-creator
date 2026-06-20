@@ -325,6 +325,20 @@
      - uri: "file://Monster Trampoline 29.4 (DRM-Free Windows).zip"
        xxh3sum: cc8771c7e976f3c9
 
+ - name: "Nanosaur"
+   id: nanosaur
+   provider: github
+   platform: linux
+   xxh3sum: 66b3bf60bfdc225b
+   exec: ./Nanosaur-1.4.4-linux-x86_64.AppImage
+   runtime: none
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/d2c5e76f960ac8c7db978d998617c08d.png"
+       xxh3sum: 1a6a9fc24c02d062
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/jorio/Nanosaur/releases/download/v1.4.4/Nanosaur-1.4.4-linux-x86_64.AppImage"
+       xxh3sum: 9f588952e05fcd36
+
  - name: "Ooo"
    id: ooo
    provider: steam
