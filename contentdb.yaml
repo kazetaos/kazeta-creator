@@ -58,6 +58,7 @@
    runtime: none
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/107100/ad7f9414231a7a5bb96d74e21893a84972dcbee8.ico"
+       xxh3sum: 51dd881a667bb4ff
        include: 2
        destination: org.kazeta.icon.png
      - uri: "file://bastion_1_0_1747_initial_test_33876.sh"
@@ -362,6 +363,7 @@
    runtime: windows-1.0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2721890/8f09827eacf1315f537a1e67f874588d49e5f323.ico"
+       xxh3sum: 68c34ac1aca807de
        include: 0
        destination: org.kazeta.icon.png
      - uri: "steam://Ooo"
