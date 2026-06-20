@@ -508,6 +508,25 @@
      - uri: "steam://Sega Classics"
        include: "uncompressed ROMs/SONIC2_W.68K"
 
+ - name: "Spelunky"
+   id: spelunky
+   provider: gog
+   platform: windows
+   xxh3sum: 3fd4fb7126edaab4
+   exec: Spelunky.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/239350/5453ead5e9276bca0be1aa217053d3129b8fa221.ico"
+       xxh3sum: 539c93c78559559c
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_spelunky_2.1.0.9.exe"
+       xxh3sum: 3f5fc120cabcf93b
+       include:
+         - app/Data
+         - app/Spelunky.exe
+         - app/fmodex.dll
+
  - name: "Stardew Valley"
    id: stardew-valley
    provider: steam
