@@ -70,6 +70,20 @@
          - data/noarch/game/Bastion.bmp
          - data/noarch/game/lib
 
+ - name: "Beyond Oasis"
+   id: beyond-oasis
+   provider: steam
+   platform: windows
+   xxh3sum: 6eed7bd6445cefee
+   exec: BEYONDOA_U.68K
+   runtime: megadrive-1.1
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/b9a76307ca86e35edfdd7e15ddb9569f/4/32x32.png"
+       xxh3sum: c101464a95daf7c8
+       destination: org.kazeta.icon.png
+     - uri: "steam://Sega Classics"
+       include: "uncompressed ROMs/BEYONDOA_U.68K"
+
  - name: "BOMCAT"
    id: bomcat
    provider: steam
