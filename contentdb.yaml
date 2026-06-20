@@ -242,6 +242,23 @@
      - uri: "steam://Freedom Planet 2"
        exclude: steam_api.dll
 
+ - name: "Hades"
+   id: hades
+   provider: steam
+   platform: windows
+   xxh3sum: d3d17a8d9639be07
+   exec: x64Vk/Hades.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1145360/c2af83dde08c0636a1cd511abd0f9290913e6249.ico"
+       xxh3sum: 4a2c182785585d41
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "steam://Hades"
+       exclude:
+         - x64
+         - x86
+
  - name: "Hollow Knight"
    id: hollow-knight
    provider: gog
