@@ -422,6 +422,27 @@
          - data/noarch/game/icon.bmp
          - data/noarch/game/run.sh
 
+ - name: "Rogue Legacy"
+   id: rogue-legacy
+   provider: gog
+   platform: linux
+   xxh3sum: 8e0feec6a0baacfc
+   exec: ./RogueLegacy.bin.x86_64
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/241600/6aaac456aee6715dab18bad1108dcf222bb5d471.zip"
+       xxh3sum: e023608b1e04d9cc
+       include: 32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://rogue_legacy_en_1_4_0_22617.sh"
+       xxh3sum: 922d45fa3f6d2794
+       include: data/noarch/game/*
+       exclude:
+         - data/noarch/game/lib
+         - data/noarch/game/Rogue Legacy.bmp
+         - data/noarch/game/RogueLegacy
+         - data/noarch/game/RogueLegacy.bin.x86
+
  - name: "Sea of Stars"
    id: sea-of-stars
    provider: gog
