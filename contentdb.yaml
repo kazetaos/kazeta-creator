@@ -563,6 +563,35 @@
      - uri: "steam://Stardew Valley"
        exclude: StardewValley
 
+ - name: "SteamWorld Dig 2"
+   id: steamworld-dig-2
+   provider: gog
+   platform: linux
+   xxh3sum: 1c512cd279f3a43e
+   exec: ./Dig2
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/571310/13ae07abc94153ee0e642f0ef616c0178151b6a7.ico"
+       xxh3sum: 3a93dd658aa13f8e
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/64/libSDL2-2.0.so.0.3200.10"
+       xxh3sum: d63f7ab792e090df
+       destination: libSDL2-2.0.so.0
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/64/libopenal.so.1.24.2"
+       xxh3sum: 664be4a8ba209b79
+       destination: libopenal.so.1
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/64/libfmt.so.11.2.0"
+       xxh3sum: 4be2cf53a02ca954
+       destination: libfmt.so.11
+     - uri: "file://steamworld_dig_2_en_1_1_15062.sh"
+       xxh3sum: cb4204e4729a5aab
+       include: data/noarch/game/*
+       exclude:
+         - data/noarch/game/icon.*
+         - data/noarch/game/install.sh
+         - data/noarch/game/readme.txt
+
  - name: "Terraria"
    id: terraria
    provider: gog
