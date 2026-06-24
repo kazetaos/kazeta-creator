@@ -651,6 +651,26 @@
          - Transistor
          - Transistor.bin.x86
 
+ - name: "World of Goo"
+   id: world-of-goo
+   provider: gog
+   platform: linux
+   xxh3sum: 715adca92755ecff
+   exec: ./WorldOfGoo.bin.x86_64
+   runtime: none
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/7720dd1f89f149b7610d2607b7e7ee1c/32/32x32.png"
+       xxh3sum: cb6fcdf814dfaf1b
+       destination: org.kazeta.icon.png
+     - uri: "file://world_of_goo_1_6_538_87464.sh"
+       xxh3sum: 6be0ac6cf122234f
+       include: data/noarch/game/*
+       exclude:
+         - data/noarch/game/AppRun
+         - data/noarch/game/goggame*
+         - data/noarch/game/WorldOfGoo.desktop
+         - data/noarch/game/WorldOfGoo.png
+
  - name: "Xeno Crisis"
    id: xeno-crisis
    provider: gog
