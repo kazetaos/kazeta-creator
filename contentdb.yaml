@@ -329,7 +329,7 @@
    id: mina-the-hollower
    provider: steam
    platform: linux
-   xxh3sum: 5a968737abf35c88
+   xxh3sum: 181e93144d6d1f4b
    exec: ./MinaTheHollower
    runtime: none
    sources:
