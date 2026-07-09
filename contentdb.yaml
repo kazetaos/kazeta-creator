@@ -651,6 +651,23 @@
          - Transistor
          - Transistor.bin.x86
 
+ - name: "Unpacking"
+   id: unpacking
+   provider: gog
+   platform: linux
+   xxh3sum: 9205d44f97526ca6
+   exec: ./unpacking.x86_64
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1135690/578792d3542c8912787f26ba2456e0f7345a341c.zip"
+       xxh3sum: c998e8d5c61e7102
+       include: linux/Unpacking_2_32x32x32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://unpacking_1_4_85766.sh"
+       xxh3sum: e5884041183a940e
+       include: data/noarch/game/*
+       exclude: data/noarch/game/goggame*
+
  - name: "World of Goo"
    id: world-of-goo
    provider: gog
