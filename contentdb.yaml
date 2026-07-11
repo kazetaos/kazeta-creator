@@ -466,6 +466,27 @@
          - data/noarch/game/RogueLegacy
          - data/noarch/game/RogueLegacy.bin.x86
 
+ - name: "Rollerdrome"
+   id: rollerdrome
+   provider: gog
+   platform: windows
+   xxh3sum: 2fc7f682100cd1b8
+   exec: ROLLERDROME.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1294420/9e2dd0bc2a892bca2ede7f41793000205a608845.ico"
+       xxh3sum: d195b5ec83517eda
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_rollerdrome_1.0_security_patch_(85641).exe"
+       xxh3sum: 6239714f4fcd1738
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Sea of Stars"
    id: sea-of-stars
    provider: gog
