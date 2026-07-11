@@ -559,6 +559,27 @@
          - shovelknight/64
          - shovelknight/data
 
+ - name: "SkyDrift Infinity"
+   id: skydrift-infinity
+   provider: gog
+   platform: windows
+   xxh3sum: 205997185b85445c
+   exec: SkydriftInfinity.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/827330/6879b90e5b41839ddb44496b994762accd893821.ico"
+       xxh3sum: 35459cade9c57b8c
+       include: 3
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_skydrift_infinity_1.0_(48877).exe"
+       xxh3sum: 605cd7b8fbba54e3
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Sonic the Hedgehog 2"
    id: sonic-the-hedgehog-2
    provider: steam
