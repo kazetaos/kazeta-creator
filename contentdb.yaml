@@ -168,6 +168,29 @@
          - CyberShadow/icon.bmp
          - CyberShadow/run.sh
 
+ - name: "The Elder Scrolls III: Morrowind GOTY Edition"
+   id: elder-scrolls-iii-goty
+   provider: gog
+   platform: windows
+   xxh3sum: fd03d5ae63021b79
+   exec: Morrowind.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/22320/6db49c87ce494fbc4115a8f1b21cfd177849ef78.ico"
+       xxh3sum: 46e39f810b8cd7f1
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_the_elder_scrolls_iii_morrowind_goty_1.6.0.1820_gog_0.1_(77582)-1.bin"
+       xxh3sum: fe2c221a4a53cd76
+       process: false
+     - uri: "file://setup_the_elder_scrolls_iii_morrowind_goty_1.6.0.1820_gog_0.1_(77582).exe"
+       xxh3sum: 63a2b444b4502697
+       include:
+         - binkw32.dll
+         - "Data Files"
+         - Morrowind.exe
+         - Morrowind.ini
+
  - name: "ElecHead"
    id: elechead
    provider: gog
