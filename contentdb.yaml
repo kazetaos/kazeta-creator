@@ -336,7 +336,7 @@
    id: mina-the-hollower
    provider: humble
    platform: linux
-   xxh3sum: b3078749c48eb2a2
+   xxh3sum: 73a10a706c907f31
    exec: ./MinaTheHollower
    runtime: none
    sources:
@@ -344,9 +344,8 @@
        xxh3sum: efba3766032dd497
        include: clientIcon32x32.png
        destination: org.kazeta.icon.png
-     - uri: "file://minathehollower.tar.tar"
-       xxh3sum: 792c44778ce8f41b
-       exclude: libsteam_api.so
+     - uri: "file://minathehollower-linux.tar.tar"
+       xxh3sum: 13f6a4cd8fcf181e
 
  - name: "Mina the Hollower"
    id: mina-the-hollower
