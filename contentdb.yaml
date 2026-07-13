@@ -697,6 +697,20 @@
          - __redist
          - tmp
 
+ - name: "Teenage Mutant Ninja Turtles: Shredder's Revenge"
+   id: tmnt-shredders-revenge
+   provider: steam
+   platform: linux
+   xxh3sum: aedd6fd000c9b29e
+   exec: ./TMNT
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1361510/39b762dc9f4b901bbe82e29e26f10b0d6d4b1b28.ico"
+       xxh3sum: dfa5299b46af0142
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "steam://TMNT"
+
  - name: "Transistor"
    id: transistor
    provider: steam
