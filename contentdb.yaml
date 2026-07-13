@@ -332,6 +332,27 @@
        destination: org.kazeta.icon.png
      - uri: "steam://LittleKittyBigCity"
 
+ - name: "The Messenger"
+   id: the-messenger
+   provider: gog
+   platform: windows
+   xxh3sum: ef402e69717f1932
+   exec: TheMessenger.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/764790/ecff89a818b3c47ad2f8d271047ad1d57524f6c3.ico"
+       xxh3sum: 8aedaa248e946364
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_the_messenger_2.0.4_(64bit)_(30928).exe"
+       xxh3sum: c307f5a5a3c9fdf4
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Mina the Hollower"
    id: mina-the-hollower
    provider: humble
