@@ -8,6 +8,7 @@ from pathlib import Path
 
 FILE_DIR = os.path.join(Path.home(), 'Downloads')
 STEAM_DIR = os.path.join(Path.home(), '.steam/steam/steamapps/common')
+HEROIC_DIR=os.path.join(Path.home(), 'Games/Heroic')
 
 def xxh3sum(path):
     result = subprocess.run(["xxh3sum", path], capture_output=True, text=True)
@@ -57,6 +58,10 @@ def build_game(game, log_cb=print, compression="lz4"):
             path = os.path.join(FILE_DIR, basename)
         elif uri.startswith('steam://'):
             path = os.path.join(STEAM_DIR, basename)
+        elif uri.startswith('epic://'):
+            path = os.path.join(HEROIC_DIR, basename)
+        elif uri.startswith('amazon://'):
+            path = os.path.join(HEROIC_DIR, basename)
         elif uri.startswith('https://'):
             subprocess.run(["curl", "--progress-bar", "-LO", "--output-dir", download_dir, uri])
             path = os.path.join(download_dir, basename)
