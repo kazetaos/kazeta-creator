@@ -99,6 +99,20 @@
        destination: org.kazeta.icon.png
      - uri: "steam://BOMCAT"
 
+ - name: "Cat Quest"
+   id: cat-quest
+   provider: epic
+   platform: windows
+   xxh3sum: 5776e3ca0f731365
+   exec: '"Cat Quest.exe"'
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/593280/43f94561d5ddbb26a3c62b480df7db121861a96a.ico"
+       xxh3sum: 24e7389e3dc41126
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "epic://CatQuest"
+
  - name: "Celeste"
    id: celeste
    provider: itch
