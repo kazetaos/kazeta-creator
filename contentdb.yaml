@@ -265,6 +265,24 @@
      - uri: "steam://Freedom Planet 2"
        exclude: steam_api.dll
 
+ - name: "Gravity Circuit"
+   id: gravity-circuit
+   provider: amazon
+   platform: windows
+   xxh3sum: b7254420df6a0de1
+   exec: ./love-11.5-x86_64.AppImage GravityCircuit.love
+   runtime: none
+   sources:
+     - uri: "amazon://Gravity Circuit"
+       include: GravityCircuit.exe
+       destination: GravityCircuit.love
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/858710/e6dccace87af20f288873465e6f8c3cf4cd0ac92.ico"
+       xxh3sum: 0e73c77eb570722e
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/love2d/love/releases/download/11.5/love-11.5-x86_64.AppImage"
+       xxh3sum: 905ef6ac23cb6603
+
  - name: "Hades"
    id: hades
    provider: steam
