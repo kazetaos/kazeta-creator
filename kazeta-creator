@@ -27,6 +27,7 @@ def xxh3_check(path, expected):
 
 FILE_DIR=os.path.join(Path.home(), 'Downloads')
 STEAM_DIR=os.path.join(Path.home(), '.steam/steam/steamapps/common')
+HEROIC_DIR=os.path.join(Path.home(), 'Games/Heroic')
 
 
 try:
@@ -97,6 +98,10 @@ for source in game['sources']:
         path = os.path.join(FILE_DIR, basename)
     elif uri.startswith('steam://'):
         path = os.path.join(STEAM_DIR, basename)
+    elif uri.startswith('epic://'):
+        path = os.path.join(HEROIC_DIR, basename)
+    elif uri.startswith('amazon://'):
+        path = os.path.join(HEROIC_DIR, basename)
     elif uri.startswith('https://'):
         subprocess.run(["curl", "--progress-bar", "-LO", "--output-dir", download_dir,  uri])
         path = os.path.join(download_dir, basename)
