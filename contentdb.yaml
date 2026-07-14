@@ -611,6 +611,35 @@
          - shovelknight/64
          - shovelknight/data
 
+ - name: "Sid Meier's Civilization VI"
+   id: civilization-vi
+   provider: epic
+   platform: windows
+   xxh3sum: 44e9ebebdf40f4de
+   exec: Base/Binaries/Win64EOS/CivilizationVI.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/b2a223f097589a3682d3221d102fc52e/8/32x32.png"
+       xxh3sum: 81caa638c921f31e
+       destination: org.kazeta.icon.png
+     - uri: "epic://SidMeiersCivilizationVI"
+       exclude:
+         - DLC
+         - Debug
+         - Base/Binaries/Win64EOS/Civ6_Launcher.exe
+         - Base/Binaries/Win64EOS/CivilizationVI_DX12.exe
+         - Base/Binaries/Win64EOS/FiraxisBugReporter.exe
+         - "Base/Platforms/Windows/audio/Chinese(PRC)"
+         - "Base/Platforms/Windows/audio/Chinese(Taiwan)"
+         - "Base/Platforms/Windows/audio/French(France)"
+         - "Base/Platforms/Windows/audio/German"
+         - "Base/Platforms/Windows/audio/Italian"
+         - "Base/Platforms/Windows/audio/Japanese"
+         - "Base/Platforms/Windows/audio/Korean"
+         - "Base/Platforms/Windows/audio/Polish"
+         - "Base/Platforms/Windows/audio/Russian"
+         - "Base/Platforms/Windows/audio/Spanish(Spain)"
+
  - name: "SkyDrift Infinity"
    id: skydrift-infinity
    provider: gog
