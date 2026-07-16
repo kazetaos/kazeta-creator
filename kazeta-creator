@@ -12,12 +12,7 @@ from PyQt6.QtGui import QFont
 import backend
 
 class BuildWorker(QThread):
-    """
-    Runs the build process in a background thread to keep the PyQt UI responsive.
-    Emits signals to pass log messages back to the main thread.
-    """
     log_signal = pyqtSignal(str)
-    # Update signal to pass a boolean (success) and a string (message)
     finished_signal = pyqtSignal(bool, str)
 
     def __init__(self, game, compression):
@@ -31,7 +26,7 @@ class BuildWorker(QThread):
         try:
             self.log_signal.emit(f"\n--- Starting build for: {self.game['name']} ({self.game['id']}) ---")
 
-            # Pass the compression method to the core logic
+            # pass the compression method to the core logic
             backend.build_game(self.game, log_cb=self.log_signal.emit, compression=self.compression)
 
             msg = f"Successfully packaged {self.game['name']}!"
@@ -42,7 +37,7 @@ class BuildWorker(QThread):
             self.log_signal.emit(f"\nBUILD FAILED: {str(e)}")
             success = False
         finally:
-            # Pass the success status and message back to the main thread
+            # pass the success status and message back to the main thread
             self.finished_signal.emit(success, msg)
 
 class MainWindow(QMainWindow):
@@ -62,7 +57,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(central_widget)
         main_layout = QVBoxLayout(central_widget)
 
-        # --- Top Section: Game Selection ---
+        # game selection
         selection_group = QGroupBox("Game Selection")
         form_layout = QFormLayout(selection_group)
 
@@ -80,7 +75,7 @@ class MainWindow(QMainWindow):
 
         main_layout.addWidget(selection_group)
 
-        # --- Middle Section: Controls ---
+        # controls
         control_layout = QHBoxLayout()
 
         self.clear_btn = QPushButton("Clear Log")
@@ -97,7 +92,7 @@ class MainWindow(QMainWindow):
         control_layout.addWidget(self.build_btn)
         main_layout.addLayout(control_layout)
 
-        # --- Bottom Section: Logs ---
+        # logs
         log_group = QGroupBox("Activity Log")
         log_layout = QVBoxLayout(log_group)
 
@@ -111,7 +106,6 @@ class MainWindow(QMainWindow):
         log_layout.addWidget(self.log_console)
         main_layout.addWidget(log_group, stretch=1)
 
-        # Connect the clear button NOW that log_console exists
         self.clear_btn.clicked.connect(self.log_console.clear)
 
     def load_database(self):
@@ -121,7 +115,7 @@ class MainWindow(QMainWindow):
         try:
             self.games = backend.load_database('contentdb.yaml')
 
-            # Extract unique game names to avoid duplicates in the primary dropdown
+            # extract unique game names to avoid duplicates in the primary dropdown
             unique_games = []
             for game in self.games:
                 name = game.get('name', 'Unknown')
@@ -134,14 +128,14 @@ class MainWindow(QMainWindow):
             self.append_log(f"ERROR: Failed to load game database.\nDetails: {e}")
 
     def update_providers(self):
-        """Updates the provider dropdown based on the currently selected game."""
+        # updates the provider dropdown based on the currently selected game
         self.provider_combo.clear()
         selected_game_name = self.game_combo.currentText()
 
         if not selected_game_name:
             return
 
-        # Find all available providers for this specific game
+        # find all available providers for this specific game
         providers = []
         for game in self.games:
             if game.get('name') == selected_game_name:
@@ -150,7 +144,7 @@ class MainWindow(QMainWindow):
         self.provider_combo.addItems(providers)
 
     def append_log(self, text):
-        """Appends text to the console and auto-scrolls to the bottom."""
+        # appends text to the console and auto-scrolls to the bottom
         self.log_console.append(text)
 
     def start_build(self):
@@ -172,7 +166,7 @@ class MainWindow(QMainWindow):
             QMessageBox.critical(self, "Error", "Could not find matching game configuration.")
             return
 
-        # Disable inputs while building
+        # disable inputs while building
         self.build_btn.setEnabled(False)
         self.reload_btn.setEnabled(False)
         self.clear_btn.setEnabled(False)
@@ -186,7 +180,7 @@ class MainWindow(QMainWindow):
         self.worker.start()
 
     def on_build_finished(self, success, message):
-        # 1. Re-enable all inputs when complete
+        # re-enable all inputs when complete
         self.build_btn.setEnabled(True)
         self.reload_btn.setEnabled(True)
         self.clear_btn.setEnabled(True)
@@ -194,13 +188,13 @@ class MainWindow(QMainWindow):
         self.provider_combo.setEnabled(True)
         self.compression_combo.setEnabled(True)
 
-        # 2. Safely schedule the thread for cleanup (prevents memory leaks and hard crashes)
+        # safely schedule the thread for cleanup (prevents memory leaks and hard crashes)
         if self.worker:
             self.worker.deleteLater()
             self.worker = None
 
-        # 3. Trigger the notification asynchronously
-        # This detaches the pop-up from the thread's shutdown process so the UI doesn't freeze!
+        # trigger the notification asynchronously
+        # this detaches the pop-up from the thread's shutdown process so the UI doesn't freeze
         if success:
             QTimer.singleShot(0, lambda s=success, m=message: QMessageBox.information(self, "Build Complete", m))
         else:
@@ -209,7 +203,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
 
-    # Optional: Set a basic style fusion for cross-platform consistency
+    # set a basic style fusion for cross-platform consistency
     app.setStyle("Fusion")
 
     window = MainWindow()

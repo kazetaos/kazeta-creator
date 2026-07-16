@@ -24,7 +24,7 @@ def xxh3_check(path, expected, log_cb):
     return True
 
 def load_database(yaml_path='contentdb.yaml'):
-    """Loads the YAML database and returns the list of games."""
+    # loads the YAML database and returns the list of games
     with open(yaml_path) as yaml_file:
         return yaml.load(yaml_file, Loader=yaml.FullLoader)
 
