@@ -1,0 +1,211 @@
+#!/usr/bin/env python3
+
+import sys
+import yaml
+from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout,
+                             QHBoxLayout, QPushButton, QTextEdit, QMessageBox,
+                             QGroupBox, QComboBox, QFormLayout, QDialog,
+                             QLabel, QLineEdit, QPlainTextEdit, QDialogButtonBox)
+from PyQt6.QtCore import QThread, pyqtSignal, QTimer
+from PyQt6.QtGui import QFont
+
+import kazeta_creator
+
+class BuildWorker(QThread):
+    log_signal = pyqtSignal(str)
+    finished_signal = pyqtSignal(bool, str)
+
+    def __init__(self, game, compression):
+        super().__init__()
+        self.game = game
+        self.compression = compression
+
+    def run(self):
+        success = False
+        msg = ""
+        try:
+            self.log_signal.emit(f"\n--- Starting build for: {self.game['name']} ({self.game['id']}) ---")
+
+            # pass the compression method to the core logic
+            kazeta_creator.build_game(self.game, log_cb=self.log_signal.emit, compression=self.compression)
+
+            msg = f"Successfully packaged {self.game['name']}!"
+            self.log_signal.emit(f"\nSUCCESS: {msg}")
+            success = True
+        except Exception as e:
+            msg = f"Build failed: {str(e)}"
+            self.log_signal.emit(f"\nBUILD FAILED: {str(e)}")
+            success = False
+        finally:
+            # pass the success status and message back to the main thread
+            self.finished_signal.emit(success, msg)
+
+class MainWindow(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Kazeta Creator GUI")
+        self.resize(800, 600)
+
+        self.games = []
+        self.worker = None
+
+        self.setup_ui()
+        self.load_database()
+
+    def setup_ui(self):
+        central_widget = QWidget()
+        self.setCentralWidget(central_widget)
+        main_layout = QVBoxLayout(central_widget)
+
+        # game selection
+        selection_group = QGroupBox("Game Selection")
+        form_layout = QFormLayout(selection_group)
+
+        self.game_combo = QComboBox()
+        self.game_combo.currentIndexChanged.connect(self.update_providers)
+
+        self.provider_combo = QComboBox()
+
+        self.compression_combo = QComboBox()
+        self.compression_combo.addItems(["lz4", "lz4hc", "lzma", "deflate", "libdeflate", "zstd"])
+
+        form_layout.addRow("Select Game:", self.game_combo)
+        form_layout.addRow("Select Provider:", self.provider_combo)
+        form_layout.addRow("Compression:", self.compression_combo)
+
+        main_layout.addWidget(selection_group)
+
+        # controls
+        control_layout = QHBoxLayout()
+
+        self.clear_btn = QPushButton("Clear Log")
+
+        self.reload_btn = QPushButton("Reload Database")
+        self.reload_btn.clicked.connect(self.load_database)
+
+        self.build_btn = QPushButton("Build Selected Game")
+        self.build_btn.clicked.connect(self.start_build)
+
+        control_layout.addWidget(self.clear_btn)
+        control_layout.addStretch()
+        control_layout.addWidget(self.reload_btn)
+        control_layout.addWidget(self.build_btn)
+        main_layout.addLayout(control_layout)
+
+        # logs
+        log_group = QGroupBox("Activity Log")
+        log_layout = QVBoxLayout(log_group)
+
+        self.log_console = QTextEdit()
+        self.log_console.setReadOnly(True)
+        font = QFont("Consolas", 10)
+        font.setStyleHint(QFont.StyleHint.Monospace)
+        self.log_console.setFont(font)
+        self.log_console.setStyleSheet("background-color: #1e1e1e; color: #d4d4d4;")
+
+        log_layout.addWidget(self.log_console)
+        main_layout.addWidget(log_group, stretch=1)
+
+        self.clear_btn.clicked.connect(self.log_console.clear)
+
+    def load_database(self):
+        self.game_combo.clear()
+        self.provider_combo.clear()
+        self.games = []
+        try:
+            self.games = kazeta_creator.load_database('contentdb.yaml')
+
+            # extract unique game names to avoid duplicates in the primary dropdown
+            unique_games = []
+            for game in self.games:
+                name = game.get('name', 'Unknown')
+                if name not in unique_games:
+                    unique_games.append(name)
+
+            self.game_combo.addItems(unique_games)
+            self.append_log("Successfully loaded contentdb.yaml")
+        except Exception as e:
+            self.append_log(f"ERROR: Failed to load game database.\nDetails: {e}")
+
+    def update_providers(self):
+        # updates the provider dropdown based on the currently selected game
+        self.provider_combo.clear()
+        selected_game_name = self.game_combo.currentText()
+
+        if not selected_game_name:
+            return
+
+        # find all available providers for this specific game
+        providers = []
+        for game in self.games:
+            if game.get('name') == selected_game_name:
+                providers.append(game.get('provider', 'Unknown'))
+
+        self.provider_combo.addItems(providers)
+
+    def append_log(self, text):
+        # appends text to the console and auto-scrolls to the bottom
+        self.log_console.append(text)
+
+    def start_build(self):
+        selected_game_name = self.game_combo.currentText()
+        selected_provider = self.provider_combo.currentText()
+        selected_compression = self.compression_combo.currentText()
+
+        if not selected_game_name or not selected_provider:
+            QMessageBox.warning(self, "No Selection", "Please select a game and provider.")
+            return
+
+        selected_game = None
+        for game in self.games:
+            if game.get('name') == selected_game_name and game.get('provider') == selected_provider:
+                selected_game = game
+                break
+
+        if not selected_game:
+            QMessageBox.critical(self, "Error", "Could not find matching game configuration.")
+            return
+
+        # disable inputs while building
+        self.build_btn.setEnabled(False)
+        self.reload_btn.setEnabled(False)
+        self.clear_btn.setEnabled(False)
+        self.game_combo.setEnabled(False)
+        self.provider_combo.setEnabled(False)
+        self.compression_combo.setEnabled(False)
+
+        self.worker = BuildWorker(selected_game, selected_compression)
+        self.worker.log_signal.connect(self.append_log)
+        self.worker.finished_signal.connect(self.on_build_finished)
+        self.worker.start()
+
+    def on_build_finished(self, success, message):
+        # re-enable all inputs when complete
+        self.build_btn.setEnabled(True)
+        self.reload_btn.setEnabled(True)
+        self.clear_btn.setEnabled(True)
+        self.game_combo.setEnabled(True)
+        self.provider_combo.setEnabled(True)
+        self.compression_combo.setEnabled(True)
+
+        # safely schedule the thread for cleanup (prevents memory leaks and hard crashes)
+        if self.worker:
+            self.worker.deleteLater()
+            self.worker = None
+
+        # trigger the notification asynchronously
+        # this detaches the pop-up from the thread's shutdown process so the UI doesn't freeze
+        if success:
+            QTimer.singleShot(0, lambda s=success, m=message: QMessageBox.information(self, "Build Complete", m))
+        else:
+            QTimer.singleShot(0, lambda s=success, m=message: QMessageBox.critical(self, "Build Failed", m))
+
+if __name__ == "__main__":
+    app = QApplication(sys.argv)
+
+    # set a basic style fusion for cross-platform consistency
+    app.setStyle("Fusion")
+
+    window = MainWindow()
+    window.show()
+    sys.exit(app.exec())
