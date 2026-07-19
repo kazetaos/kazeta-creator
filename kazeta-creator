@@ -187,6 +187,8 @@ with open(os.path.join(game['id'], 'org.kazeta.cart.kzi'), 'w', encoding='utf-8'
     file.write('Id={}\n'.format(game['id']))
     file.write('Exec={}\n'.format(game['exec']))
     file.write('Icon={}\n'.format('org.kazeta.icon.png'))
+    if 'gamescope' in game:
+        file.write('GamescopeOptions={}\n'.format(game['gamescope']))
     if 'runtime' in game and game['runtime'] != 'none':
         file.write('Runtime={}\n'.format(game['runtime']))
 
