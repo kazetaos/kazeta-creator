@@ -684,6 +684,29 @@
      - uri: "steam://Sonic Mania"
        include: "Data.rsdk"
 
+ - name: "Sonic Mania"
+   id: sonic-mania
+   provider: epic
+   platform: windows
+   xxh3sum: 894d8045d93c5252
+   exec: LD_LIBRARY_PATH=$(pwd) ./RSDKv5U
+   runtime: none
+   gamescope: --filter pixel
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/9d5a197b365fa7a34ba672e92d784640/8/32x32.png"
+       xxh3sum: 4cb0df36dddf36e6
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/64/libtheoradec.so.2.1.1"
+       xxh3sum: 01fe240cb295f9cd
+       destination: libtheoradec.so.2
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/64/rsdk/Game.so"
+       xxh3sum: c13cace8190b650c
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/64/rsdk/RSDKv5U"
+       xxh3sum: 2359b340f97c1f82
+       executable: true
+     - uri: "epic://SonicMania"
+       include: "Data.rsdk"
+
  - name: "Sonic the Hedgehog 2"
    id: sonic-the-hedgehog-2
    provider: steam
