@@ -874,6 +874,30 @@
        include: data/noarch/game/*
        exclude: data/noarch/game/goggame*
 
+ - name: "Warcraft II: Battle.net Edition"
+   id: warcraft-ii-bne
+   provider: gog
+   platform: windows
+   xxh3sum: 9c4a69f4044b4593
+   exec: '"Warcraft II BNE.exe"'
+   runtime: windows-1.0
+   gamescope: --filter pixel --scaler integer
+   sources:
+    - uri: "https://cdn2.steamgriddb.com/icon/ef602a5ddfe0a4b860743ce934d2e87b/32/32x32.png"
+      xxh3sum: 48c209de8a079192
+      destination: org.kazeta.icon.png
+    - uri: "file://setup_warcraft_ii_2.02_v5_(78104)-1.bin"
+      xxh3sum: d22a3c2ffde5293a
+      process: false
+    - uri: "file://setup_warcraft_ii_2.02_v5_(78104).exe"
+      xxh3sum: 7a7f0f2452132946
+      exclude:
+        - app
+        - commonappdata
+        - goggame*
+        - __redist
+        - tmp
+
  - name: "World of Goo"
    id: world-of-goo
    provider: gog
