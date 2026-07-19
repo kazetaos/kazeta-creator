@@ -117,6 +117,9 @@ for source in game['sources']:
         print("ERROR: File or directory not found: {}".format(basename))
         sys.exit(1)
 
+    if 'executable' in source and source['executable'] == True and os.path.isfile(path):
+        subprocess.run(["chmod", "+x", path])
+
     # check hash
     if 'xxh3sum' in source and os.path.isfile(path):
         if not xxh3_check(path, source['xxh3sum']):
