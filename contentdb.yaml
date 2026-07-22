@@ -784,6 +784,20 @@
          - data/noarch/game/install.sh
          - data/noarch/game/readme.txt
 
+ - name: "Streets of Rage 2"
+   id: streets-of-rage-2
+   provider: steam
+   platform: windows
+   xxh3sum: 57a179e6b90116e5
+   exec: STREETS2_U.68K
+   runtime: megadrive-1.1
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/3282c6bbfd18b23b5e39f280072f9a1d/32/32x32.png"
+       xxh3sum: 016b99084d53928c
+       destination: org.kazeta.icon.png
+     - uri: "steam://Sega Classics"
+       include: "uncompressed ROMs/STREETS2_U.68K"
+
  - name: "Terraria"
    id: terraria
    provider: gog
