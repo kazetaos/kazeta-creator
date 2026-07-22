@@ -661,6 +661,20 @@
          - __redist
          - tmp
 
+ - name: "Snakebird Complete"
+   id: snakebird-complete
+   provider: epic
+   platform: windows
+   xxh3sum: e28ae0d67acf2852
+   exec: '"Snakebird Complete.exe"'
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/357300/eb867fcf9b304ce6e2a4afa39e354e347f211870.zip"
+       xxh3sum: b10ec8404d3d867e
+       include: snakebirdIcon_32x32.png
+       destination: org.kazeta.icon.png
+     - uri: "epic://SnakebirdCompletezp91Z"
+
  - name: "Sonic Mania"
    id: sonic-mania
    provider: steam
