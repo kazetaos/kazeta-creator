@@ -279,6 +279,21 @@
      - uri: "steam://Freedom Planet 2"
        exclude: steam_api.dll
 
+ - name: "Grapple Dog"
+   id: grapple-dog
+   provider: steam
+   platform: windows
+   xxh3sum: 236e35c09efa83fb
+   exec: '"Grapple Dog.exe"'
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1345860/6538859b2416b508657bac751d697e142d002d5d.ico"
+       xxh3sum: fb1c29b78ccde068
+       include: 4
+       destination: org.kazeta.icon.png
+     - uri: "steam://Grapple Dog"
+       exclude: "*.pdf"
+
  - name: "Gravity Circuit"
    id: gravity-circuit
    provider: amazon
