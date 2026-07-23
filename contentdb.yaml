@@ -497,6 +497,20 @@
          - data/noarch/game/icon.bmp
          - data/noarch/game/run.sh
 
+ - name: "River City Girls"
+   id: river-city-girls
+   provider: epic
+   platform: windows
+   xxh3sum: 6b53bd7886659f03
+   exec: RiverCityGirls.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1049320/d1a5e23b945f9c6eed029b5095ffcc3a909b5d1d.ico"
+       xxh3sum: bbfa1ee097f171e9
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "epic://RiverCityGirls"
+
  - name: "Rogue Legacy"
    id: rogue-legacy
    provider: gog
