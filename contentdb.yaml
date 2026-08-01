@@ -218,6 +218,26 @@
      - uri: "https://github.com/pkgforge-dev/Crispy-Doom-AppImage/releases/download/7.1-2@2026-08-01_1785586239/Crispy_Doom-7.1-2-anylinux-x86_64.AppImage"
        xxh3sum: 8a4acfea70a3a5cb
 
+ - name: "DOOM II"
+   id: doom-ii
+   provider: steam
+   platform: windows
+   xxh3sum: aa0350fefbe9a7c5
+   exec: ./Crispy_Doom-7.1-2-anylinux-x86_64.AppImage DOOM2.WAD
+   runtime: none
+   gamescope: --filter pixel
+   post: | # disable autoupdate
+     mkdir -p .config/auto-updates-policy
+     echo "0" > .config/auto-updates-policy/io.github.fabiangreffrath.Doom-update-setting
+   sources:
+     - uri: "steam://Ultimate Doom"
+       include: base/doom2/DOOM2.WAD
+     - uri: "https://cdn2.steamgriddb.com/icon/49494b2411c66c20b40c26a64449eb44/32/32x32.png"
+       xxh3sum: c0497d91aaf2bc1e
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/pkgforge-dev/Crispy-Doom-AppImage/releases/download/7.1-2@2026-08-01_1785586239/Crispy_Doom-7.1-2-anylinux-x86_64.AppImage"
+       xxh3sum: 8a4acfea70a3a5cb
+
  - name: "The Elder Scrolls III: Morrowind GOTY Edition"
    id: elder-scrolls-iii-goty
    provider: gog
