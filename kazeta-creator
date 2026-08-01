@@ -171,6 +171,9 @@ for source in game['sources']:
     for e in includes:
         src_files = glob.glob(os.path.join(staging_dir, e))
         for f in src_files:
+            final_basedir = os.path.dirname(final_dst)
+            if final_basedir:
+                subprocess.run(["mkdir", "-p", final_basedir])
             subprocess.run(["mv", f, final_dst])
 
 
