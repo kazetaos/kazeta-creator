@@ -955,6 +955,29 @@
         - __redist
         - tmp
 
+ - name: "Wolfenstein 3D"
+   id: wolfenstein-3d
+   provider: gog
+   platform: windows
+   xxh3sum: 60793ec6a39fc9b3
+   exec: ./ECWolf-1.4.2-1-anylinux-x86_64.AppImage
+   runtime: none
+   post: |
+     mkdir -p .config/auto-updates-policy
+     echo "0" > .config/auto-updates-policy/net.maniacsvault.ecwolf-update-setting
+   gamescope: --filter pixel
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/da0c44a0f2442bf0f6402b4e71f21cfe.png"
+       xxh3sum: 8bcd627c4a0c6618
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/pkgforge-dev/ECWolf-AppImage/releases/download/1.4.2-1@2026-08-01_1785585703/ECWolf-1.4.2-1-anylinux-x86_64.AppImage"
+       xxh3sum: 8e6ca49b1206065c
+     - uri: "file://setup_wolfenstein_3d_1.4_(58806).exe"
+       xxh3sum: 61b817644e906792
+       include:
+         - "*.WL6"
+       destination: ".local/share/ecwolf/"
+
  - name: "World of Goo"
    id: world-of-goo
    provider: gog
