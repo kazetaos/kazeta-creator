@@ -198,6 +198,26 @@
          - CyberShadow/icon.bmp
          - CyberShadow/run.sh
 
+ - name: "DOOM"
+   id: doom-1993
+   provider: steam
+   platform: windows
+   xxh3sum: 3cd8009a5286cae4
+   exec: ./Crispy_Doom-7.1-2-anylinux-x86_64.AppImage DOOM.WAD
+   runtime: none
+   gamescope: --filter pixel
+   post: | # disable autoupdate
+     mkdir -p .config/auto-updates-policy
+     echo "0" > .config/auto-updates-policy/io.github.fabiangreffrath.Doom-update-setting
+   sources:
+     - uri: "steam://Ultimate Doom"
+       include: base/DOOM.WAD
+     - uri: "https://cdn2.steamgriddb.com/icon/83227757f7487fbd0347617cc09a1c57.png"
+       xxh3sum: 35fbbc584f0b8d54
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/pkgforge-dev/Crispy-Doom-AppImage/releases/download/7.1-2@2026-08-01_1785586239/Crispy_Doom-7.1-2-anylinux-x86_64.AppImage"
+       xxh3sum: 8a4acfea70a3a5cb
+
  - name: "The Elder Scrolls III: Morrowind GOTY Edition"
    id: elder-scrolls-iii-goty
    provider: gog
