@@ -199,6 +199,14 @@ if 'steam_app_id' in game:
     with open(os.path.join(game['id'], 'steam_appid.txt'), 'w', encoding='utf-8') as file:
         file.write(str(game['steam_app_id']))
 
+if 'post' in game:
+    with open('/tmp/kazeta-creator-script', 'w', encoding='utf-8') as file:
+        file.write('#! /bin/bash\n')
+        file.write(str(game['post']))
+    subprocess.run(['chmod', '+x', '/tmp/kazeta-creator-script'])
+    subprocess.run(['/tmp/kazeta-creator-script'], cwd=game['id'])
+
+# create kzp
 kzp = game['id'] + '.kzp'
 subprocess.run(["rm", "-rf", kzp])
 uuid=str(uuid.uuid5(uuid.NAMESPACE_DNS, 'org.kazeta.' + game['id']))
