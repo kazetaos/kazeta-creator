@@ -13,6 +13,22 @@
      - uri: "steam://Assault Android Cactus"
        exclude: cactus.x86
 
+ - name: "Atomic Owl"
+   id: atomic-owl
+   provider: itch
+   platform: linux
+   xxh3sum: 89bee115b56f5439
+   exec: ./AtomicOwl.x86_64
+   runtime: none
+   post: chmod +x AtomicOwl.x86_64
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2228490/055c8c0ed9d5e700dac90e48222b169907b894e5.ico"
+       xxh3sum: 80a9ff70ec304805
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://AtomicOwlLinuxFinal.zip"
+       xxh3sum: ca4aacb0ee12296e
+
  - name: "Baba Is You"
    id: baba-is-you
    provider: steam
