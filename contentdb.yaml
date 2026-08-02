@@ -1018,10 +1018,10 @@
    xxh3sum: 60793ec6a39fc9b3
    exec: ./ECWolf-1.4.2-1-anylinux-x86_64.AppImage
    runtime: none
-   post: |
+   gamescope: --filter pixel
+   post: | # disable autoupdate
      mkdir -p .config/auto-updates-policy
      echo "0" > .config/auto-updates-policy/net.maniacsvault.ecwolf-update-setting
-   gamescope: --filter pixel
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/da0c44a0f2442bf0f6402b4e71f21cfe.png"
        xxh3sum: 8bcd627c4a0c6618
