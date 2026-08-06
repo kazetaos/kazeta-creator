@@ -30,6 +30,26 @@
        xxh3sum: ce584d3705d738f5
        include: "Atomic Owl Linux/*"
 
+ - name: "Axiom Verge"
+   id: axiom-verge
+   provider: steam
+   platform: linux
+   xxh3sum: 8741336d0fa36149
+   exec: ./AxiomVerge
+   runtime: none
+   gamescope: --filter pixel
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/332200/c660873df033be33440d6ab8de153e8bbd174d60.ico"
+       xxh3sum: 492211761340d92b
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "steam://Axiom Verge"
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: linux/x86_64/libsteam_api.so
+       destination: lib64/
+
  - name: "Baba Is You"
    id: baba-is-you
    provider: steam
