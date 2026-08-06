@@ -128,22 +128,44 @@ for source in game['sources']:
     if 'process' in source and source['process'] == False:
         continue
 
-    # extract files
-    if path.endswith('.tar') or '.tar.' in path:
-        subprocess.run(["tar", "-xf", path, "-C", staging_dir])
+    if 'type' in source:
+        filetype = source['type']
+    elif path.endswith('.tar') or '.tar.' in path:
+        filetype = 'tar'
     elif path.endswith('.zip') or path.endswith('.sh') or path.endswith('-bin'):
-        subprocess.run(["unzip", "-q", path, "-d", staging_dir])
+        filetype = 'zip'
     elif path.endswith('.exe'):
-        subprocess.run(["innoextract", "--silent", "--progress=1", path, "-d", staging_dir])
-    elif path.endswith('.ico') and 'include' in source and 'destination' in source:
-        subprocess.run(["magick", path + '[' + str(source['include']) + ']', "-strip",  os.path.join(dst_dir, source['destination'])])
-        continue
+        filetype = 'inno'
+    elif path.endswith('.ico'):
+        filetype = 'icon'
     elif os.path.isdir(path):
-        src_files = glob.glob(path + '/*')
-        for f in src_files:
-            subprocess.run(["cp", "-r", f, staging_dir + '/'])
+        filetype = 'dir'
     else:
-        subprocess.run(["cp", path, staging_dir + '/'])
+        filetype = 'plain'
+
+    match filetype:
+        case 'tar':
+            subprocess.run(["tar", "-xf", path, "-C", staging_dir])
+        case 'zip':
+            subprocess.run(["unzip", "-q", path, "-d", staging_dir])
+        case 'inno':
+            subprocess.run(["innoextract", "--silent", "--progress=1", path, "-d", staging_dir])
+        case 'icon':
+            if 'include' not in source or 'destination' not in source:
+                print("ERROR: Provide 'include' and 'destination' fields for 'icon' type sources or set type to 'plain'")
+                sys.exit(1)
+
+            subprocess.run(["magick", path + '[' + str(source['include']) + ']', "-strip",  os.path.join(dst_dir, source['destination'])])
+            continue
+        case 'dir':
+            src_files = glob.glob(path + '/*')
+            for f in src_files:
+                subprocess.run(["cp", "-r", f, staging_dir + '/'])
+        case 'plain':
+            subprocess.run(["cp", path, staging_dir + '/'])
+        case _:
+            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'icon', 'dir', 'plain'".format(os.path.basename(path)))
+            sys.exit(1)
 
     # exclude filter
     if 'exclude' in source:
