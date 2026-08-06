@@ -1035,6 +1035,26 @@
          - "*.WL6"
        destination: ".local/share/ecwolf/"
 
+ - name: "Vampire Survivors"
+   id: vampire-survivors
+   provider: steam
+   platform: linux
+   xxh3sum: 1e7a75112af7ed04
+   exec: ./VampireSurvivors.exe
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1794680/b61dc182c372d4f9517043ba04f4fa61308a30bb.ico"
+       xxh3sum: deeea212f805bb22
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://Vampire Survivors"
+       exclude: launcher.sh
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: linux/x86_64/libsteam_api.so
+       destination: VampireSurvivors_Data/Plugins/
+
  - name: "World of Goo"
    id: world-of-goo
    provider: gog
