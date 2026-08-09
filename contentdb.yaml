@@ -17,18 +17,17 @@
    id: atomic-owl
    provider: itch
    platform: linux
-   xxh3sum: d73bcdc6391c5c20
-   exec: ./'Atomic Owl.x86_64'
+   xxh3sum: e44490fec79901fa
+   exec: ./AtomicOwl.x86_64
    runtime: none
-   post: chmod +x 'Atomic Owl.x86_64'
+   post: chmod +x 'AtomicOwl.x86_64'
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2228490/055c8c0ed9d5e700dac90e48222b169907b894e5.ico"
        xxh3sum: 80a9ff70ec304805
        include: 0
        destination: org.kazeta.icon.png
      - uri: "file://Atomic Owl - GOLD - Linux.zip"
-       xxh3sum: ce584d3705d738f5
-       include: "Atomic Owl Linux/*"
+       xxh3sum: bc456bd4413ffd55
 
  - name: "Axiom Verge"
    id: axiom-verge
