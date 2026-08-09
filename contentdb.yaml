@@ -219,11 +219,11 @@
          - CyberShadow/icon.bmp
          - CyberShadow/run.sh
 
- - name: "DOOM"
-   id: doom-1993
+ - name: "The Ultimate DOOM"
+   id: ultimate-doom
    provider: steam
    platform: windows
-   xxh3sum: 3cd8009a5286cae4
+   xxh3sum: f69cdb37522bcb6b
    exec: ./Crispy_Doom-7.1-2-anylinux-x86_64.AppImage DOOM.WAD
    runtime: none
    gamescope: --filter pixel
