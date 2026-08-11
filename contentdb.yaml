@@ -1,3 +1,16 @@
+ - name: "Animal Well"
+   id: animal-well
+   provider: steam
+   platform: windows
+   xxh3sum: d341eb34ec404bbe
+   exec: '"Animal Well.exe"'
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/813230/740eaab77c0c9e5eb68a320dd0f1b8e795a0c15a.ico"
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://Animal Well"
+
  - name: "Assault Android Cactus"
    id: assault-android-cactus
    provider: steam
