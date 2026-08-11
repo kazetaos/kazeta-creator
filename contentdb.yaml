@@ -135,6 +135,20 @@
        destination: org.kazeta.icon.png
      - uri: "steam://BOMCAT"
 
+ - name: "Boomerang Fu"
+   id: boomerang-fu
+   provider: steam
+   platform: windows
+   xxh3sum: 18eb5c868fe41156
+   exec: '"Boomerang Fu.exe"'
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/965680/8d8f8c40f211f3f04be6e6a075329613612461c7.ico"
+       xxh3sum: 31ab49d036cb3677
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://Boomerang Fu"
+
  - name: "Cat Quest"
    id: cat-quest
    provider: epic
