@@ -564,6 +564,40 @@
          - data
          - MinaTheHollower
 
+ - name: "Mirror's Edge"
+   id: mirrors-edge
+   provider: gog
+   platform: windows
+   exec: Binaries/MirrorsEdge.exe
+   runtime: windows-1.0
+   tricks: physx
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/17410/fc0e6be63050c9e35ff5e7d257e99cc299fed997.ico"
+       xxh3sum: 63426f5b91327df6
+       include: 3
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_mirrors_edge_1.01_jpfix_(41238)-1.bin"
+       xxh3sum: 66bf657146dcd626
+       process: false
+     - uri: "file://setup_mirrors_edge_1.01_jpfix_(41238)-2.bin"
+       xxh3sum: 3829750debd7e106
+       process: false
+     - uri: "file://setup_mirrors_edge_1.01_jpfix_(41238)-3.bin"
+       xxh3sum: 00a9f93b7c3430c0
+       process: false
+     - uri: "file://setup_mirrors_edge_1.01_jpfix_(41238).exe"
+       xxh3sum: ea2d6e13aa9f2034
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - "*.ico"
+         - __redist
+         - Redistributable
+         - __support
+         - tmp
+         - TdGame/Splash/PC/Splash.bmp
+
  - name: "Monster Trampoline"
    id: monster-trampoline
    provider: itch
