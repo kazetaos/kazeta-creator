@@ -468,6 +468,35 @@
          - HorizonChase_Data
          - HorizonChase.x86_64
 
+ - name: "LEGO Star Wars: The Complete Saga"
+   id: lego-star-wars-complete-saga
+   provider: gog
+   platform: windows
+   exec: LEGOStarWarsSaga.exe
+   runtime: windows-1.0
+   tricks: d3dcompiler_47
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/32440/f808f62c96a6f95e825789e4edd76481ab9dab54.ico"
+       xxh3sum: 17d476b7f10ca4d6
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_lego_star_wars_1.0_(16810)-1.bin"
+       xxh3sum: 109d0b36b3b85cd6
+       process: false
+     - uri: "file://setup_lego_star_wars_1.0_(16810)-2.bin"
+       xxh3sum: 807c970504028242
+       process: false
+     - uri: "file://setup_lego_star_wars_1.0_(16810).exe"
+       xxh3sum: 9866fe65cc2f513b
+       include: app/*
+       exclude:
+         - app/*.rtf
+         - app/goggame*
+         - app/language_setup*
+         - app/__support
+         - app/webcache.zip
+         - app/GameIcon.ico
+
  - name: "Little Kitty, Big City"
    id: little-kitty-big-city
    provider: steam
