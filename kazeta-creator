@@ -228,6 +228,35 @@ if 'post' in game:
     subprocess.run(['chmod', '+x', '/tmp/kazeta-creator-script'])
     subprocess.run(['/tmp/kazeta-creator-script'], cwd=game['id'])
 
+if 'tricks' in game and 'runtime' in game and 'windows' in game['runtime']:
+    cwd = os.getcwd()
+    runtime = os.path.join(cwd, game['runtime'] + '.kzr')
+
+    if not Path(runtime).is_file():
+        print("ERROR: Runtime file required to run winetricks, but not found at: {}".format(runtime))
+        sys.exit(1)
+
+    gamedir = os.path.join(cwd, game['id'])
+    workdir = os.path.join(cwd, '.run/work')
+    targetdir = os.path.join(cwd, '.run/target')
+    runtimedir = os.path.join(cwd, '.run/runtime')
+
+    # mount game data as an overlay on top of the runtime
+    subprocess.run(["pkexec", "kazeta-mount", "install", gamedir, workdir, targetdir, runtime, runtimedir])
+
+    try:
+        # perform winetricks on targetdir
+        subprocess.run(
+            ["winetricks", "-q"] + game['tricks'].split(' '),
+            env=os.environ | {
+                "WINE": os.path.join(targetdir, '.kazeta/share/proton/files/bin/wine64'),
+                "WINEPREFIX": os.path.join(targetdir, '.kazeta/var/prefix'),
+            }
+        )
+    finally:
+        # unmount overlay and runtime
+        subprocess.run(["pkexec", "kazeta-mount", "--unmount", targetdir, runtimedir])
+
 # create kzp
 kzp = game['id'] + '.kzp'
 subprocess.run(["rm", "-rf", kzp])
