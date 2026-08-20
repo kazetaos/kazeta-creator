@@ -480,6 +480,12 @@
        xxh3sum: 17d476b7f10ca4d6
        include: 1
        destination: org.kazeta.icon.png
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/noarch/lego-star-wars-complete-saga/Mappings.dat"
+       xxh3sum: ac61289c5201a319
+       destination: ".kazeta/var/prefix/drive_c/users/steamuser/AppData/Local/LucasArts/LEGO Star Wars - The Complete Saga/"
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/noarch/lego-star-wars-complete-saga/pcconfig.txt"
+       xxh3sum: a95fbb978dafc2e0
+       destination: ".kazeta/var/prefix/drive_c/users/steamuser/AppData/Local/LucasArts/LEGO Star Wars - The Complete Saga/"
      - uri: "file://setup_lego_star_wars_1.0_(16810)-1.bin"
        xxh3sum: 109d0b36b3b85cd6
        process: false
