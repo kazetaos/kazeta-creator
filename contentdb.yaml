@@ -684,6 +684,35 @@
          - data/noarch/game/icon.bmp
          - data/noarch/game/run.sh
 
+ - name: "Return to Castle Wolfenstein"
+   id: return-to-castle-wolfenstein
+   provider: gog
+   platform: windows
+   xxh3sum: edfc62e31df5cd63
+   exec: ./iowolfsp.x86_64
+   gamescope: --force-grab-cursor
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/7a3a5778db9271d6f93523c8050ba200/32/32x32.png"
+       xxh3sum: 89c648e6c2b0595c
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/iortcw/iortcw/releases/download/1.51c/iortcw-1.51c-linux-x86_64.zip"
+       xxh3sum: f200ffdbdb6595ec
+       include: iortcw-1.51c-linux-x86_64/*
+       exclude:
+         - iortcw-1.51c-linux-x86_64/Docs
+         - iortcw-1.51c-linux-x86_64/iowolfded.x86_64
+         - iortcw-1.51c-linux-x86_64/iowolfmp.x86_64
+         - iortcw-1.51c-linux-x86_64/openurl.sh
+         - iortcw-1.51c-linux-x86_64/*_mp_*.so
+         - iortcw-1.51c-linux-x86_64/main/mp_*.pk3
+         - iortcw-1.51c-linux-x86_64/main/*.mp.*.so
+         - iortcw-1.51c-linux-x86_64/main/vm
+     - uri: "file://setup_return_to_castle_wolfenstein_2.0.0.2.exe"
+       xxh3sum: 1e76119bcca45007
+       include: app/Main/*.pk3
+       exclude: app/Main/mp_*.pk3
+       destination: main/
+
  - name: "River City Girls"
    id: river-city-girls
    provider: epic
