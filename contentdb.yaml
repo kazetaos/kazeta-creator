@@ -382,6 +382,22 @@
      - uri: "steam://Freedom Planet 2"
        exclude: steam_api.dll
 
+ - name: "Gang Beasts"
+   id: gang-beasts
+   provider: humble
+   platform: linux
+   xxh3sum: 8af5385afaa5f3cc
+   exec: ./'Gang Beasts.x86_64'
+   post: chmod +x 'Gang Beasts.x86_64'
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/285900/753ee0574aca1a45b1ab7a0df6eaa5b6217db2ad.zip"
+       xxh3sum: 658f395449b808d3
+       include: GB_32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://GangBeasts_1.28.0_Linux.zip"
+       xxh3sum: c843adc50e257886
+       include: NoDRM-Linux/Builds/NoDRM/Linux/Release/*
+
  - name: "Grapple Dog"
    id: grapple-dog
    provider: steam
