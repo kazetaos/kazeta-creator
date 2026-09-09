@@ -382,6 +382,24 @@
      - uri: "steam://Freedom Planet 2"
        exclude: steam_api.dll
 
+ - name: "FTL: Faster Than Light"
+   id: ftl
+   provider: gog
+   platform: linux
+   xxh3sum: 03a11813a40e4c21
+   exec: ./FTL.amd64
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/212680/d88380926f78c3d2e55a280e7b6ce1f81b9a12a4.zip"
+       xxh3sum: 8e36d44ec1e8e0a4
+       include: FTL_icon32.png
+       destination: org.kazeta.icon.png
+     - uri: "file://ftl_advanced_edition_1_6_12_2_35269.sh"
+       xxh3sum: 39c0b3fb9298f9b2
+       include:
+         - data/noarch/game/data/FTL.amd64
+         - data/noarch/game/data/ftl.dat
+
  - name: "Gang Beasts"
    id: gang-beasts
    provider: humble
