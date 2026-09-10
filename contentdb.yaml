@@ -513,6 +513,9 @@
    exec: LEGOStarWarsSaga.exe
    runtime: windows-1.0
    tricks: d3dcompiler_47
+   post: |
+     mkdir -p .kazeta/share/proton
+     echo 'user_settings = { "PROTON_NO_ESYNC": "1", "PROTON_NO_FSYNC": "1" }' > .kazeta/share/proton/user_settings.py
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/32440/f808f62c96a6f95e825789e4edd76481ab9dab54.ico"
        xxh3sum: 17d476b7f10ca4d6
