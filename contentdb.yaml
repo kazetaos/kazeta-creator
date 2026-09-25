@@ -611,6 +611,21 @@
          - data
          - MinaTheHollower
 
+ - name: Mindustry
+   id: mindustry
+   provider: itch
+   platform: linux
+   xxh3sum: 764ccf8f1c160bf9
+   exec: ./Mindustry
+   runtime: none
+   sources:
+     - uri: "file://mindustry-linux-64-bit.zip"
+       xxh3sum: 5dc0aab0d6167ade
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1127400/1620dc861d4734cd419f0fef1cc44ea996efc262.zip"
+       xxh3sum: 48fa721d0536d5cb
+       include: linux-icons/icon-32
+       destination: org.kazeta.icon.png
+
  - name: "Mirror's Edge"
    id: mirrors-edge
    provider: gog
