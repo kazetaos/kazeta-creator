@@ -1171,6 +1171,22 @@
          - Transistor
          - Transistor.bin.x86
 
+ - name: "Turok"
+   id: turok
+   provider: gog
+   platform: linux
+   xxh3sum: b1acb8f67ab4464e
+   exec: ./TurokEx
+   runtime: none
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/cb917a5128be1a61b9dfd3a7ab382c48/32/32x32.png"
+       xxh3sum: e57ffc8e614032db
+       destination: org.kazeta.icon.png
+     - uri: "file://turok_2_0_0_kex_3_86720.sh"
+       xxh3sum: 8e11d844e950ee75
+       include: data/noarch/game/*
+       exclude: data/noarch/game/goggame*
+
  - name: "Unpacking"
    id: unpacking
    provider: gog
