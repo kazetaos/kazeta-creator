@@ -506,6 +506,37 @@
          - HorizonChase_Data
          - HorizonChase.x86_64
 
+ - name: "Ittle Dew"
+   id: ittle-dew
+   provider: humble
+   platform: linux
+   xxh3sum: 4750fc160bb466a2
+   exec: LD_LIBRARY_PATH=. ALSA_CONFIG_PATH=alsa.conf ./IttleDew.x86_64
+   runtime: none
+   post: |
+     chmod +x 'IttleDew.x86_64'
+     python3 fix-dpad.py
+     rm fix-dpad.py
+     rm IttleDew_Data/mainData.orig
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/cc6e5b68301b81b49a2a8011cea43f0e/32/32x32.png"
+       xxh3sum: d91068613f0ac9d3
+       destination: org.kazeta.icon.png
+     - uri: "file://Ittle_Dew_1.6_Linux.zip"
+       xxh3sum: d4cbe8c7f884e2c2
+       include: Linux/*
+       exclude:
+         - Linux/IttleDew.x86
+         - Linux/IttleDew_Data/Plugins
+         - Linux/IttleDew_Data/Mono/x86
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/noarch/ittle-dew/alsa.conf"
+       xxh3sum: db8e1aebc0cf2c2e
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/noarch/ittle-dew/fix-dpad.py"
+       xxh3sum: eaf9c769f3249f3e
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/64/libGLU.so.1.3.1"
+       xxh3sum: b3e605063918ec39
+       destination: libGLU.so.1
+
  - name: "LEGO Star Wars: The Complete Saga"
    id: lego-star-wars-complete-saga
    provider: gog
