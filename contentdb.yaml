@@ -542,9 +542,12 @@
    steam_app_id: 395620
    provider: steam
    platform: linux
-   xxh3sum: f043867c0caa1784
+   xxh3sum: fa35a5e63b59ff01
    exec: ./ID2.x86_64
    runtime: none
+   post: |
+     GIT_DIR= git apply -v xbox_controller.patch
+     rm xbox_controller.patch
    sources:
      - uri: "steam://Ittle Dew 2"
        exclude:
@@ -559,6 +562,8 @@
        type: zip
        include: linux/x86_64/libsteam_api.so
        destination: ID2_Data/Plugins/x86_64/
+     - uri: "https://github.com/kazetaos/libs/raw/refs/heads/main/noarch/ittle-dew-2/xbox_controller.patch"
+       xxh3sum: d04d867a7a0f7713
 
  - name: "LEGO Star Wars: The Complete Saga"
    id: lego-star-wars-complete-saga
