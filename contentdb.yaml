@@ -537,6 +537,29 @@
        xxh3sum: b3e605063918ec39
        destination: libGLU.so.1
 
+ - name: "Ittle Dew 2+"
+   id: ittle-dew-2
+   steam_app_id: 395620
+   provider: steam
+   platform: linux
+   xxh3sum: f043867c0caa1784
+   exec: ./ID2.x86_64
+   runtime: none
+   sources:
+     - uri: "steam://Ittle Dew 2"
+       exclude:
+         - ID2.x86
+         - D2_Data/Mono/x86
+         - D2_Data/Plugins/x86
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/395620/c481999018c6dd1a76c7c989a0be197141172e81.zip"
+       include: 353fdd61685d430b/32x32.png
+       destination: org.kazeta.icon.png
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: linux/x86_64/libsteam_api.so
+       destination: ID2_Data/Plugins/x86_64/
+
  - name: "LEGO Star Wars: The Complete Saga"
    id: lego-star-wars-complete-saga
    provider: gog
