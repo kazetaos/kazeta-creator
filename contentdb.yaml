@@ -1230,6 +1230,28 @@
          - Transistor
          - Transistor.bin.x86
 
+ - name: "Trombone Champ"
+   id: trombone-champ
+   steam_app_id: 1059990
+   provider: steam
+   platform: windows
+   xxh3sum: 67376c23b2ced439
+   exec: TromboneChamp.exe
+   runtime: windows-1.0
+   timestamp: 315532800 # mono fails to load assemblies with a zero mtime
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1059990/76b979640856f9936435a5d643538294b9130db6.ico"
+       xxh3sum: 21cec54ba93de23c
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "steam://TromboneChamp"
+       exclude: TromboneChamp_Data/Plugins/x86_64/steam_api64.dll
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: steam_api64.dll
+       destination: TromboneChamp_Data/Plugins/x86_64/
+
  - name: "Turok"
    id: turok
    provider: gog
