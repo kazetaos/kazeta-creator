@@ -261,7 +261,10 @@ if 'tricks' in game and 'runtime' in game and 'windows' in game['runtime']:
 kzp = game['id'] + '.kzp'
 subprocess.run(["rm", "-rf", kzp])
 uuid=str(uuid.uuid5(uuid.NAMESPACE_DNS, 'org.kazeta.' + game['id']))
-subprocess.run(["mkfs.erofs", "-T", "0", "-U", uuid, "-zlz4", kzp, game['id']])
+timestamp = '0'
+if 'timestamp' in game:
+    timestamp = str(game['timestamp'])
+subprocess.run(["mkfs.erofs", "-T", timestamp, "-U", uuid, "-zlz4", kzp, game['id']])
 subprocess.run(["rm", "-rf", game['id']])
 
 if 'xxh3sum' in game:
