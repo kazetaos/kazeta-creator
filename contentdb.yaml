@@ -757,6 +757,32 @@
      - uri: "file://Monster Trampoline 29.4 (DRM-Free Windows).zip"
        xxh3sum: cc8771c7e976f3c9
 
+ - name: "Mortal Kombat Komplete Edition"
+   id: mortal-kombat-komplete-edition
+   provider: steam
+   platform: windows
+   xxh3sum: ee01f3b746200954
+   exec: MKKE.exe
+   runtime: windows-1.0
+   post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
+     LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
+     rm steam_api_original.dll
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/237110/ff6da04dbb7aa04ca1ecbe13aa5c7392c28519e1.ico"
+       xxh3sum: a47da7d35fb51026
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://MortalKombat_KompleteEdition"
+       include: DiscContentPC/* # the game looks for Config/ in the working directory
+       exclude: DiscContentPC/steam_api.dll
+     - uri: "steam://MortalKombat_KompleteEdition"
+       include: DiscContentPC/steam_api.dll
+       destination: steam_api_original.dll
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: steam_api.dll
+
  - name: "Nanosaur"
    id: nanosaur
    provider: github
