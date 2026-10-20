@@ -1317,6 +1317,33 @@
        include: data/noarch/game/*
        exclude: data/noarch/game/goggame*
 
+ - name: "Ultra Street Fighter IV"
+   id: ultra-street-fighter-iv
+   steam_app_id: 45760
+   provider: steam
+   platform: windows
+   xxh3sum: 466371130f065277
+   exec: SSFIV.exe
+   runtime: windows-1.0
+   post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
+     LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
+     rm steam_api_original.dll
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/45760/22fef97a2319daae7257fdc067d847084feac02f.ico"
+       xxh3sum: 91c0dc3651fdce79
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://Super Street Fighter IV - Arcade Edition"
+       exclude:
+         - steam_api.dll
+     - uri: "steam://Super Street Fighter IV - Arcade Edition"
+       include: steam_api.dll
+       destination: steam_api_original.dll
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: steam_api.dll
+
  - name: "Unpacking"
    id: unpacking
    provider: gog
