@@ -493,6 +493,21 @@
      - uri: "steam://Grapple Dog"
        exclude: "*.pdf"
 
+ - name: "Grapple Dogs: Cosmic Canines"
+   id: grapple-dogs-cosmic-canines
+   provider: steam
+   platform: windows
+   exec: GrappleDogsCosmicCanines.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2278790/581e75e34cbfc8b070eb16401689e1273e5ab224.ico"
+       xxh3sum: 03bd7630b3e43e69
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "steam://Grapple Dog 2"
+       exclude:
+         - Steamworks_Extension_Documentation.html
+
  - name: "Gravity Circuit"
    id: gravity-circuit
    provider: amazon
