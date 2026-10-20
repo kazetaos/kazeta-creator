@@ -371,6 +371,41 @@
          - data/FEZ.bin.x86
          - data/lib
 
+ - name: "Flight Control HD"
+   id: flight-control-hd
+   steam_app_id: 62000
+   provider: steam
+   platform: windows
+   xxh3sum: d62abd798c04bf41
+   exec: flightControl_win32.exe
+   runtime: windows-1.0
+   post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
+     LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
+     rm steam_api_original.dll
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/62000/7fdacd112d56ea6799b58ba8f09c742cda9e66f7.ico"
+       xxh3sum: a6df5241bfeafd89
+       include: 9
+       destination: org.kazeta.icon.png
+     - uri: "steam://Flight_Control_HD"
+       exclude:
+         - installscript.vdf
+         - OpenAL
+         - OS_Check
+         - steam_api.dll
+         - VC_Redist
+     - uri: "steam://Flight_Control_HD"
+       include: steam_api.dll
+       destination: steam_api_original.dll
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: steam_api.dll
+     - uri: "https://github.com/kcat/openal-soft/releases/download/1.25.2/openal-soft-1.25.2-bin.zip"
+       xxh3sum: cc3d82399d44f752
+       include: openal-soft-1.25.2-bin/bin/Win32/soft_oal.dll
+       destination: OpenAL32.dll
+
  - name: "Flower"
    id: flower
    provider: gog
