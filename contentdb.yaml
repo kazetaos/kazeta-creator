@@ -245,6 +245,29 @@
          - CyberShadow/icon.bmp
          - CyberShadow/run.sh
 
+ - name: "DiRT 2"
+   id: dirt-2
+   provider: steam
+   platform: windows
+   xxh3sum: fea6d533609f171a
+   exec: dirt2.exe
+   runtime: windows-1.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/12840/4fd0dc55f116ea2c8bc79c794b7bfe0e0a4fdff1.ico"
+       xxh3sum: 6f404cb031cfe8a9
+       include: 3
+       destination: org.kazeta.icon.png
+     - uri: "steam://Dirt 2"
+       exclude: redist
+     - uri: "https://github.com/ThirteenAG/Ultimate-ASI-Loader/releases/download/v9.7.4/Ultimate-ASI-Loader-NoPDB.zip"
+       xxh3sum: 3d6e86ca448f0091
+       include: dinput8.dll
+       destination: xlive.dll # the loader picks its role from its filename; as xlive.dll it replaces GFWL
+     - uri: "https://github.com/kcat/openal-soft/releases/download/1.25.2/openal-soft-1.25.2-bin.zip"
+       xxh3sum: cc3d82399d44f752
+       include: openal-soft-1.25.2-bin/bin/Win32/soft_oal.dll
+       destination: OpenAL32.dll
+
  - name: "The Ultimate DOOM"
    id: ultimate-doom
    provider: steam
