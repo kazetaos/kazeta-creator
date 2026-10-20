@@ -898,6 +898,53 @@
          - data/noarch/game/icon.bmp
          - data/noarch/game/run.sh
 
+ - name: "Portal 2"
+   id: portal-2
+   steam_app_id: 620
+   provider: steam
+   platform: linux
+   xxh3sum: e877edadbb8d31d8
+   exec: LD_LIBRARY_PATH=lib ./portal2.sh -game portal2
+   runtime: none
+   gamescope: --force-grab-cursor
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/620/25a5a16b2423bf7487ac5340b5b0948cef48c5f8.ico"
+       xxh3sum: deb54906763bf63b
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://Portal 2"
+       exclude:
+         - installscript_osx.vdf
+         - thirdpartylegalnotices.doc
+         - portal2.exe
+         - portal2.ico
+         - portal2_osx
+         - sdk_content
+         - soundtrack
+         - bin/osx32
+         - bin/win64
+         - bin/*.exe
+         - bin/*.dsym
+         - portal2/bin/*.dll
+         - portal2/SAVE
+     - uri: "https://repo.steampowered.com/steamrt-images-scout/snapshots/1.0.20260714.251828/steam-runtime.tar.xz"
+       xxh3sum: 694855d80edbaf99
+       include:
+         - steam-runtime/lib/i386-linux-gnu/libbz2.so.1*
+         - steam-runtime/lib/i386-linux-gnu/libexpat.so.1*
+         - steam-runtime/lib/i386-linux-gnu/libpng12.so.0*
+         - steam-runtime/lib/i386-linux-gnu/libuuid.so.1*
+         - steam-runtime/usr/lib/i386-linux-gnu/libfontconfig.so.1*
+         - steam-runtime/usr/lib/i386-linux-gnu/libopenal.so.1*
+         - steam-runtime/usr/lib/i386-linux-gnu/libSDL2-2.0.so.0*
+         - steam-runtime/usr/lib/i386-linux-gnu/libxml2.so.2*
+       destination: lib/
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: linux/x86/libsteam_api.so
+       destination: bin/linux32/
+
  - name: "Return to Castle Wolfenstein"
    id: return-to-castle-wolfenstein
    provider: gog
