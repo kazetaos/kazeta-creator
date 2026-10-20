@@ -264,8 +264,12 @@ uuid=str(uuid.uuid5(uuid.NAMESPACE_DNS, 'org.kazeta.' + game['id']))
 timestamp = '0'
 if 'timestamp' in game:
     timestamp = str(game['timestamp'])
-subprocess.run(["mkfs.erofs", "-T", timestamp, "-U", uuid, "-zlz4", kzp, game['id']])
-subprocess.run(["rm", "-rf", game['id']])
+tmp_dir = game['id'] + '_tmp' # mkfs.erofs buffers data in TMPDIR; /tmp may be too small for large games
+subprocess.run(["rm", "-rf", tmp_dir])
+subprocess.run(["mkdir", tmp_dir])
+subprocess.run(["mkfs.erofs", "-T", timestamp, "-U", uuid, "-zlz4", kzp, game['id']],
+               env={**os.environ, 'TMPDIR': os.path.abspath(tmp_dir)})
+subprocess.run(["rm", "-rf", tmp_dir, game['id']])
 
 if 'xxh3sum' in game:
     xxh3_check(game['id'] + '.kzp', game['xxh3sum'])
