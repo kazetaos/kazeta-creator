@@ -1245,6 +1245,38 @@
          - app/Spelunky.exe
          - app/fmodex.dll
 
+ - name: "StarCraft: Brood War"
+   id: starcraft-brood-war
+   provider: disc
+   platform: windows
+   xxh3sum: a8167e0df7a6ba8d
+   exec: StarCraft.exe
+   runtime: windows-1.0
+   gamescope: --filter pixel --scaler integer
+   post: | # a placeholder CD key: the game needs the key files, but doesn't check the key offline
+     rm bnupdate.exe BlizzardError.exe SystemSurvey.exe
+     blizzard starcraft-key 0000-00000-0003 Kazeta .
+   sources:
+     - uri: "https://cdn2.steamgriddb.com/icon/acf4b89d3d503d8252c9c4ba75ddbf6d/4/32x32.png"
+       xxh3sum: a4b40128647c5c22
+       destination: org.kazeta.icon.png
+     # INSTALL.EXE from the StarCraft and Brood War CDs, copied as StarCraft.mpq and BroodWar.mpq;
+     # Brood War installs over StarCraft, and the game also reads the CDs' data from them
+     - uri: "file://StarCraft.mpq"
+       xxh3sum: 950a3a14bdbddeb9
+       type: blizzard-install
+     - uri: "file://BroodWar.mpq"
+       xxh3sum: 5abc0a6eb381cbeb
+       type: blizzard-install
+     - uri: "file://StarCraft.mpq"
+       xxh3sum: 950a3a14bdbddeb9
+     - uri: "file://BroodWar.mpq"
+       xxh3sum: 5abc0a6eb381cbeb
+     # 1.17.0 (1.16.1's storm.dll crashes at startup on Wine 10, see https://bugs.winehq.org/show_bug.cgi?id=57758)
+     - uri: "http://ftp.blizzard.com/pub/broodwar/patches/PC/BW-1170.exe"
+       xxh3sum: a6949d564b7f8c40
+       type: bnupdate
+
  - name: "Stardew Valley"
    id: stardew-valley
    provider: steam

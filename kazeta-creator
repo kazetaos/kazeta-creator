@@ -29,6 +29,27 @@ FILE_DIR=os.path.join(Path.home(), 'Downloads')
 STEAM_DIR=os.path.join(Path.home(), '.steam/steam/steamapps/common')
 HEROIC_DIR=os.path.join(Path.home(), 'Games/Heroic')
 
+# blizzard-tools, used for carts built from Blizzard CDs (StarCraft). Downloaded on
+# first use; pinned to a commit so carts stay reproducible
+BLIZZARD_COMMIT='c14200bd1f697303d023947e5338811ff4834a87'
+BLIZZARD_XXH3='7489d15908e51ff4'
+BLIZZARD_URL='https://raw.githubusercontent.com/kazetaos/blizzard-tools/{}/blizzard'.format(BLIZZARD_COMMIT)
+BLIZZARD_DIR=os.path.join(Path.home(), '.cache/kazeta-creator/blizzard-tools', BLIZZARD_COMMIT)
+
+def blizzard_path():
+    path = os.path.join(BLIZZARD_DIR, 'blizzard')
+    if not os.path.isfile(path):
+        print('Downloading blizzard-tools {}'.format(BLIZZARD_COMMIT[:7]), flush=True)
+        subprocess.run(["mkdir", "-p", BLIZZARD_DIR])
+        if subprocess.run(["curl", "--progress-bar", "-fL", "-o", path + '.part', BLIZZARD_URL]).returncode != 0:
+            print('ERROR: Failed to download blizzard-tools')
+            sys.exit(1)
+        if not xxh3_check(path + '.part', BLIZZARD_XXH3):
+            sys.exit(1)
+        subprocess.run(["chmod", "+x", path + '.part'])
+        os.rename(path + '.part', path)
+    return path
+
 
 try:
     with open('contentdb.yaml') as yaml_file:
@@ -102,7 +123,7 @@ for source in game['sources']:
         path = os.path.join(HEROIC_DIR, basename)
     elif uri.startswith('amazon://'):
         path = os.path.join(HEROIC_DIR, basename)
-    elif uri.startswith('https://'):
+    elif uri.startswith('https://') or uri.startswith('http://'):
         subprocess.run(["curl", "--progress-bar", "-LO", "--output-dir", download_dir,  uri])
         path = os.path.join(download_dir, basename)
 
@@ -163,8 +184,16 @@ for source in game['sources']:
                 subprocess.run(["cp", "-r", f, staging_dir + '/'])
         case 'plain':
             subprocess.run(["cp", path, staging_dir + '/'])
+        case 'blizzard-install' | 'bnupdate':
+            # these work on the files already in the cart (or in `destination`), like
+            # Blizzard's installers: Brood War installs over StarCraft, patches patch it
+            command = 'install' if filetype == 'blizzard-install' else 'patch'
+            target_dir = os.path.join(dst_dir, source.get('destination', ''))
+            if subprocess.run([blizzard_path(), command, path, target_dir]).returncode != 0:
+                sys.exit(1)
+            continue
         case _:
-            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'icon', 'dir', 'plain'".format(os.path.basename(path)))
+            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'icon', 'dir', 'plain', 'blizzard-install', 'bnupdate'".format(os.path.basename(path)))
             sys.exit(1)
 
     # exclude filter
@@ -226,7 +255,11 @@ if 'post' in game:
         file.write('#! /bin/bash\n')
         file.write(str(game['post']))
     subprocess.run(['chmod', '+x', '/tmp/kazeta-creator-script'])
-    subprocess.run(['/tmp/kazeta-creator-script'], cwd=game['id'])
+    env = os.environ
+    if re.search(r'\bblizzard\b', str(game['post'])):
+        # make the tool available to post scripts as `blizzard`
+        env = env | {'PATH': os.path.dirname(blizzard_path()) + os.pathsep + env.get('PATH', '')}
+    subprocess.run(['/tmp/kazeta-creator-script'], cwd=game['id'], env=env)
 
 if 'tricks' in game and 'runtime' in game and 'windows' in game['runtime']:
     cwd = os.getcwd()
