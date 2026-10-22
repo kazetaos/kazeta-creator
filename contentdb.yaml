@@ -138,6 +138,7 @@
    id: bioshock
    provider: gog
    platform: windows
+   xxh3sum: e0fa3ea9c0770754
    exec: bioshock.bat
    runtime: windows-1.0
    gamescope: --force-grab-cursor
