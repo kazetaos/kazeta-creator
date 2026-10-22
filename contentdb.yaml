@@ -716,6 +716,79 @@
        destination: org.kazeta.icon.png
      - uri: "steam://LittleKittyBigCity"
 
+ - name: "Magicka"
+   id: magicka
+   provider: steam
+   platform: windows
+   xxh3sum: 7318492edfd524ba
+   exec: steamclient_loader.exe # goldberg's loader; Magicka checks the hash of steam_api.dll, so the original stays and talks to goldberg's steamclient
+   runtime: windows-1.0
+   post: |
+     # xna 3.1 from the redist steam ships, unpacked instead of installed with msiexec, which writes the
+     # build machine's hardware into the registry
+     dxcabs='OCT_DXRedist_D3DX9_File APR_DXRedist_D3DX9_File DXRedist_XACT_File DXRedist_X3DAudio_File DXRedist_XAudio2_File DXRedist_XInput_File'
+     7z e -y xnafx31_redist.msi Microsoft_Xna_Framework_dll_GAC Microsoft_Xna_Framework_Game_dll_GAC XnaNative_dll_File $dxcabs > /dev/null
+     mv Microsoft_Xna_Framework_dll_GAC Microsoft.Xna.Framework.dll
+     mv Microsoft_Xna_Framework_Game_dll_GAC Microsoft.Xna.Framework.Game.dll
+     rm xnafx31_redist.msi
+     # the directx dlls from the redist; with wine's builtin ones the game recreates the device when it
+     # applies its resolution and crashes loading its content a second time
+     sys=.kazeta/var/prefix/drive_c/windows/syswow64
+     mkdir -p $sys
+     for cab in $dxcabs; do
+       for dll in $(7z l -slt $cab | sed -n 's/^Path = \(.*\.dll\)$/\1/p'); do
+         7z e -so $cab $dll > $sys/$(echo $dll | tr A-Z a-z)
+       done
+       rm $cab
+     done
+     # xna loads XnaNative.dll from the directory in this key: the runtime's registry plus the key
+     xna='.kazeta/var/prefix/drive_c/Program Files (x86)/Common Files/Microsoft Shared/XNA/Framework/v3.1'
+     mkdir -p "$xna"
+     mv XnaNative_dll_File "$xna/XnaNative.dll"
+     dump.erofs --cat --path=/.kazeta/var/prefix/system.reg ../windows-1.0.kzr > .kazeta/var/prefix/system.reg
+     cat >> .kazeta/var/prefix/system.reg <<'EOF'
+
+     [Software\\Wow6432Node\\Microsoft\\XNA\\Framework\\v3.1] 0
+     "Installed"=dword:00000001
+     "NativeLibraryPath"="C:\\Program Files (x86)\\Common Files\\Microsoft Shared\\XNA\\Framework\\v3.1\\"
+     EOF
+     # proton loads its own steamclient bridge for any dll named steamclient.dll, so goldberg's is renamed
+     printf '[SteamClient]\nExe=Magicka.exe\nExeRunDir=.\nExeCommandLine=\nAppId=42910\n\nSteamClientDll=goldberg_steamclient.dll\nSteamClient64Dll=goldberg_steamclient64.dll\n' > ColdClientLoader.ini
+     patch() { # offset, original bytes, new bytes
+       [ "$(xxd -s $1 -l $((${#2} / 2)) -p Magicka.exe)" = "$2" ] || { echo "Magicka.exe: unexpected bytes at $1"; exit 1; }
+       echo "$3" | xxd -r -p | dd of=Magicka.exe bs=1 seek=$(($1)) conv=notrunc status=none
+     }
+     # wine-mono's Process.Threads has null entries; catch Exception instead of Win32Exception around the CPU affinity loop
+     patch 0xe197c 08020001 31000001
+     # skip GameSparks; the service is gone and its reconnect crashes on wine-mono's sockets
+     patch 0xe1b9d 6fab00002b 2600000000
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/42910/0be25a4171a66e9fa7d6ee9ed4cd1664a6aa02e7.ico"
+       xxh3sum: 9d790d9b17dff956
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://Magicka"
+       exclude:
+         - 42910_install.vdf
+         - Dependencies
+     - uri: "steam://Magicka"
+       include: Dependencies/xnafx31_redist.msi
+       destination: xnafx31_redist.msi
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: experimental_steamclient/steamclient_loader.exe
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: experimental_steamclient/steamclient.dll
+       destination: goldberg_steamclient.dll
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: experimental_steamclient/steamclient64.dll # the loader refuses to start without it
+       destination: goldberg_steamclient64.dll
+
  - name: "The Messenger"
    id: the-messenger
    provider: gog
