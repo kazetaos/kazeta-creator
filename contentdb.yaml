@@ -997,6 +997,56 @@
          - data/noarch/game/icon.bmp
          - data/noarch/game/run.sh
 
+ - name: "Portal"
+   id: portal
+   steam_app_id: 400
+   provider: steam
+   platform: linux
+   xxh3sum: 1b9525bf67c1c314
+   exec: LD_LIBRARY_PATH=lib ./hl2.sh -game portal
+   runtime: none
+   post: | # Portal's depot lacks the soname files that Half-Life 2's has
+     ln -s libfontconfig.so bin/libfontconfig.so.1
+     ln -s libfreetype.so bin/libfreetype.so.6
+     ln -s libharfbuzz.so bin/libharfbuzz.so.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/400/c7cb09b9f0fbb9589b4bd5a8217c8333c4d8204e.ico"
+       xxh3sum: 93eb1f03c8b06167
+       include: 5
+       destination: org.kazeta.icon.png
+     - uri: "steam://Portal"
+       include:
+         - bin
+         - hl2
+         - hl2.sh
+         - hl2_linux
+         - platform
+         - portal
+         - steam_input
+       exclude:
+         - bin/libsteam_api.so
+         - portal/save
+     # the engine's fallback font, for glyphs the UI fonts lack. Without it vgui looks in
+     # /usr/share/fonts, which Kazeta doesn't have. Half-Life 2 ships this file, Portal doesn't
+     - uri: "https://raw.githubusercontent.com/notofonts/noto-cjk/Sans2.004/Sans/OTC/NotoSansCJK-Regular.ttc"
+       xxh3sum: 492b01bd1a408ee8
+       destination: platform/resource/linux_fonts/notosanscjk-regular.ttc
+     - uri: "https://repo.steampowered.com/steamrt-images-scout/snapshots/1.0.20260714.251828/steam-runtime.tar.xz"
+       xxh3sum: 694855d80edbaf99
+       include:
+         - steam-runtime/lib/i386-linux-gnu/libbz2.so.1*
+         - steam-runtime/lib/i386-linux-gnu/libexpat.so.1*
+         - steam-runtime/lib/i386-linux-gnu/libpng12.so.0*
+         - steam-runtime/lib/i386-linux-gnu/libuuid.so.1*
+         - steam-runtime/usr/lib/i386-linux-gnu/libopenal.so.1*
+         - steam-runtime/usr/lib/i386-linux-gnu/libSDL2-2.0.so.0*
+         - steam-runtime/usr/lib/i386-linux-gnu/libxml2.so.2*
+       destination: lib/
+     - uri: "https://github.com/Detanup01/gbe_fork/releases/download/release-2026_09_16_2/emu-linux-release.tar.bz2"
+       xxh3sum: c268a3bc325ca53b
+       include: release/regular/x86/libsteam_api.so # the old Goldberg build lacks SteamInternal_GameServer_Init_V2
+       destination: bin/
+
  - name: "Portal 2"
    id: portal-2
    steam_app_id: 620
