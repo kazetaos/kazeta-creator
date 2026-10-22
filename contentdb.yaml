@@ -134,6 +134,32 @@
      - uri: "steam://Sega Classics"
        include: "uncompressed ROMs/BEYONDOA_U.68K"
 
+ - name: "BioShock"
+   id: bioshock
+   provider: gog
+   platform: windows
+   exec: bioshock.bat
+   runtime: windows-1.0
+   gamescope: --force-grab-cursor
+   post: | # crashes at startup unless run from its own directory
+     printf 'cd /d "%%~dp0Builds\\Release"\r\nBioshock.exe -dx9\r\n' > bioshock.bat
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/7670/2d90881c6067287da04259ec3c205061f270dd55.ico"
+       xxh3sum: 3077a24a41ecd4f3
+       include: 4
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_bioshock_1.1_(25450)-1.bin"
+       xxh3sum: 87f2f64e2e6b6c36
+       process: false
+     - uri: "file://setup_bioshock_1.1_(25450).exe"
+       xxh3sum: fa80a9a40bf98682
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "BOMCAT"
    id: bomcat
    provider: steam
