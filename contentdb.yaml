@@ -947,6 +947,22 @@
      - uri: "https://github.com/jorio/Nanosaur/releases/download/v1.4.4/Nanosaur-1.4.4-linux-x86_64.AppImage"
        xxh3sum: 9f588952e05fcd36
 
+ - name: "None Runtime"
+   id: none
+   xxh3sum: 65eb27eded8b9e52
+   kind: runtime
+   # the runtime Kazeta uses for carts without a Runtime (runtime: none); it ships with Kazeta as
+   # /usr/share/kazeta/runtimes/none.kzr. `run` gets the file holding the cart's Exec and, if the
+   # cart has a Path, the directory (relative to the cart root) to run it from
+   post: |
+     mkdir -p .kazeta/share
+     cat > .kazeta/share/run <<'EOF'
+     #! /bin/bash
+     cd "${2:-.}" || exit 1
+     bash "$1"
+     EOF
+     chmod +x .kazeta/share/run
+
  - name: "Ooo"
    id: ooo
    provider: steam

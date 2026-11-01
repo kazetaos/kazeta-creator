@@ -60,7 +60,10 @@ except:
 
 if len(sys.argv) < 2:
     for game in games:
-        print('{} | {}:{}:{}'.format(game['name'], game['id'], game['provider'], game['platform']))
+        if game.get('kind') == 'runtime':
+            print('{} | {}'.format(game['name'], game['id']))
+        else:
+            print('{} | {}:{}:{}'.format(game['name'], game['id'], game['provider'], game['platform']))
 
     sys.exit()
 
@@ -78,7 +81,7 @@ if len(args) >= 3:
 
 results = []
 for g in games:
-    if g['id'] == game_id and re.match(provider, g['provider']) and re.match(platform, g['platform']):
+    if g['id'] == game_id and re.match(provider, g.get('provider', '')) and re.match(platform, g.get('platform', '')):
         results.append(g)
 
 if len(results) == 0:
@@ -98,11 +101,12 @@ staging_dir = dst_dir + '_staging'
 subprocess.run(["rm", "-rf", dst_dir])
 subprocess.run(["mkdir", dst_dir])
 
-if 'sources' not in game:
+# a runtime can be made entirely in `post` (the none runtime)
+if 'sources' not in game and game.get('kind') != 'runtime':
     print('No sources found, exiting')
     sys.exit(1)
 
-for source in game['sources']:
+for source in game.get('sources', []):
     if 'uri' not in source:
         print('Missing `uri` key in source')
         sys.exit(1)
@@ -232,19 +236,25 @@ for source in game['sources']:
 subprocess.run(["rm", "-rf", download_dir])
 subprocess.run(["rm", "-rf", staging_dir])
 
-icon_path=os.path.join(game['id'], 'org.kazeta.icon.png')
-if not os.path.exists(icon_path):
-    print("WARNING: no icon found")
+# runtimes (.kzr) are the base layer carts run on, without a cart's metadata
+is_runtime = game.get('kind') == 'runtime'
 
-with open(os.path.join(game['id'], 'org.kazeta.cart.kzi'), 'w', encoding='utf-8') as file:
-    file.write('Name={}\n'.format(game['name']))
-    file.write('Id={}\n'.format(game['id']))
-    file.write('Exec={}\n'.format(game['exec']))
-    file.write('Icon={}\n'.format('org.kazeta.icon.png'))
-    if 'gamescope' in game:
-        file.write('GamescopeOptions={}\n'.format(game['gamescope']))
-    if 'runtime' in game and game['runtime'] != 'none':
-        file.write('Runtime={}\n'.format(game['runtime']))
+if not is_runtime:
+    icon_path=os.path.join(game['id'], 'org.kazeta.icon.png')
+    if not os.path.exists(icon_path):
+        print("WARNING: no icon found")
+
+    with open(os.path.join(game['id'], 'org.kazeta.cart.kzi'), 'w', encoding='utf-8') as file:
+        file.write('Name={}\n'.format(game['name']))
+        file.write('Id={}\n'.format(game['id']))
+        file.write('Exec={}\n'.format(game['exec']))
+        file.write('Icon={}\n'.format('org.kazeta.icon.png'))
+        if 'path' in game:
+            file.write('Path={}\n'.format(game['path']))
+        if 'gamescope' in game:
+            file.write('GamescopeOptions={}\n'.format(game['gamescope']))
+        if 'runtime' in game and game['runtime'] != 'none':
+            file.write('Runtime={}\n'.format(game['runtime']))
 
 if 'steam_app_id' in game:
     with open(os.path.join(game['id'], 'steam_appid.txt'), 'w', encoding='utf-8') as file:
@@ -290,8 +300,8 @@ if 'tricks' in game and 'runtime' in game and 'windows' in game['runtime']:
         # unmount overlay and runtime
         subprocess.run(["pkexec", "kazeta-mount", "--unmount", targetdir, runtimedir])
 
-# create kzp
-kzp = game['id'] + '.kzp'
+# create kzp (or kzr)
+kzp = game['id'] + ('.kzr' if is_runtime else '.kzp')
 subprocess.run(["rm", "-rf", kzp])
 uuid=str(uuid.uuid5(uuid.NAMESPACE_DNS, 'org.kazeta.' + game['id']))
 timestamp = '0'
@@ -300,12 +310,19 @@ if 'timestamp' in game:
 tmp_dir = game['id'] + '_tmp' # mkfs.erofs buffers data in TMPDIR; /tmp may be too small for large games
 subprocess.run(["rm", "-rf", tmp_dir])
 subprocess.run(["mkdir", tmp_dir])
-subprocess.run(["mkfs.erofs", "-T", timestamp, "-U", uuid, "-zlz4", kzp, game['id']],
+# runtimes repeat a lot of data (Proton ships many DLLs several times); dedupe stores it once
+# (needs Linux 6.1+). Not for carts, as it would change their hashes
+dedupe = ["-Ededupe"] if is_runtime else []
+subprocess.run(["mkfs.erofs", "-T", timestamp, "-U", uuid, "-zlz4"] + dedupe + [kzp, game['id']],
                env={**os.environ, 'TMPDIR': os.path.abspath(tmp_dir)})
 subprocess.run(["rm", "-rf", tmp_dir, game['id']])
 
 if 'xxh3sum' in game:
-    xxh3_check(game['id'] + '.kzp', game['xxh3sum'])
+    xxh3_check(kzp, game['xxh3sum'])
+
+# carts name their runtime, so runtimes keep their plain name
+if is_runtime:
+    sys.exit()
 
 xxh3 = xxh3sum(kzp)[:5]
 final_dst = game['id'] + '_' + xxh3 + '.kzp'
