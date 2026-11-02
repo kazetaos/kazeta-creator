@@ -1685,6 +1685,362 @@
         - __redist
         - tmp
 
+ - name: "Windows Runtime 2.0"
+   id: windows-2.0
+   kind: runtime
+   xxh3sum: 7ba7b1bf0ea358c8
+   timestamp: 315532800 # mono fails to load assemblies with a zero mtime; also written to the prefix's .update-timestamp below
+   # GE-Proton run directly on Kazeta, without umu or the Steam Linux Runtime container. Kazeta
+   # provides glibc, Mesa, X11/Wayland, audio, gnutls and the other base libraries; the few
+   # Proton needs that Kazeta lacks (mostly 32-bit) are in .kazeta/share/lib, from Arch packages
+   post: |
+     cat > .kazeta/share/run <<'EOF'
+     #! /bin/bash
+     # the cart's Env lines (NAME=value), set as written (no shell expansion) for Proton. Read first, so
+     # the runtime's settings below add to WINEDLLOVERRIDES and LD_LIBRARY_PATH instead of replacing them
+     if [ -n "$3" ]; then
+       while IFS= read -r var; do export "$var"; done < "$3"
+     fi
+     export WINEPREFIX="$PWD/.kazeta/var/prefix"
+     export STEAM_COMPAT_DATA_PATH="$WINEPREFIX" # Proton uses its pfx, a link to itself
+     # Wine adds ports and host drives to dosdevices at every start; the prefix links it to /tmp to
+     # keep them out of the save. The cart is X: and U:-W: are mapped as umu did; some games need W:
+     dev=/tmp/kazeta-dosdevices
+     rm -rf $dev
+     mkdir -p $dev
+     ln -s "$WINEPREFIX/drive_c" $dev/c:
+     ln -s "$PWD" $dev/x:
+     ln -s /media $dev/u:
+     ln -s /run/media $dev/v:
+     ln -s /mnt $dev/w:
+     ln -s / $dev/z:
+     export PROTON_USE_XALIA=${PROTON_USE_XALIA:-0} # gamepad navigation for launchers, kept running next to the game
+     export WINEDLLOVERRIDES="$(cat .kazeta/share/dlloverrides)${WINEDLLOVERRIDES:+;$WINEDLLOVERRIDES}"
+     # libraries Proton needs that the host may lack. They come after the host's own library directories,
+     # so they only fill in what the host is missing: the host's copies match its config and plugin paths
+     # (ALSA, libva) and its Mesa, which a bundled copy found first would replace. ld.so skips directories
+     # of the other architecture. The pulseaudio directories keep the host's libpulse on its own
+     # libpulsecommon, as LD_LIBRARY_PATH comes before the path libpulse finds it in
+     host=/usr/lib64:/usr/lib32:/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu:/usr/lib
+     host=$host:/usr/lib64/pulseaudio:/usr/lib32/pulseaudio:/usr/lib/x86_64-linux-gnu/pulseaudio:/usr/lib/i386-linux-gnu/pulseaudio:/usr/lib/pulseaudio
+     export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$host:$PWD/.kazeta/share/lib/x86_64-linux-gnu:$PWD/.kazeta/share/lib/i386-linux-gnu"
+     export PYTHONDONTWRITEBYTECODE=1 # the proton script would otherwise write its bytecode to the save
+     # winspool adds the host's CUPS printers to the prefix (PPDs in system32/spool/drivers, entries in
+     # system.reg and user.reg), which would end up in the save; without a server libcups finds none
+     export CUPS_SERVER=/dev/null
+     # with GLX, Wine probes OpenGL through a 1x1 window that gamescope briefly shows full screen
+     export WINE_USE_EGL=${WINE_USE_EGL:-1}
+     # an absolute path: proton derives WINEDLLPATH from it, and Wine fails to load vkd3d (needed
+     # by wined3d, so by d3dx9/d3dcompiler) from a relative one with status c000003b
+     proton="$PWD/.kazeta/share/proton/proton"
+     # Exec runs from the cart's Path (relative to the cart root) when the launcher passes one
+     (cd "${2:-.}" && bash -c "\"$proton\" runinprefix $(cat $1)")
+     rc=$?
+     # let wineserver end Wine's own processes before exiting: gamescope's reaper sends SIGTERM to
+     # everything left once this script exits, wineserver dies from it, and Wine processes only act on
+     # SIGTERM through wineserver, so one that gets it after wineserver is gone (usually winedevice.exe)
+     # waits in ntsync forever and gamescope never exits. Kill whatever outlives the game by 10 seconds
+     wineserver="$PWD/.kazeta/share/proton/files/bin/wineserver"
+     timeout 10 "$wineserver" -w || "$wineserver" -k
+     exit $rc
+     EOF
+     chmod +x .kazeta/share/run
+
+     # protonfixes applies game fixes, which carts carry themselves, and `runinprefix` never runs
+     # them, but importing it was most of the proton script's startup. Its drive mapping is in `run`
+     mkdir .kazeta/share/proton/protonfixes
+     cat > .kazeta/share/proton/protonfixes/__init__.py <<'EOF'
+     def setup(*args): pass
+     def setup_mount_drives(*args): pass
+     def winetricks(*args): pass
+     def setup_frame_rate(*args): pass
+     def setup_local_shader_cache(*args): pass
+     def setup_upscalers(*args): pass
+     def execute(): pass
+     EOF
+
+     # create the prefix with Proton's own setup_prefix(), as its `run` verb does on first launch
+     env -i PATH="$PATH" PYTHONDONTWRITEBYTECODE=1 python3 - <<'EOF'
+     import importlib.machinery, importlib.util, os, sys
+     proton_dir = os.path.abspath('.kazeta/share/proton')
+     prefix = os.path.abspath('.kazeta/var/prefix')
+     os.makedirs(prefix)
+     os.symlink('.', prefix + '/pfx')
+     os.environ['STEAM_COMPAT_DATA_PATH'] = prefix
+     os.environ['STEAM_COMPAT_CLIENT_INSTALL_PATH'] = ''
+     sys.argv = [proton_dir + '/proton', 'setup']
+     sys.path.insert(0, proton_dir)
+     loader = importlib.machinery.SourceFileLoader('proton', proton_dir + '/proton')
+     proton = importlib.util.module_from_spec(importlib.util.spec_from_loader('proton', loader))
+     loader.exec_module(proton)
+     proton.g_proton = proton.Proton(proton_dir)
+     proton.g_compatdata = proton.CompatData(prefix)
+     proton.g_session = proton.Session()
+     proton.g_session.nvidia_wine_dll_dir = None
+     defaults = dict(proton.g_session.dlloverrides)
+     proton.g_compatdata.setup_prefix()
+     # setup_prefix() switches to DXVK and vkd3d-proton with overrides that `runinprefix` doesn't set
+     with open('.kazeta/share/dlloverrides', 'w') as f:
+         f.write(';'.join(f'{k}={v}' for k, v in proton.g_session.dlloverrides.items() if defaults.get(k) != v))
+     EOF
+
+     # left out for size, after the prefix setup that copies some of them: wine-gecko (embedded HTML,
+     # ~210 MB), the Chinese/Japanese/Korean fonts (~90 MB), text-to-speech and speech recognition,
+     # and VR. wine-mono stays: .NET and XNA games can't run without it
+     p=.kazeta/share/proton/files
+     rm -r $p/share/wine/gecko
+     rm $p/share/fonts/{msyh.ttf,msyhbd.ttf,simsun.ttc,malgun.ttf,msgothic.ttc}
+     rm -r $p/lib/*-linux-gnu/{libvosk.so,libonnxruntime.so*,libpiper*,libespeak-ng.so*} $p/share/espeak-ng-data $p/share/libtashkeel_model.ort
+     rm -r $p/lib/x86_64-linux-gnu/libopenxr_loader.so* $p/share/openxr .kazeta/var/prefix/drive_c/{vrclient,openxr}
+     find .kazeta/var/prefix/drive_c -xtype l -delete # the prefix's links to the removed fonts
+
+     # Visual C++ 2015-2022 runtime and MFC, unpacked from Microsoft's redistributables: Steam installs
+     # them for the games that need them, and Wine's own msvcp140 and friends are incomplete. Proton's
+     # prefix already prefers native copies and registers the runtime as installed (launchers such as
+     # Unreal's check). Proton's copies are removed first, as some are links
+     win=.kazeta/var/prefix/drive_c/windows
+     cabextract -q -d .redist/x64 .redist/VC_redist.x64.exe
+     cabextract -q -d .redist/x64 .redist/x64/a12 .redist/x64/a13
+     cabextract -q -d .redist/x86 .redist/VC_redist.x86.exe
+     cabextract -q -d .redist/x86 .redist/x86/a10 .redist/x86/a11
+     for f in .redist/x64/*.dll_amd64; do rm -f $win/system32/$(basename $f _amd64); cp $f $win/system32/$(basename $f _amd64); done
+     for f in .redist/x86/*.dll_x86; do rm -f $win/syswow64/$(basename $f _x86); cp $f $win/syswow64/$(basename $f _x86); done
+     # the same for Visual C++ 2010, 2012 and 2013, which older games need (msvcr100, msvcp110, ...);
+     # Proton's prefix prefers native copies of these too. 2010's update for ATL and MFC
+     # (msp_kb2565063.msp) is a binary patch, so it stays at SP1 (10.0.40219.1), as Steam's copy does
+     for v in 2010 2012 2013; do
+       for a in x64 x86; do
+         d=.redist/$v-$a
+         cabextract -q -d $d .redist/vcredist_${v}_$a.exe
+         if [ $v = 2010 ]; then cabs=$d/vc_red.cab; else cabs="$d/a2 $d/a3"; fi
+         cabextract -q -d $d/dll -F 'F_CENTRAL_*' $cabs
+         if [ $a = x64 ]; then dir=system32; else dir=syswow64; fi
+         for f in $d/dll/F_CENTRAL_*; do
+           name=$(basename $f _$a); name=${name#F_CENTRAL_}.dll
+           rm -f $win/$dir/$name
+           cp $f $win/$dir/$name
+         done
+       done
+     done
+     # OpenAL Soft as the system OpenAL32.dll, for games that expect Creative's OpenAL to be installed
+     cp .redist/openal/bin/Win64/soft_oal.dll $win/system32/OpenAL32.dll
+     cp .redist/openal/bin/Win32/soft_oal.dll $win/syswow64/OpenAL32.dll
+     mkdir -p .kazeta/share/licenses/openal-soft
+     cp .redist/openal/COPYING .redist/openal/LICENSE-pffft .kazeta/share/licenses/openal-soft/
+     rm -rf .redist # cabextract keeps the read-only flag some files in the installers have
+
+     cd .kazeta/var/prefix
+     mv system.reg.old system.reg # keep the MachineGuid of Proton's default prefix instead of a random one
+     # only used when Proton updates the prefix, which runinprefix never does; they hold build paths
+     rm pfx.lock config_info tracked_files
+     rm -r dosdevices
+     ln -s /tmp/kazeta-dosdevices dosdevices # filled by `run`
+     echo 315532800 > .update-timestamp # wine.inf's mtime in the image; Wine updates the prefix on any other value
+     # Proton links the prefix's DLLs and fonts with absolute paths
+     root="$(realpath ../../..)"
+     find . -type l -lname "$root/*" -exec sh -c 'ln -sfnr "$(readlink "$1")" "$1"' _ {} \;
+   sources:
+     - uri: "https://github.com/GloriousEggroll/proton-ge-custom/releases/download/GE-Proton11-11/GE-Proton11-11-x86_64.tar.gz"
+       xxh3sum: deaf2613fb3095ba
+       exclude:
+         - GE-Proton11-11-x86_64/protonfixes # replaced in post
+         - GE-Proton11-11-x86_64/files/share/xalia
+         # bridge to Steam's on-screen keyboard; explorer waits for it at every start
+         - GE-Proton11-11-x86_64/files/lib/wine/*-windows/tabtip.exe
+         - GE-Proton11-11-x86_64/files/share/default_pfx/drive_c/windows/*/tabtip.exe
+         # only loaded when an environment variable enables them
+         - GE-Proton11-11-x86_64/files/lib/wine/d7vk
+         - GE-Proton11-11-x86_64/files/lib/*-linux-gnu/libvkbasalt.so
+         - GE-Proton11-11-x86_64/files/lib/*-linux-gnu/libVkLayer_*
+         - GE-Proton11-11-x86_64/files/lib/*-linux-gnu/libdxvk_nvapi_vkreflex_layer.so
+         - GE-Proton11-11-x86_64/files/share/vkbasalt
+         - GE-Proton11-11-x86_64/files/share/pyroveil
+         - GE-Proton11-11-x86_64/files/share/low_latency_layer
+         - GE-Proton11-11-x86_64/files/share/steam-overlay-wayland
+         - GE-Proton11-11-x86_64/files/share/dxvk-nvapi-vkreflex-layer
+       include: GE-Proton11-11-x86_64
+       destination: .kazeta/share/proton
+     # Visual C++ 2015-2022 14.44.35211 (aka.ms/vs/17/release/vc_redist.*.exe); unpacked in post
+     - uri: "https://download.visualstudio.microsoft.com/download/pr/990c720a-46ce-4dc7-87b9-c2eb615d34b9/CC0FF0EB1DC3F5188AE6300FAEF32BF5BEEBA4BDD6E8E445A9184072096B713B/VC_redist.x64.exe"
+       xxh3sum: 05c997cb8cd56b6f
+       type: plain
+       destination: .redist/
+     - uri: "https://download.visualstudio.microsoft.com/download/pr/990c720a-46ce-4dc7-87b9-c2eb615d34b9/0C09F2611660441084CE0DF425C51C11E147E6447963C3690F97E0B25C55ED64/VC_redist.x86.exe"
+       xxh3sum: 4be9038c5a761397
+       type: plain
+       destination: .redist/
+     # Visual C++ 2010 SP1 (MFC security update 10.0.40219.325), 2012 Update 4 (11.0.61030) and
+     # 2013 Update 5 (12.0.40664, aka.ms/highdpimfc2013x86enu); unpacked in post
+     - uri: "https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x64.exe"
+       xxh3sum: b5cd4d49bdad4edb
+       type: plain
+       destination: .redist/vcredist_2010_x64.exe
+     - uri: "https://download.microsoft.com/download/1/6/5/165255E7-1014-4D0A-B094-B6A430A6BFFC/vcredist_x86.exe"
+       xxh3sum: 06e4ced71b2f0909
+       type: plain
+       destination: .redist/vcredist_2010_x86.exe
+     - uri: "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x64.exe"
+       xxh3sum: 04b955db4ac43c83
+       type: plain
+       destination: .redist/vcredist_2012_x64.exe
+     - uri: "https://download.microsoft.com/download/1/6/B/16B06F60-3B20-4FF2-B699-5E9B7962F9AE/VSU_4/vcredist_x86.exe"
+       xxh3sum: 25fb18c776503e84
+       type: plain
+       destination: .redist/vcredist_2012_x86.exe
+     - uri: "https://download.visualstudio.microsoft.com/download/pr/10912041/cee5d6bca2ddbcd039da727bf4acb48a/vcredist_x64.exe"
+       xxh3sum: d9f43684e1fd35e8
+       type: plain
+       destination: .redist/vcredist_2013_x64.exe
+     - uri: "https://download.visualstudio.microsoft.com/download/pr/10912113/5da66ddebb0ad32ebd4b922fd82e8e25/vcredist_x86.exe"
+       xxh3sum: e0c7cffaab905530
+       type: plain
+       destination: .redist/vcredist_2013_x86.exe
+     - uri: "https://github.com/kcat/openal-soft/releases/download/1.25.2/openal-soft-1.25.2-bin.zip"
+       xxh3sum: cc3d82399d44f752
+       include: openal-soft-1.25.2-bin
+       destination: .redist/openal
+     # libva and libvdpau for Proton's ffmpeg (video playback)
+     - uri: "https://archive.archlinux.org/packages/l/libva/libva-2.24.1-1-x86_64.pkg.tar.zst"
+       xxh3sum: a1927a254fdb2f54
+       include: [usr/lib/libva.so.*, usr/lib/libva-drm.so.*, usr/lib/libva-x11.so.*]
+       destination: .kazeta/share/lib/x86_64-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/libvdpau/libvdpau-1.5-4-x86_64.pkg.tar.zst"
+       xxh3sum: 9f1737cd6876d085
+       include: usr/lib/libvdpau.so.*
+       destination: .kazeta/share/lib/x86_64-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/libxinerama/libxinerama-1.1.6-1-x86_64.pkg.tar.zst"
+       xxh3sum: e5e0b44d43e8a180
+       include: usr/lib/libXinerama.so.*
+       destination: .kazeta/share/lib/x86_64-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libva/lib32-libva-2.24.1-1-x86_64.pkg.tar.zst"
+       xxh3sum: fd1780ab95a33506
+       include: [usr/lib32/libva.so.*, usr/lib32/libva-drm.so.*, usr/lib32/libva-x11.so.*]
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # Arch no longer has lib32-libvdpau; this is its last build
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libvdpau/lib32-libvdpau-1.5-3-x86_64.pkg.tar.zst"
+       xxh3sum: 9593b9d312f77f43
+       include: usr/lib32/libvdpau.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # X11 extensions for 32-bit winex11
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libxi/lib32-libxi-1.8.3-1-x86_64.pkg.tar.zst"
+       xxh3sum: 8730774d3f13f277
+       include: usr/lib32/libXi.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libxrandr/lib32-libxrandr-1.5.5-1-x86_64.pkg.tar.zst"
+       xxh3sum: cb3026a4aad681ff
+       include: usr/lib32/libXrandr.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libxcursor/lib32-libxcursor-1.2.3-1-x86_64.pkg.tar.zst"
+       xxh3sum: 66deb3c24a95f40f
+       include: usr/lib32/libXcursor.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libxrender/lib32-libxrender-0.9.12-1-x86_64.pkg.tar.zst"
+       xxh3sum: 0bd74d0d3d022a32
+       include: usr/lib32/libXrender.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libxinerama/lib32-libxinerama-1.1.6-1-x86_64.pkg.tar.zst"
+       xxh3sum: daf6307c087a2111
+       include: usr/lib32/libXinerama.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libxcomposite/lib32-libxcomposite-0.4.7-1-x86_64.pkg.tar.zst"
+       xxh3sum: c70eaf2d489352b9
+       include: usr/lib32/libXcomposite.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # fonts for 32-bit win32u and dwrite
+     - uri: "https://archive.archlinux.org/packages/l/lib32-freetype2/lib32-freetype2-2.14.3-1-x86_64.pkg.tar.zst"
+       xxh3sum: 0ede42b4afe0eaac
+       include: usr/lib32/libfreetype.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libpng/lib32-libpng-1.6.59-1-x86_64.pkg.tar.zst"
+       xxh3sum: 04e013c96ac5da24
+       include: usr/lib32/libpng16.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-fontconfig/lib32-fontconfig-2:2.18.3-1-x86_64.pkg.tar.zst"
+       xxh3sum: dfcd1cd79edb0a1e
+       include: usr/lib32/libfontconfig.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # PulseAudio client for 32-bit winepulse, which talks to Kazeta's pipewire-pulse
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libpulse/lib32-libpulse-17.0+r98+gb096704c0-1-x86_64.pkg.tar.zst"
+       xxh3sum: 451ece309e20b639
+       include: [usr/lib32/libpulse.so.*, usr/lib32/pulseaudio/libpulsecommon-*.so]
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libasyncns/lib32-libasyncns-1:0.8+r3+g68cd5af-3-x86_64.pkg.tar.zst"
+       xxh3sum: d75aeb0c54429970
+       include: usr/lib32/libasyncns.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libsndfile/lib32-libsndfile-1.2.2-3-x86_64.pkg.tar.zst"
+       xxh3sum: 2e28d8097d16be95
+       include: usr/lib32/libsndfile.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-flac/lib32-flac-1.5.0-1-x86_64.pkg.tar.zst"
+       xxh3sum: 4e5ab60640edba49
+       include: usr/lib32/libFLAC.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libogg/lib32-libogg-1.3.6-1-x86_64.pkg.tar.zst"
+       xxh3sum: f5225635ed5e013d
+       include: usr/lib32/libogg.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libvorbis/lib32-libvorbis-1.3.7-4-x86_64.pkg.tar.zst"
+       xxh3sum: fe2544d715e83c12
+       include: [usr/lib32/libvorbis.so.*, usr/lib32/libvorbisenc.so.*]
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # 32-bit games load Wine's 32-bit unix modules; these are what they need beyond the libraries above
+     # and 32-bit Mesa's. Builds that need glibc 2.38 at most, as Wine does (alsa-lib 1.2.16 and gnutls
+     # 3.8.13 need 2.43). For winepulse and winealsa
+     - uri: "https://archive.archlinux.org/packages/l/lib32-alsa-lib/lib32-alsa-lib-1.2.15.3-1-x86_64.pkg.tar.zst"
+       xxh3sum: 75646f2e1740888b
+       include: usr/lib32/libasound.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # libudev for winepulse and winebus, libsystemd for libpulse and libdbus
+     - uri: "https://archive.archlinux.org/packages/l/lib32-systemd/lib32-systemd-262.1-1-x86_64.pkg.tar.zst"
+       xxh3sum: 92a28893fb718978
+       include: [usr/lib32/libsystemd.so.*, usr/lib32/libudev.so.*]
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # for libpulse
+     - uri: "https://archive.archlinux.org/packages/l/lib32-dbus/lib32-dbus-1.16.2-1-x86_64.pkg.tar.zst"
+       xxh3sum: ab28f0b295193d8f
+       include: usr/lib32/libdbus-1.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # for libsndfile
+     - uri: "https://archive.archlinux.org/packages/l/lib32-opus/lib32-opus-1.6.1-1-x86_64.pkg.tar.zst"
+       xxh3sum: 46671cfcced017f4
+       include: usr/lib32/libopus.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # for freetype
+     - uri: "https://archive.archlinux.org/packages/l/lib32-brotli/lib32-brotli-1.2.1-1-x86_64.pkg.tar.zst"
+       xxh3sum: 485aaba22aefbaaa
+       include: [usr/lib32/libbrotlidec.so.*, usr/lib32/libbrotlicommon.so.*]
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     # gnutls for ffmpeg's libavformat (video playback), bcrypt and secur32 (TLS), and its dependencies
+     - uri: "https://archive.archlinux.org/packages/l/lib32-gnutls/lib32-gnutls-3.8.12-1-x86_64.pkg.tar.zst"
+       xxh3sum: 82868d3a10c0a9da
+       include: usr/lib32/libgnutls.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-nettle/lib32-nettle-3.10.2-1-x86_64.pkg.tar.zst"
+       xxh3sum: f46dcb667b935739
+       include: [usr/lib32/libnettle.so.*, usr/lib32/libhogweed.so.*]
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-gmp/lib32-gmp-6.3.0-2-x86_64.pkg.tar.zst"
+       xxh3sum: 58a5ba1e584aa53f
+       include: usr/lib32/libgmp.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libtasn1/lib32-libtasn1-4.21.0-1-x86_64.pkg.tar.zst"
+       xxh3sum: 927157d75a3c5d05
+       include: usr/lib32/libtasn1.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libidn2/lib32-libidn2-2.3.8-1-x86_64.pkg.tar.zst"
+       xxh3sum: 72f748e25f7cf3fe
+       include: usr/lib32/libidn2.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-libunistring/lib32-libunistring-1.4.2-1-x86_64.pkg.tar.zst"
+       xxh3sum: ce0d61b0d146c9f2
+       include: usr/lib32/libunistring.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+     - uri: "https://archive.archlinux.org/packages/l/lib32-p11-kit/lib32-p11-kit-0.26.5-1-x86_64.pkg.tar.zst"
+       xxh3sum: d4fd4453ba1f1c75
+       include: usr/lib32/libp11-kit.so.*
+       destination: .kazeta/share/lib/i386-linux-gnu/
+
  - name: "Wolfenstein 3D"
    id: wolfenstein-3d
    provider: gog

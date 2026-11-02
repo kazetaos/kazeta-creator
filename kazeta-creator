@@ -295,14 +295,24 @@ if 'tricks' in game and 'runtime' in game and 'windows' in game['runtime']:
     subprocess.run(["pkexec", "kazeta-mount", "install", gamedir, workdir, targetdir, runtime, runtimedir])
 
     try:
-        # perform winetricks on targetdir
-        subprocess.run(
-            ["winetricks", "-q"] + game['tricks'].split(' '),
-            env=os.environ | {
-                "WINE": os.path.join(targetdir, '.kazeta/share/proton/files/bin/wine64'),
-                "WINEPREFIX": os.path.join(targetdir, '.kazeta/var/prefix'),
-            }
-        )
+        # perform winetricks on targetdir; Proton 11 has no separate wine64
+        wine = os.path.join(targetdir, '.kazeta/share/proton/files/bin/wine64')
+        if not os.path.exists(wine):
+            wine = os.path.join(targetdir, '.kazeta/share/proton/files/bin/wine')
+        prefix = os.path.join(targetdir, '.kazeta/var/prefix')
+        # windows-2.0's prefix links dosdevices to /tmp/kazeta-dosdevices, which its `run` fills at
+        # each launch; without this, C: would be the drive of the last cart Kazeta ran
+        dosdevices = '/tmp/kazeta-dosdevices'
+        if os.path.islink(os.path.join(prefix, 'dosdevices')):
+            subprocess.run(["rm", "-rf", dosdevices])
+            os.makedirs(dosdevices)
+            os.symlink(os.path.join(prefix, 'drive_c'), os.path.join(dosdevices, 'c:'))
+            os.symlink('/', os.path.join(dosdevices, 'z:'))
+        env = os.environ | {"WINE": wine, "WINEPREFIX": prefix}
+        subprocess.run(["winetricks", "-q"] + game['tricks'].split(' '), env=env)
+        # wineserver keeps the overlay busy, and writes the registry when it exits
+        wineserver = os.path.join(os.path.dirname(wine), 'wineserver')
+        subprocess.run([wineserver, "-w"], env=env)
     finally:
         # unmount overlay and runtime
         subprocess.run(["pkexec", "kazeta-mount", "--unmount", targetdir, runtimedir])
