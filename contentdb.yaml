@@ -1189,6 +1189,42 @@
        include: linux/x86/libsteam_api.so
        destination: bin/linux32/
 
+ - name: "Resident Evil HD Remaster"
+   id: resident-evil-hd-remaster
+   provider: gog
+   platform: windows
+   xxh3sum: 7e6f772781d05add
+   exec: bhd.exe
+   runtime: windows-2.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/304240/6ff98f5489411e48f6aa191ba5b11c71e8d11101.ico"
+       xxh3sum: da9be862f1b68e2c
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_resident_evil_hd_remaster_1.0_gog_(85280)-1.bin"
+       xxh3sum: 4a5a6c3bb8f0c67a
+       process: false
+     - uri: "file://setup_resident_evil_hd_remaster_1.0_gog_(85280)-2.bin"
+       xxh3sum: 3b752e0f88dcb8ec
+       process: false
+     - uri: "file://setup_resident_evil_hd_remaster_1.0_gog_(85280)-3.bin"
+       xxh3sum: fbd2326c062ac26a
+       process: false
+     - uri: "file://setup_resident_evil_hd_remaster_1.0_gog_(85280)-4.bin"
+       xxh3sum: 43078d20a34abf44
+       process: false
+     - uri: "file://setup_resident_evil_hd_remaster_1.0_gog_(85280)-5.bin"
+       xxh3sum: c20200a9b5c774bd
+       process: false
+     - uri: "file://setup_resident_evil_hd_remaster_1.0_gog_(85280).exe"
+       xxh3sum: feabf0f1e0c1da8d
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Return to Castle Wolfenstein"
    id: return-to-castle-wolfenstein
    provider: gog
