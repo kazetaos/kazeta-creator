@@ -1635,6 +1635,24 @@
          - data/noarch/game/Terraria
          - data/noarch/game/Terraria.png
 
+ - name: "Thank You Bus Driver"
+   id: thank-you-bus-driver
+   provider: humble
+   platform: windows
+   xxh3sum: 9bfd537ee8633f07
+   exec: ThankYouBusDriver/Binaries/Win64/ThankYouBusDriver-Win64-Shipping.exe
+   runtime: windows-2.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/5067360/3f7882f77425940cd691b37ede08b7bb5a91ecfa.ico"
+       xxh3sum: 4a5f008764fe9f8a
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://ThankYouBusDriver-win64-2.zip"
+       xxh3sum: 87cada8087070944
+       exclude:
+         - "Manifest_*.txt"
+         - Engine/Extras
+
  - name: "Tiny Thor"
    id: tiny-thor
    provider: gog
