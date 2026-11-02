@@ -138,12 +138,11 @@
    id: bioshock
    provider: gog
    platform: windows
-   xxh3sum: e0fa3ea9c0770754
-   exec: bioshock.bat
-   runtime: windows-1.0
+   xxh3sum: 13dcf1e6151ce5b3
+   exec: Bioshock.exe -dx9
+   path: Builds/Release
+   runtime: windows-2.0
    gamescope: --force-grab-cursor
-   post: | # crashes at startup unless run from its own directory
-     printf 'cd /d "%%~dp0Builds\\Release"\r\nBioshock.exe -dx9\r\n' > bioshock.bat
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/7670/2d90881c6067287da04259ec3c205061f270dd55.ico"
        xxh3sum: 3077a24a41ecd4f3
