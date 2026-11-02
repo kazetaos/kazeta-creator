@@ -623,6 +623,30 @@
          - HorizonChase_Data
          - HorizonChase.x86_64
 
+ - name: "IRON NEST: Heavy Turret Simulator"
+   id: iron-nest
+   provider: gog
+   platform: windows
+   xxh3sum: 09f5ef25f0a60419
+   exec: '"Iron Nest Heavy Turret Simulator.exe"'
+   runtime: windows-2.0
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2950790/9e5fd22a0678b6d1b82850f2f95a83f82f2a1c96.ico"
+       xxh3sum: f37cb57174d8ce68
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_iron_nest_heavy_turret_simulator_1.0_(92887)-1.bin"
+       xxh3sum: d92e7fbe035c7cfd
+       process: false
+     - uri: "file://setup_iron_nest_heavy_turret_simulator_1.0_(92887).exe"
+       xxh3sum: a79348428e022134
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Ittle Dew"
    id: ittle-dew
    provider: humble
