@@ -255,6 +255,13 @@ if not is_runtime:
             file.write('GamescopeOptions={}\n'.format(game['gamescope']))
         if 'runtime' in game and game['runtime'] != 'none':
             file.write('Runtime={}\n'.format(game['runtime']))
+        # one Env line per variable, set by the runtime for the game (Linux) or Proton (Windows)
+        for name, value in game.get('env', {}).items():
+            if isinstance(value, bool):
+                sys.exit("env {}: quote the value, YAML reads {} as a boolean".format(name, value))
+            if '\n' in str(value) or '=' in str(name):
+                sys.exit("env {}: names can't contain '=', values can't contain newlines".format(name))
+            file.write('Env={}={}\n'.format(name, value))
 
 if 'steam_app_id' in game:
     with open(os.path.join(game['id'], 'steam_appid.txt'), 'w', encoding='utf-8') as file:

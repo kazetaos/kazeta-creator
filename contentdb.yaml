@@ -949,16 +949,21 @@
 
  - name: "None Runtime"
    id: none
-   xxh3sum: 65eb27eded8b9e52
+   xxh3sum: e64f7c8db08d08de
    kind: runtime
    # the runtime Kazeta uses for carts without a Runtime (runtime: none); it ships with Kazeta as
-   # /usr/share/kazeta/runtimes/none.kzr. `run` gets the file holding the cart's Exec and, if the
-   # cart has a Path, the directory (relative to the cart root) to run it from
+   # /usr/share/kazeta/runtimes/none.kzr. `run` gets the file holding the cart's Exec, then the
+   # directory (relative to the cart root) to run it from when the cart has a Path or Env, then the
+   # file holding the cart's Env lines (NAME=value) when it has any
    post: |
      mkdir -p .kazeta/share
      cat > .kazeta/share/run <<'EOF'
      #! /bin/bash
      cd "${2:-.}" || exit 1
+     # the cart's environment variables, set as written (no shell expansion) for the game only
+     if [ -n "$3" ]; then
+       while IFS= read -r var; do export "$var"; done < "$3"
+     fi
      bash "$1"
      EOF
      chmod +x .kazeta/share/run
