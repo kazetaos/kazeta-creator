@@ -2175,9 +2175,6 @@
    exec: ./ECWolf-1.4.2-1-anylinux-x86_64.AppImage
    runtime: none
    gamescope: --filter pixel
-   post: | # disable autoupdate
-     mkdir -p .config/auto-updates-policy
-     echo "0" > .config/auto-updates-policy/net.maniacsvault.ecwolf-update-setting
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/da0c44a0f2442bf0f6402b4e71f21cfe.png"
        xxh3sum: 8bcd627c4a0c6618
@@ -2189,6 +2186,9 @@
        include:
          - "*.WL6"
        destination: ".local/share/ecwolf/"
+     - type: inline
+       destination: .config/auto-updates-policy/net.maniacsvault.ecwolf-update-setting
+       content: "0\n"
 
  - name: "Vampire Survivors"
    id: vampire-survivors
