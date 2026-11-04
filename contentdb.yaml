@@ -713,18 +713,17 @@
    platform: linux
    exec: ./JSB.x86_64
    runtime: none
-   post: |
-     # Rewired (the game's input library) doesn't know InputPlumber's Xbox Series pad and gives it no
-     # mapping. Make the Linux matching criteria of its Xbox One map accept it: 16 buttons (the 11 Xbox
-     # One buttons, the d-pad as 4 buttons and Share), its evdev name and its product id
-     a=JSB_Data/sharedassets0.assets
-     patch() { # offset, original bytes, new bytes
-       [ "$(xxd -s $1 -l $((${#2} / 2)) -p -c 64 $a)" = "$2" ] || { echo "$a: unexpected bytes at $1"; exit 1; }
-       echo "$3" | xxd -r -p | dd of=$a bs=1 seek=$(($1)) conv=notrunc status=none
-     }
-     patch 0x113a54 0b000000 10000000 # buttonCount 11 -> 16
-     patch 0x113ab4 4d6963726f736f667420582d426f78204f6e652053207061642e2a 4d6963726f736f66742058626f782053657269657320532e582e2a # systemName "Microsoft X-Box One S pad.*" -> "Microsoft Xbox Series S.X.*"
-     patch 0x113afc 4445454630343545 3042313230343545 # productGUID DEEF045E -> 0B12045E
+   # Rewired (the game's input library) doesn't know InputPlumber's Xbox Series pad and gives it no
+   # mapping. Make the Linux matching criteria of its Xbox One map accept it: 16 buttons (the 11 Xbox
+   # One buttons, the d-pad as 4 buttons and Share), its evdev name and its product id
+   patches:
+     JSB_Data/sharedassets0.assets:
+       # buttonCount 11 -> 16
+       - 0x113a54 0b000000 10000000
+       # systemName "Microsoft X-Box One S pad.*" -> "Microsoft Xbox Series S.X.*"
+       - 0x113ab4 4d6963726f736f667420582d426f78204f6e652053207061642e2a 4d6963726f736f66742058626f782053657269657320532e582e2a
+       # productGUID DEEF045E -> 0B12045E
+       - 0x113afc 4445454630343545 3042313230343545
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/531510/4e81fd175134cdf26152dd749f8aa2b54ce85cee.ico"
        xxh3sum: cc02ff2afcbbd84e
