@@ -279,6 +279,30 @@ if 'steam_app_id' in game:
     with open(os.path.join(game['id'], 'steam_appid.txt'), 'w', encoding='utf-8') as file:
         file.write(str(game['steam_app_id']))
 
+# byte patches, {file: ["offset original-bytes new-bytes", ...]} (hex), applied before `post`; the
+# original bytes are checked first, so a different version of the file stops the build
+for name, patches in game.get('patches', {}).items():
+    target = os.path.join(dst_dir, name)
+    if not os.path.isfile(target):
+        print("ERROR: patches: {} not found".format(name))
+        sys.exit(1)
+    with open(target, 'r+b') as file:
+        for patch in patches:
+            fields = str(patch).split()
+            try:
+                offset, original, new = int(fields[0], 0), bytes.fromhex(fields[1]), bytes.fromhex(fields[2])
+            except (ValueError, IndexError):
+                fields = None
+            if not fields or len(fields) != 3 or len(original) != len(new):
+                print("ERROR: patches: {}: '{}' isn't 'offset original new' with bytes of the same length".format(name, patch))
+                sys.exit(1)
+            file.seek(offset)
+            if file.read(len(original)) != original:
+                print("ERROR: patches: {}: unexpected bytes at {}".format(name, fields[0]))
+                sys.exit(1)
+            file.seek(offset)
+            file.write(new)
+
 if 'post' in game:
     with open('/tmp/kazeta-creator-script', 'w', encoding='utf-8') as file:
         file.write('#! /bin/bash\n')
