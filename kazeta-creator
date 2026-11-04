@@ -107,6 +107,18 @@ if 'sources' not in game and game.get('kind') != 'runtime':
     sys.exit(1)
 
 for source in game.get('sources', []):
+    # a file written from the recipe itself (launch scripts, configs), instead of `post` heredocs
+    if source.get('type') == 'inline':
+        if 'content' not in source or 'destination' not in source or source['destination'].endswith('/'):
+            print("ERROR: 'inline' sources need 'content' and a file 'destination'")
+            sys.exit(1)
+        text_dst = os.path.join(dst_dir, source['destination'])
+        os.makedirs(os.path.dirname(text_dst), exist_ok=True)
+        with open(text_dst, 'w', encoding='utf-8', newline='') as f:
+            f.write(source['content'])
+        os.chmod(text_dst, 0o755 if source.get('executable') else 0o644)
+        continue
+
     if 'uri' not in source:
         print('Missing `uri` key in source')
         sys.exit(1)
@@ -197,7 +209,7 @@ for source in game.get('sources', []):
                 sys.exit(1)
             continue
         case _:
-            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'icon', 'dir', 'plain', 'blizzard-install', 'bnupdate'".format(os.path.basename(path)))
+            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'icon', 'dir', 'plain', 'inline', 'blizzard-install', 'bnupdate'".format(os.path.basename(path)))
             sys.exit(1)
 
     # exclude filter
