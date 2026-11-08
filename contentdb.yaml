@@ -1819,58 +1819,6 @@
    # provides glibc, Mesa, X11/Wayland, audio, gnutls and the other base libraries; the few
    # Proton needs that Kazeta lacks (mostly 32-bit) are in .kazeta/share/lib, from Arch packages
    post: |
-     cat > .kazeta/share/run <<'EOF'
-     #! /bin/bash
-     # the cart's Env lines (NAME=value), set as written (no shell expansion) for Proton. Read first, so
-     # the runtime's settings below add to WINEDLLOVERRIDES and LD_LIBRARY_PATH instead of replacing them
-     if [ -n "$3" ]; then
-       while IFS= read -r var; do export "$var"; done < "$3"
-     fi
-     export WINEPREFIX="$PWD/.kazeta/var/prefix"
-     export STEAM_COMPAT_DATA_PATH="$WINEPREFIX" # Proton uses its pfx, a link to itself
-     # Wine adds ports and host drives to dosdevices at every start; the prefix links it to /tmp to
-     # keep them out of the save. The cart is X: and U:-W: are mapped as umu did; some games need W:
-     dev=/tmp/kazeta-dosdevices
-     rm -rf $dev
-     mkdir -p $dev
-     ln -s "$WINEPREFIX/drive_c" $dev/c:
-     ln -s "$PWD" $dev/x:
-     ln -s /media $dev/u:
-     ln -s /run/media $dev/v:
-     ln -s /mnt $dev/w:
-     ln -s / $dev/z:
-     export PROTON_USE_XALIA=${PROTON_USE_XALIA:-0} # gamepad navigation for launchers, kept running next to the game
-     export WINEDLLOVERRIDES="$(cat .kazeta/share/dlloverrides)${WINEDLLOVERRIDES:+;$WINEDLLOVERRIDES}"
-     # libraries Proton needs that the host may lack. They come after the host's own library directories,
-     # so they only fill in what the host is missing: the host's copies match its config and plugin paths
-     # (ALSA, libva) and its Mesa, which a bundled copy found first would replace. ld.so skips directories
-     # of the other architecture. The pulseaudio directories keep the host's libpulse on its own
-     # libpulsecommon, as LD_LIBRARY_PATH comes before the path libpulse finds it in
-     host=/usr/lib64:/usr/lib32:/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu:/usr/lib
-     host=$host:/usr/lib64/pulseaudio:/usr/lib32/pulseaudio:/usr/lib/x86_64-linux-gnu/pulseaudio:/usr/lib/i386-linux-gnu/pulseaudio:/usr/lib/pulseaudio
-     export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$host:$PWD/.kazeta/share/lib/x86_64-linux-gnu:$PWD/.kazeta/share/lib/i386-linux-gnu"
-     export PYTHONDONTWRITEBYTECODE=1 # the proton script would otherwise write its bytecode to the save
-     # winspool adds the host's CUPS printers to the prefix (PPDs in system32/spool/drivers, entries in
-     # system.reg and user.reg), which would end up in the save; without a server libcups finds none
-     export CUPS_SERVER=/dev/null
-     # with GLX, Wine probes OpenGL through a 1x1 window that gamescope briefly shows full screen
-     export WINE_USE_EGL=${WINE_USE_EGL:-1}
-     # an absolute path: proton derives WINEDLLPATH from it, and Wine fails to load vkd3d (needed
-     # by wined3d, so by d3dx9/d3dcompiler) from a relative one with status c000003b
-     proton="$PWD/.kazeta/share/proton/proton"
-     # Exec runs from the cart's Path (relative to the cart root) when the launcher passes one
-     (cd "${2:-.}" && bash -c "\"$proton\" runinprefix $(cat $1)")
-     rc=$?
-     # let wineserver end Wine's own processes before exiting: gamescope's reaper sends SIGTERM to
-     # everything left once this script exits, wineserver dies from it, and Wine processes only act on
-     # SIGTERM through wineserver, so one that gets it after wineserver is gone (usually winedevice.exe)
-     # waits in ntsync forever and gamescope never exits. Kill whatever outlives the game by 10 seconds
-     wineserver="$PWD/.kazeta/share/proton/files/bin/wineserver"
-     timeout 10 "$wineserver" -w || "$wineserver" -k
-     exit $rc
-     EOF
-     chmod +x .kazeta/share/run
-
      # protonfixes applies game fixes, which carts carry themselves, and `runinprefix` never runs
      # them, but importing it was most of the proton script's startup. Its drive mapping is in `run`
      mkdir .kazeta/share/proton/protonfixes
@@ -1985,6 +1933,59 @@
          - GE-Proton11-11-x86_64/files/share/dxvk-nvapi-vkreflex-layer
        include: GE-Proton11-11-x86_64
        destination: .kazeta/share/proton
+     # runtime launcher script
+     - type: inline
+       destination: .kazeta/share/run
+       executable: true
+       content: |
+         #! /bin/bash
+         # the cart's Env lines (NAME=value), set as written (no shell expansion) for Proton. Read first, so
+         # the runtime's settings below add to WINEDLLOVERRIDES and LD_LIBRARY_PATH instead of replacing them
+         if [ -n "$3" ]; then
+           while IFS= read -r var; do export "$var"; done < "$3"
+         fi
+         export WINEPREFIX="$PWD/.kazeta/var/prefix"
+         export STEAM_COMPAT_DATA_PATH="$WINEPREFIX" # Proton uses its pfx, a link to itself
+         # Wine adds ports and host drives to dosdevices at every start; the prefix links it to /tmp to
+         # keep them out of the save. The cart is X: and U:-W: are mapped as umu did; some games need W:
+         dev=/tmp/kazeta-dosdevices
+         rm -rf $dev
+         mkdir -p $dev
+         ln -s "$WINEPREFIX/drive_c" $dev/c:
+         ln -s "$PWD" $dev/x:
+         ln -s /media $dev/u:
+         ln -s /run/media $dev/v:
+         ln -s /mnt $dev/w:
+         ln -s / $dev/z:
+         export PROTON_USE_XALIA=${PROTON_USE_XALIA:-0} # gamepad navigation for launchers, kept running next to the game
+         export WINEDLLOVERRIDES="$(cat .kazeta/share/dlloverrides)${WINEDLLOVERRIDES:+;$WINEDLLOVERRIDES}"
+         # libraries Proton needs that the host may lack. They come after the host's own library directories,
+         # so they only fill in what the host is missing: the host's copies match its config and plugin paths
+         # (ALSA, libva) and its Mesa, which a bundled copy found first would replace. ld.so skips directories
+         # of the other architecture. The pulseaudio directories keep the host's libpulse on its own
+         # libpulsecommon, as LD_LIBRARY_PATH comes before the path libpulse finds it in
+         host=/usr/lib64:/usr/lib32:/usr/lib/x86_64-linux-gnu:/usr/lib/i386-linux-gnu:/usr/lib
+         host=$host:/usr/lib64/pulseaudio:/usr/lib32/pulseaudio:/usr/lib/x86_64-linux-gnu/pulseaudio:/usr/lib/i386-linux-gnu/pulseaudio:/usr/lib/pulseaudio
+         export LD_LIBRARY_PATH="${LD_LIBRARY_PATH:+$LD_LIBRARY_PATH:}$host:$PWD/.kazeta/share/lib/x86_64-linux-gnu:$PWD/.kazeta/share/lib/i386-linux-gnu"
+         export PYTHONDONTWRITEBYTECODE=1 # the proton script would otherwise write its bytecode to the save
+         # winspool adds the host's CUPS printers to the prefix (PPDs in system32/spool/drivers, entries in
+         # system.reg and user.reg), which would end up in the save; without a server libcups finds none
+         export CUPS_SERVER=/dev/null
+         # with GLX, Wine probes OpenGL through a 1x1 window that gamescope briefly shows full screen
+         export WINE_USE_EGL=${WINE_USE_EGL:-1}
+         # an absolute path: proton derives WINEDLLPATH from it, and Wine fails to load vkd3d (needed
+         # by wined3d, so by d3dx9/d3dcompiler) from a relative one with status c000003b
+         proton="$PWD/.kazeta/share/proton/proton"
+         # Exec runs from the cart's Path (relative to the cart root) when the launcher passes one
+         (cd "${2:-.}" && bash -c "\"$proton\" runinprefix $(cat $1)")
+         rc=$?
+         # let wineserver end Wine's own processes before exiting: gamescope's reaper sends SIGTERM to
+         # everything left once this script exits, wineserver dies from it, and Wine processes only act on
+         # SIGTERM through wineserver, so one that gets it after wineserver is gone (usually winedevice.exe)
+         # waits in ntsync forever and gamescope never exits. Kill whatever outlives the game by 10 seconds
+         wineserver="$PWD/.kazeta/share/proton/files/bin/wineserver"
+         timeout 10 "$wineserver" -w || "$wineserver" -k
+         exit $rc
      # Visual C++ 2015-2022 14.44.35211 (aka.ms/vs/17/release/vc_redist.*.exe); unpacked in post
      - uri: "https://download.visualstudio.microsoft.com/download/pr/990c720a-46ce-4dc7-87b9-c2eb615d34b9/CC0FF0EB1DC3F5188AE6300FAEF32BF5BEEBA4BDD6E8E445A9184072096B713B/VC_redist.x64.exe"
        xxh3sum: 05c997cb8cd56b6f
