@@ -94,6 +94,28 @@ if len(results) > 1:
 
 game = results[0]
 
+# `base: <id>`: the recipe is another one's (e.g. a runtime's next version) with its own keys
+# replacing the base's, except `sources` and `post`, which come after the base's (each `post` runs
+# on its own, from the cart directory). The name, id and hash stay the recipe's own
+def with_base(game, seen):
+    if 'base' not in game:
+        return dict(game, post=[game['post']] if 'post' in game else [])
+    if game['base'] in seen:
+        print('ERROR: base: \'{}\' is its own base'.format(game['base']))
+        sys.exit(1)
+    bases = [g for g in games if g['id'] == game['base']]
+    if len(bases) != 1:
+        print('ERROR: base: \'{}\' must match one entry'.format(game['base']))
+        sys.exit(1)
+    base = with_base(bases[0], seen + (game['base'],))
+    merged = {k: v for k, v in base.items() if k not in ('name', 'id', 'xxh3sum')}
+    merged.update({k: v for k, v in game.items() if k != 'base'})
+    merged['sources'] = base.get('sources', []) + game.get('sources', [])
+    merged['post'] = base['post'] + ([game['post']] if 'post' in game else [])
+    return merged
+
+game = with_base(game, (game['id'],))
+
 dst_dir = game['id']
 download_dir = dst_dir + '_download'
 staging_dir = dst_dir + '_staging'
@@ -303,13 +325,13 @@ for name, patches in game.get('patches', {}).items():
             file.seek(offset)
             file.write(new)
 
-if 'post' in game:
+for post in game['post']: # the base recipes' first (see `base`)
     with open('/tmp/kazeta-creator-script', 'w', encoding='utf-8') as file:
         file.write('#! /bin/bash\n')
-        file.write(str(game['post']))
+        file.write(str(post))
     subprocess.run(['chmod', '+x', '/tmp/kazeta-creator-script'])
     env = os.environ
-    if re.search(r'\bblizzard\b', str(game['post'])):
+    if re.search(r'\bblizzard\b', str(post)):
         # make the tool available to post scripts as `blizzard`
         env = env | {'PATH': os.path.dirname(blizzard_path()) + os.pathsep + env.get('PATH', '')}
     subprocess.run(['/tmp/kazeta-creator-script'], cwd=game['id'], env=env)
