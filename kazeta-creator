@@ -366,11 +366,29 @@ if 'tricks' in game and 'runtime' in game and 'windows' in game['runtime']:
             os.makedirs(dosdevices)
             os.symlink(os.path.join(prefix, 'drive_c'), os.path.join(dosdevices, 'c:'))
             os.symlink('/', os.path.join(dosdevices, 'z:'))
+        # windows-3.0 links the user's Temp to /tmp/kazeta-temp, which its `run` makes
+        if os.path.islink(os.path.join(prefix, 'drive_c/users/steamuser/AppData/Local/Temp')):
+            os.makedirs('/tmp/kazeta-temp', exist_ok=True)
         env = os.environ | {"WINE": wine, "WINEPREFIX": prefix}
+        # runtimes with a layered registry (windows-3.0) merge it at launch: give winetricks the
+        # runtime's and the cart's layers, then keep what it changed as a layer of the cart
+        regstack = os.path.join(targetdir, '.kazeta/share/regstack')
+        hives = ['system.reg', 'user.reg', 'userdef.reg']
+        def layers(hive):
+            d = os.path.join(targetdir, '.kazeta/share/registry', hive + '.d')
+            return sorted(os.path.join(d, f) for f in os.listdir(d) if f.endswith('.reg'))
+        if os.path.exists(regstack):
+            for hive in hives:
+                subprocess.run([regstack, "merge", os.path.join(prefix, hive)] + layers(hive), check=True)
         subprocess.run(["winetricks", "-q"] + game['tricks'].split(' '), env=env)
         # wineserver keeps the overlay busy, and writes the registry when it exits
         wineserver = os.path.join(os.path.dirname(wine), 'wineserver')
         subprocess.run([wineserver, "-w"], env=env)
+        if os.path.exists(regstack):
+            for hive in hives:
+                out = os.path.join(targetdir, '.kazeta/share/registry', hive + '.d', '40-tricks.reg')
+                subprocess.run([regstack, "diff", os.path.join(prefix, hive), out] + layers(hive), check=True)
+                os.remove(os.path.join(prefix, hive))
     finally:
         # unmount overlay and runtime
         subprocess.run(["pkexec", "kazeta-mount", "--unmount", targetdir, runtimedir])
