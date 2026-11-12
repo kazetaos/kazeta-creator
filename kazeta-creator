@@ -612,6 +612,8 @@ for source in game.get('sources', []):
         filetype = 'tar'
     elif path.endswith('.zip') or path.endswith('.sh') or path.endswith('-bin'):
         filetype = 'zip'
+    elif path.endswith('.7z'):
+        filetype = '7z'
     elif path.endswith('.msi'):
         filetype = 'msi'
     elif path.endswith('.exe'):
@@ -628,6 +630,8 @@ for source in game.get('sources', []):
             subprocess.run(["tar", "-xf", path, "-C", staging_dir])
         case 'zip':
             subprocess.run(["unzip", "-q", path, "-d", staging_dir])
+        case '7z':
+            subprocess.run(["7z", "x", "-y", "-bso0", "-bsp0", "-o" + staging_dir, path])
         case 'hfs':
             extract_hfs(path, staging_dir)
         case 'inno':
@@ -660,7 +664,7 @@ for source in game.get('sources', []):
                 sys.exit(1)
             continue
         case _:
-            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'hfs', 'msi', 'icon', 'dir', 'plain', 'inline', 'blizzard-install', 'bnupdate'".format(os.path.basename(path)))
+            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', '7z', 'inno', 'hfs', 'msi', 'icon', 'dir', 'plain', 'inline', 'blizzard-install', 'bnupdate'".format(os.path.basename(path)))
             sys.exit(1)
 
     # exclude filter
