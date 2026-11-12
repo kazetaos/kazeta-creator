@@ -591,9 +591,9 @@
    id: horizon-chase-2
    provider: epic
    platform: windows
-   xxh3sum: bde01be331bc9ced
+   xxh3sum: 5ff919bcce0ab7c0
    exec: HorizonChase2/Binaries/Win64/HorizonChase2-Win64-Shipping.exe -AUTH_LOGIN=unused -AUTH_PASSWORD= -AUTH_TYPE=exchangecode -epicapp=97991054c39843cba2e61d5347333433 -epicenv=Prod -EpicPortal -epicusername=Kazeta -epicuserid=00000000000000000000000000000000 -epiclocale=en -epicsandboxid=e24498202a7b4c80af7e3c18e63a0b34
-   runtime: windows-2.0
+   runtime: windows
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/6dac798522a6a849eb3ba746a9542a25/32/32x32.png"
        xxh3sum: 5a9ce77e9146612f
