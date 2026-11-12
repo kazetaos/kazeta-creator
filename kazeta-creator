@@ -33,8 +33,8 @@ HEROIC_DIR=os.path.join(Path.home(), 'Games/Heroic')
 
 # blizzard-tools, used for carts built from Blizzard CDs (StarCraft). Downloaded on
 # first use; pinned to a commit so carts stay reproducible
-BLIZZARD_COMMIT='c14200bd1f697303d023947e5338811ff4834a87'
-BLIZZARD_XXH3='7489d15908e51ff4'
+BLIZZARD_COMMIT='1584cd554583469bd7ddcb9184c5782ea94505d3'
+BLIZZARD_XXH3='a14cfa14f79f911d'
 BLIZZARD_URL='https://raw.githubusercontent.com/kazetaos/blizzard-tools/{}/blizzard'.format(BLIZZARD_COMMIT)
 BLIZZARD_DIR=os.path.join(Path.home(), '.cache/kazeta-creator/blizzard-tools', BLIZZARD_COMMIT)
 
@@ -547,6 +547,7 @@ if 'sources' not in game and game.get('kind') != 'runtime':
     print('No sources found, exiting')
     sys.exit(1)
 
+blizzard_media = [] # the blizzard-install sources so far, which patches may need originals from
 for source in game.get('sources', []):
     # a file written from the recipe itself (launch scripts, configs), instead of `post` heredocs
     if source.get('type') == 'inline':
@@ -658,9 +659,14 @@ for source in game.get('sources', []):
         case 'blizzard-install' | 'bnupdate':
             # these work on the files already in the cart (or in `destination`), like
             # Blizzard's installers: Brood War installs over StarCraft, patches patch it
-            command = 'install' if filetype == 'blizzard-install' else 'patch'
             target_dir = os.path.join(dst_dir, source.get('destination', ''))
-            if subprocess.run([blizzard_path(), command, path, target_dir]).returncode != 0:
+            if filetype == 'blizzard-install':
+                command = ['install', path, target_dir]
+                blizzard_media.append(path)
+            else:
+                # Warcraft III's patches diff against files its installer only keeps as backups
+                command = ['patch', path, target_dir] + [a for m in blizzard_media for a in ('--cd', m)]
+            if subprocess.run([blizzard_path()] + command).returncode != 0:
                 sys.exit(1)
             continue
         case _:
