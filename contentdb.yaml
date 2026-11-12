@@ -738,14 +738,11 @@
 
  - name: "LEGO Star Wars: The Complete Saga"
    id: lego-star-wars-complete-saga
+   xxh3sum: 7bd6da77c51db19d
    provider: gog
    platform: windows
    exec: LEGOStarWarsSaga.exe
-   runtime: windows-1.0
-   tricks: d3dcompiler_47
-   post: |
-     mkdir -p .kazeta/share/proton
-     echo 'user_settings = { "PROTON_NO_ESYNC": "1", "PROTON_NO_FSYNC": "1" }' > .kazeta/share/proton/user_settings.py
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/32440/f808f62c96a6f95e825789e4edd76481ab9dab54.ico"
        xxh3sum: 17d476b7f10ca4d6
