@@ -730,6 +730,47 @@ if 'steam_app_id' in game:
     with open(os.path.join(game['id'], 'steam_appid.txt'), 'w', encoding='utf-8') as file:
         file.write(str(game['steam_app_id']))
 
+# INI settings, {file: {section: {key: value}}}, applied before `post`: an existing key's first line in
+# the section gets the value, a missing key is added at the end of its section, a missing section at
+# the end of the file. Line endings stay as the file has them
+def set_ini(path, settings):
+    with open(path, 'rb') as f:
+        data = f.read()
+    if data.startswith(b'\xff\xfe') or data.startswith(b'\xfe\xff'):
+        print("ERROR: ini: {} is UTF-16, which isn't supported".format(path))
+        sys.exit(1)
+    text = data.decode('latin-1') # bytes as they are
+    nl = '\r\n' if '\r\n' in text else '\n'
+    lines = text.split(nl)
+    for section, values in settings.items():
+        for key, value in values.items():
+            value = str(value)
+            start = next((i for i, l in enumerate(lines) if l.strip().lower() == '[{}]'.format(section).lower()), None)
+            if start is None:
+                trailing = bool(lines) and lines[-1] == '' # the file ends with a newline
+                if trailing:
+                    lines.pop()
+                lines.append('[{}]'.format(section))
+                start = len(lines) - 1
+                if trailing:
+                    lines.append('')
+            end = next((i for i in range(start + 1, len(lines)) if lines[i].lstrip().startswith('[')), len(lines))
+            match = next((i for i in range(start + 1, end) if lines[i].split('=', 1)[0].strip().lower() == str(key).lower() and '=' in lines[i]), None)
+            if match is not None:
+                lines[match] = '{}={}'.format(lines[match].split('=', 1)[0], value)
+            else:
+                last = max([i for i in range(start, end) if lines[i].strip()] or [start])
+                lines.insert(last + 1, '{}={}'.format(key, value))
+    with open(path, 'wb') as f:
+        f.write(nl.join(lines).encode('latin-1'))
+
+for name, settings in game.get('ini', {}).items():
+    target = os.path.join(dst_dir, name)
+    if not os.path.isfile(target):
+        print("ERROR: ini: {} not found".format(name))
+        sys.exit(1)
+    set_ini(target, settings)
+
 # byte patches, {file: ["offset original-bytes new-bytes", ...]} (hex), applied before `post`; the
 # original bytes are checked first, so a different version of the file stops the build
 for name, patches in game.get('patches', {}).items():
