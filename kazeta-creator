@@ -5,6 +5,8 @@ import re
 import sys
 import glob
 import uuid
+import shutil
+import fnmatch
 import yaml
 import subprocess
 
@@ -49,6 +51,335 @@ def blizzard_path():
         subprocess.run(["chmod", "+x", path + '.part'])
         os.rename(path + '.part', path)
     return path
+
+
+#
+# MSI packages, installed from their tables instead of with msiexec (which would run in Wine and write
+# the build machine's hardware into the registry). Files go to the prefix, registry values to a
+# registry layer of the cart (see the windows-3.0 runtime), directories added to PATH to the cart's
+# WINEPATH (Wine adds it to PATH; the registry's PATH stays the runtime's). Anything else a package would do (custom
+# actions that run code, COM registration, services, ...) stops the build, unless the recipe names the
+# component or action in `skip`
+#
+
+# the standard folders, as in a 64-bit Wine prefix; 32-bit packages get the (x86) and syswow64 ones
+MSI_FOLDERS = {
+    'TARGETDIR': '', 'WindowsVolume': '', 'ROOTDRIVE': '',
+    'ProgramFilesFolder': 'Program Files (x86)', 'ProgramFiles64Folder': 'Program Files',
+    'CommonFilesFolder': 'Program Files (x86)/Common Files', 'CommonFiles64Folder': 'Program Files/Common Files',
+    'WindowsFolder': 'windows', 'SystemFolder': 'windows/syswow64', 'System64Folder': 'windows/system32',
+    'System16Folder': 'windows/system', 'FontsFolder': 'windows/Fonts',
+    'CommonAppDataFolder': 'ProgramData', 'AppDataFolder': 'users/steamuser/AppData/Roaming',
+    'LocalAppDataFolder': 'users/steamuser/AppData/Local', 'TempFolder': 'users/steamuser/AppData/Local/Temp',
+    'PersonalFolder': 'users/steamuser/Documents', 'DesktopFolder': 'users/steamuser/Desktop',
+    'ProgramMenuFolder': 'ProgramData/Microsoft/Windows/Start Menu/Programs',
+    'StartMenuFolder': 'ProgramData/Microsoft/Windows/Start Menu',
+    'StartupFolder': 'ProgramData/Microsoft/Windows/Start Menu/Programs/StartUp',
+}
+# the prefix's spelling of directories packages may write with another case
+MSI_CASE = {n.lower(): n for n in ['windows', 'system32', 'syswow64', 'Fonts', 'Program Files',
+                                   'Program Files (x86)', 'Common Files', 'ProgramData', 'users']}
+# tables whose rows would do something this installer doesn't, for the components they name
+MSI_UNSUPPORTED = ['IniFile', 'ServiceInstall', 'Class', 'TypeLib',
+                   'ProgId', 'Extension', 'AppId', 'DuplicateFile', 'MoveFile', 'Font', 'PublishComponent',
+                   'IsolatedComponent', 'MsiDriverPackages', 'ODBCDriver', 'ODBCDataSource', 'Complus']
+
+
+class MsiDatabase:
+    """the tables of an MSI database, from its streams as `7z -tCompound` extracts them"""
+    def __init__(self, streams):
+        self.streams = streams
+        pool = self.read('!_StringPool')
+        data = self.read('!_StringData')
+        header = int.from_bytes(pool[0:4], 'little')
+        codepage = header & 0xffff
+        encoding = 'utf-8' if codepage == 65001 else 'cp%d' % (codepage or 1252)
+        self.refsize = 3 if header & 0x80000000 else 2
+        self.strings = ['']
+        off, i = 0, 4
+        while i + 4 <= len(pool):
+            n, refs = int.from_bytes(pool[i:i + 2], 'little'), int.from_bytes(pool[i + 2:i + 4], 'little')
+            i += 4
+            if n == 0 and refs != 0: # longer than 64K: the length follows
+                n = int.from_bytes(pool[i:i + 4], 'little')
+                i += 4
+            self.strings.append(data[off:off + n].decode(encoding))
+            off += n
+        self.columns = {}
+        for table, number, name, coltype in self.rows_of('_Columns', 'sisi'):
+            self.columns.setdefault(table, []).append((number, name, coltype))
+
+    def read(self, name):
+        path = os.path.join(self.streams, name)
+        if not os.path.isfile(path):
+            return b''
+        with open(path, 'rb') as f:
+            return f.read()
+
+    def rows_of(self, table, kinds):
+        """rows of a table stream, stored column by column; kinds: s (string) or i/I (2/4-byte int)"""
+        data = self.read('!' + table)
+        widths = [self.refsize if k == 's' else 2 if k == 'i' else 4 for k in kinds]
+        if not data:
+            return []
+        n = len(data) // sum(widths)
+        columns, off = [], 0
+        for k, w in zip(kinds, widths):
+            col = []
+            for r in range(n):
+                v = int.from_bytes(data[off + r * w:off + (r + 1) * w], 'little')
+                if k == 's':
+                    col.append(self.strings[v] if v else None)
+                else:
+                    col.append(v - (0x8000 if w == 2 else 0x80000000) if v else None)
+            columns.append(col)
+            off += n * w
+        return list(zip(*columns))
+
+    def table(self, name):
+        """list of {column: value}"""
+        cols = sorted(self.columns.get(name, []))
+        kinds = ''.join('s' if t & 0x0800 else 'I' if (t & 0xff) == 4 else 'i' for _, _, t in cols)
+        return [dict(zip([c[1] for c in cols], row)) for row in self.rows_of(name, kinds)]
+
+
+def reg_escape(s):
+    out = ''
+    for c in s:
+        if c in '\\"':
+            out += '\\' + c
+        elif c == '\0':
+            out += '\\0'
+        elif ord(c) < 32 or ord(c) > 126:
+            out += '\\x%04x' % ord(c)
+        else:
+            out += c
+    return out
+
+
+def install_msi(path, source, cart_dir, work_dir, env):
+    name = os.path.splitext(os.path.basename(path))[0]
+    skip = source.get('skip', [])
+    skip = skip if isinstance(skip, list) else [skip]
+    def skipped(n):
+        return any(fnmatch.fnmatchcase(n, s) for s in skip)
+    def fail(message):
+        print('ERROR: {}: {}'.format(os.path.basename(path), message))
+        sys.exit(1)
+
+    streams = os.path.join(work_dir, 'streams')
+    subprocess.run(["7z", "x", "-y", "-bso0", "-bsp0", "-tCompound", "-o" + streams, path], check=True)
+    db = MsiDatabase(streams)
+    props = {r['Property']: r['Value'] or '' for r in db.table('Property')}
+
+    # components of the chosen features (default: those installed by default)
+    features = db.table('Feature')
+    chosen = source.get('features')
+    if chosen is None:
+        chosen = [f['Feature'] for f in features if f['Level'] and 0 < f['Level'] <= int(props.get('INSTALLLEVEL', 1))]
+    chosen = chosen if isinstance(chosen, list) else chosen.split()
+    unknown = set(chosen) - {f['Feature'] for f in features}
+    if unknown:
+        fail('no feature {}'.format(', '.join(sorted(unknown))))
+    components = {r['Component']: r for r in db.table('Component')}
+    selected = []
+    for r in db.table('FeatureComponents'):
+        c = r['Component_']
+        if r['Feature_'] in chosen and c not in selected and not skipped(c):
+            selected.append(c)
+    for c in selected:
+        if components[c]['Condition']:
+            fail('component {} has a condition ({}); skip it or its feature'.format(c, components[c]['Condition']))
+    for t in MSI_UNSUPPORTED:
+        for r in db.table(t):
+            c = r.get('Component_') or r.get('Component')
+            if c in selected:
+                fail('component {} has {} entries, which aren\'t supported; skip it'.format(c, t))
+    # .NET assemblies for the GAC go where `gac` says (relative to the cart root): wine-mono doesn't
+    # look in the GAC an MSI installs into. Private assemblies (File_Application) install as files
+    gac = {r['Component_'] for r in db.table('MsiAssembly') if r['Component_'] in selected and not r['File_Application']}
+    if gac and 'gac' not in source:
+        fail('components {} install .NET assemblies into the GAC; set `gac` or skip them'.format(', '.join(sorted(gac))))
+    files = [f for f in db.table('File') if f['Component_'] in selected]
+    selfreg = {r['File_'] for r in db.table('SelfReg')}
+    for f in files:
+        if f['File'] in selfreg:
+            fail('file {} registers itself (SelfReg); skip component {}'.format(f['File'], f['Component_']))
+
+    # directories, with what custom actions before CostFinalize set them to
+    directories = {r['Directory']: r for r in db.table('Directory')}
+    overrides = {}
+    def directory(d, seen=()):
+        """-> path in drive_c, '/'-separated"""
+        if d in overrides:
+            return overrides[d]
+        if d in MSI_FOLDERS:
+            return MSI_FOLDERS[d]
+        if d not in directories or d in seen:
+            fail('unknown directory {}'.format(d))
+        r = directories[d]
+        parent = directory(r['Directory_Parent'], seen + (d,)) if r['Directory_Parent'] and r['Directory_Parent'] != d else ''
+        target = r['DefaultDir'].split(':')[0].split('|')[-1]
+        return parent if target in ('.', 'SourceDir', 'SOURCEDIR') else (parent + '/' + target).strip('/')
+    def winpath(p):
+        return 'C:\\' + p.replace('/', '\\') + ('\\' if p else '')
+    def fmt(value):
+        """MSI formatted string: [Property], [Directory], [#file], [~], [\\x]"""
+        def sub(m):
+            key = m.group(1)
+            if key == '~':
+                return '\0'
+            if key.startswith('\\'):
+                return key[1:]
+            if key[0] in '#!':
+                f = next((f for f in files if f['File'] == key[1:]), None)
+                if f is None:
+                    fail('formatted string refers to {}, which isn\'t installed'.format(key))
+                return winpath(directory(components[f['Component_']]['Directory_'])) + f['FileName'].split('|')[-1]
+            if key in props:
+                return props[key]
+            if key in directories or key in MSI_FOLDERS or key in overrides:
+                return winpath(directory(key))
+            fail('formatted string refers to {}, which isn\'t supported'.format(key))
+        return re.sub(r'\[([^\[\]]+)\]', sub, value or '')
+
+    custom = {r['Action']: r for r in db.table('CustomAction')}
+    sequence = sorted(db.table('InstallExecuteSequence'), key=lambda r: r['Sequence'] or 0)
+    # DirectX's redistributable, run by an action as DXSETUP.exe (an installed file): installed here
+    # as DXSETUP would, the DLLs from its cabinets into the system directories. Its own files (setup
+    # program, cabinets) aren't installed
+    dxsetup = []
+    for step in sequence:
+        a = step['Action']
+        if a not in custom or skipped(a):
+            continue
+        base = custom[a]['Type'] & 0x3f
+        if base == 19: # stops the install with an error message when its condition holds
+            continue
+        f = next((f for f in files if f['File'] == custom[a]['Source']), None)
+        if base == 18 and f and f['FileName'].split('|')[-1].lower() == 'dxsetup.exe':
+            dxsetup.append(f['Component_'])
+            continue
+        if base not in (35, 51):
+            fail('custom action {} (type {}) runs code; check what it does and skip it'.format(a, custom[a]['Type']))
+        if step['Condition']:
+            fail('custom action {} has a condition ({}); skip it'.format(a, step['Condition']))
+        value = fmt(custom[a]['Target'])
+        target = custom[a]['Source']
+        if base == 35 or target in directories:
+            # a Windows path back to one in drive_c
+            overrides[target] = value.replace('\\', '/').split(':', 1)[-1].strip('/')
+        else:
+            props[target] = value
+
+    def cart_path(component, p):
+        parts = [MSI_CASE.get(x.lower(), x) for x in p.split('/') if x]
+        # 32-bit components see syswow64 as system32
+        if not components[component]['Attributes'] & 0x100 and parts[:2] == ['windows', 'system32']:
+            parts[1] = 'syswow64'
+        return os.path.join(cart_dir, '.kazeta/var/prefix/drive_c', *parts)
+
+    # files, from the cabinets they're stored in (named by their File key)
+    cabs = os.path.join(work_dir, 'cabs')
+    for m in db.table('Media'):
+        cab = m['Cabinet']
+        if not cab:
+            continue
+        cab_path = os.path.join(streams, cab[1:]) if cab.startswith('#') else os.path.join(os.path.dirname(path), cab)
+        if not os.path.isfile(cab_path):
+            fail('cabinet {} not found'.format(cab))
+        subprocess.run(["7z", "x", "-y", "-bso0", "-bsp0", "-o" + cabs, cab_path], check=True)
+    for f in files:
+        src = os.path.join(cabs, f['File'])
+        if not os.path.isfile(src):
+            fail('file {} not found in the cabinets'.format(f['File']))
+        if f['Component_'] in dxsetup:
+            # its x86 cabinets go to syswow64, x64 ones to system32 (dxupdate.cab is DXSETUP's own)
+            cab_name = f['FileName'].split('|')[-1].lower()
+            arch = 'syswow64' if cab_name.endswith('_x86.cab') else 'system32' if cab_name.endswith('_x64.cab') else None
+            if arch:
+                dlls = os.path.join(work_dir, 'directx', cab_name)
+                subprocess.run(["7z", "x", "-y", "-bso0", "-bsp0", "-o" + dlls, src, "*.dll"], check=True)
+                sysdir = os.path.join(cart_dir, '.kazeta/var/prefix/drive_c/windows', arch)
+                os.makedirs(sysdir, exist_ok=True)
+                for dll in sorted(os.listdir(dlls)):
+                    shutil.copyfile(os.path.join(dlls, dll), os.path.join(sysdir, dll.lower()))
+            continue
+        if f['Component_'] in gac:
+            dst = os.path.normpath(os.path.join(cart_dir, str(source['gac'])))
+        else:
+            dst = cart_path(f['Component_'], directory(components[f['Component_']]['Directory_']))
+        os.makedirs(dst, exist_ok=True)
+        shutil.copyfile(src, os.path.join(dst, f['FileName'].split('|')[-1]))
+    for r in db.table('CreateFolder'):
+        if r['Component_'] in selected:
+            os.makedirs(cart_path(r['Component_'], directory(r['Directory_'])), exist_ok=True)
+
+    # directories added to PATH ([~] stands for its current value), for Wine's WINEPATH
+    for r in db.table('Environment'):
+        if r['Component_'] not in selected:
+            continue
+        var = r['Name'].lstrip('=+-!*')
+        parts = fmt(r['Value']).split('\0')
+        if var.upper() != 'PATH' or '!' in r['Name'][:-len(var)] or len(parts) != 2:
+            fail('environment variable {} ({}) isn\'t supported; skip component {}'.format(r['Name'], r['Value'], r['Component_']))
+        dirs = [d for d in (parts[0] + ';' + parts[1]).split(';') if d]
+        env['WINEPATH'] = ';'.join([p for p in env.get('WINEPATH', '').split(';') if p] + dirs)
+
+    # registry values, as a layer of the cart's registry
+    hives = {}
+    for r in db.table('Registry'):
+        c = r['Component_']
+        if c not in selected:
+            continue
+        root = r['Root']
+        if root == -1:
+            root = 2 if props.get('ALLUSERS') else 1
+        key = fmt(r['Key']).strip('\\')
+        wow64 = not components[c]['Attributes'] & 0x100
+        if root == 0: # HKEY_CLASSES_ROOT
+            key = 'Software\\Classes\\' + key
+            root = 2
+        if root == 2 and wow64 and key.lower().startswith('software\\') and not key.lower().startswith('software\\wow6432node'):
+            # 32-bit components see Software\Wow6432Node; in Classes only the keys Windows redirects
+            rest = key[len('software\\'):]
+            if not rest.lower().startswith('classes\\'):
+                key = 'Software\\Wow6432Node\\' + rest
+            elif rest.split('\\')[1].lower() in ('clsid', 'interface', 'typelib', 'appid', 'directshow', 'media type', 'mediafoundation'):
+                key = 'Software\\Classes\\Wow6432Node\\' + rest[len('classes\\'):]
+        if root not in (1, 2):
+            fail('registry root {} isn\'t supported'.format(r['Root']))
+        values = hives.setdefault('user.reg' if root == 1 else 'system.reg', {}).setdefault(key, {})
+        vname, raw = r['Name'], r['Value']
+        if raw is None and vname in ('+', '-', '*'):
+            continue # create the key (it is, with its values) or remove it when uninstalling
+        if raw is None and vname is None:
+            continue
+        value = fmt(raw)
+        if value.startswith('#x') or value.startswith('#X'):
+            data = 'hex:' + ','.join(value[2 + i:4 + i].lower() for i in range(0, len(value) - 2, 2))
+        elif value.startswith('#%'):
+            data = 'str(2):"{}"'.format(reg_escape(value[2:]))
+        elif value.startswith('##'):
+            data = '"{}"'.format(reg_escape(value[1:]))
+        elif value.startswith('#'):
+            data = 'dword:%08x' % (int(value[1:]) & 0xffffffff)
+        elif '\0' in value:
+            data = 'str(7):"{}"'.format(reg_escape('\0'.join(s for s in value.split('\0') if s) + '\0\0'))
+        else:
+            data = '"{}"'.format(reg_escape(value))
+        values['@' if not vname else '"{}"'.format(reg_escape(vname))] = data
+    for hive, keys in hives.items():
+        reg = os.path.join(cart_dir, '.kazeta/share/registry', hive + '.d', '45-msi-{}.reg'.format(name))
+        os.makedirs(os.path.dirname(reg), exist_ok=True)
+        with open(reg, 'w', encoding='utf-8') as f:
+            f.write(';; from {}\n'.format(os.path.basename(path)))
+            for key, values in keys.items():
+                f.write('\n[{}] 0\n'.format(reg_escape(key)))
+                for v, data in values.items():
+                    f.write('{}={}\n'.format(v, data))
+    print('{}: {} files, {} registry keys from features {}'.format(
+        os.path.basename(path), len(files), sum(len(k) for k in hives.values()), ' '.join(chosen)))
 
 
 try:
@@ -193,6 +524,8 @@ for source in game.get('sources', []):
         filetype = 'tar'
     elif path.endswith('.zip') or path.endswith('.sh') or path.endswith('-bin'):
         filetype = 'zip'
+    elif path.endswith('.msi'):
+        filetype = 'msi'
     elif path.endswith('.exe'):
         filetype = 'inno'
     elif path.endswith('.ico'):
@@ -209,6 +542,12 @@ for source in game.get('sources', []):
             subprocess.run(["unzip", "-q", path, "-d", staging_dir])
         case 'inno':
             subprocess.run(["innoextract", "--silent", "--progress=1", path, "-d", staging_dir])
+        case 'msi':
+            # installed into the prefix and the cart's registry; `include` names the MSI in a
+            # directory source (steam://), destination doesn't apply
+            msi = os.path.join(path, source['include']) if os.path.isdir(path) else path
+            install_msi(msi, source, dst_dir, staging_dir, game.setdefault('env', {}))
+            continue
         case 'icon':
             if 'include' not in source or 'destination' not in source:
                 print("ERROR: Provide 'include' and 'destination' fields for 'icon' type sources or set type to 'plain'")
@@ -231,7 +570,7 @@ for source in game.get('sources', []):
                 sys.exit(1)
             continue
         case _:
-            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'icon', 'dir', 'plain', 'inline', 'blizzard-install', 'bnupdate'".format(os.path.basename(path)))
+            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'msi', 'icon', 'dir', 'plain', 'inline', 'blizzard-install', 'bnupdate'".format(os.path.basename(path)))
             sys.exit(1)
 
     # exclude filter
