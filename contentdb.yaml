@@ -361,9 +361,9 @@
    id: elechead
    provider: gog
    platform: windows
-   xxh3sum: d180d999772f936f
+   xxh3sum: abc6236354352ed6
    exec: ElecHead.exe
-   runtime: windows-1.0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1456880/0fe9b14577f1f5c30b183fb50e7954e0fae041e4.ico"
        xxh3sum: d2a7c2bb57815298
