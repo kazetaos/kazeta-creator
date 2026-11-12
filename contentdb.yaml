@@ -240,9 +240,9 @@
    id: cuphead
    provider: steam
    platform: windows
-   xxh3sum: f2a991014ebb110d
+   xxh3sum: e9d265891566fada
    exec: Cuphead.exe
-   runtime: windows-1.0
+   runtime: windows
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/b6b265ec09d1d1b9ea935bd5d6b0f28a.ico"
        xxh3sum: 20843ee03cea3a76
