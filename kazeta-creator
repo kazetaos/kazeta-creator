@@ -54,6 +54,94 @@ def blizzard_path():
 
 
 #
+# Classic Mac (HFS) disc images, which 7z can't read (it only knows HFS+). Each file's data fork is
+# written under its name, a non-empty resource fork next to it as `<name>.rsrc`, the raw fork that
+# ScummVM's MacResManager reads. The image can start with an Apple partition map (CDs) or with the
+# volume itself (floppies). '/' in Mac names becomes ':', as macOS shows it
+def extract_hfs(path, out_dir):
+    import struct
+    with open(path, 'rb') as f:
+        img = f.read()
+    base = 0
+    if img[512:514] == b'PM':
+        for i in range(1, struct.unpack('>I', img[516:520])[0] + 1):
+            entry = img[i * 512:(i + 1) * 512]
+            if entry[48:80].split(b'\0')[0] == b'Apple_HFS':
+                base = struct.unpack('>I', entry[8:12])[0] * 512
+                break
+    mdb = img[base + 1024:base + 1024 + 162]
+    if mdb[:2] != b'BD':
+        sys.exit("ERROR: {} is not an HFS image".format(os.path.basename(path)))
+    block_size = struct.unpack('>I', mdb[20:24])[0]
+    first_block = base + struct.unpack('>H', mdb[28:30])[0] * 512
+
+    def extents(rec):
+        return [struct.unpack('>HH', rec[i:i + 4]) for i in range(0, 12, 4)]
+
+    def read_fork(exts, length, file_id=None, fork=0):
+        data = bytearray()
+        exts = list(exts)
+        i = 0
+        while len(data) < length:
+            if i == len(exts):  # the rest is in the extents overflow file
+                more = overflow.get((fork, file_id, sum(n for _, n in exts)))
+                if more is None:
+                    sys.exit("ERROR: missing extents in {}".format(os.path.basename(path)))
+                exts += more
+            start, count = exts[i]
+            i += 1
+            offset = first_block + start * block_size
+            data += img[offset:offset + count * block_size]
+        return bytes(data[:length])
+
+    def leaves(exts, length):
+        tree = read_fork(exts, length)
+        node_size = struct.unpack('>H', tree[32:34])[0]
+        node = struct.unpack('>I', tree[24:28])[0]  # first leaf
+        while node:
+            n = tree[node * node_size:(node + 1) * node_size]
+            for r in range(struct.unpack('>H', n[10:12])[0]):
+                start = struct.unpack('>H', n[node_size - 2 * (r + 1):node_size - 2 * r])[0]
+                key_len = n[start]
+                data = start + 1 + key_len
+                yield n[start + 1:data], n[data + data % 2:]  # records start at an even offset
+            node = struct.unpack('>I', n[0:4])[0]
+
+    overflow = {}
+    for key, rec in leaves(extents(mdb[134:146]), struct.unpack('>I', mdb[130:134])[0]):
+        fork, file_id, start = struct.unpack('>BIH', key[0:7])
+        overflow[(fork, file_id, start)] = extents(rec)
+
+    dirs = {}
+    files = []
+    for key, rec in leaves(extents(mdb[150:162]), struct.unpack('>I', mdb[146:150])[0]):
+        parent = struct.unpack('>I', key[1:5])[0]
+        name = key[6:6 + key[5]].decode('mac_roman').replace('/', ':')
+        if rec[0] == 1:
+            dirs[struct.unpack('>I', rec[6:10])[0]] = (parent, name)
+        elif rec[0] == 2:
+            files.append((parent, name, rec))
+
+    def dir_path(dir_id):
+        if dir_id == 2:  # the root folder, named after the volume
+            return ''
+        parent, name = dirs[dir_id]
+        return os.path.join(dir_path(parent), name)
+
+    for dir_id in dirs:
+        os.makedirs(os.path.join(out_dir, dir_path(dir_id)), exist_ok=True)
+    for parent, name, rec in files:
+        file_id = struct.unpack('>I', rec[20:24])[0]
+        target = os.path.join(out_dir, dir_path(parent), name)
+        with open(target, 'wb') as f:
+            f.write(read_fork(extents(rec[74:86]), struct.unpack('>I', rec[26:30])[0], file_id, 0))
+        rsrc_len = struct.unpack('>I', rec[36:40])[0]
+        if rsrc_len:
+            with open(target + '.rsrc', 'wb') as f:
+                f.write(read_fork(extents(rec[86:98]), rsrc_len, file_id, 0xff))
+
+
+#
 # MSI packages, installed from their tables instead of with msiexec (which would run in Wine and write
 # the build machine's hardware into the registry). Files go to the prefix, registry values to a
 # registry layer of the cart (see the windows-3.0 runtime), directories added to PATH to the cart's
@@ -540,6 +628,8 @@ for source in game.get('sources', []):
             subprocess.run(["tar", "-xf", path, "-C", staging_dir])
         case 'zip':
             subprocess.run(["unzip", "-q", path, "-d", staging_dir])
+        case 'hfs':
+            extract_hfs(path, staging_dir)
         case 'inno':
             subprocess.run(["innoextract", "--silent", "--progress=1", path, "-d", staging_dir])
         case 'msi':
@@ -570,7 +660,7 @@ for source in game.get('sources', []):
                 sys.exit(1)
             continue
         case _:
-            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'msi', 'icon', 'dir', 'plain', 'inline', 'blizzard-install', 'bnupdate'".format(os.path.basename(path)))
+            print("ERROR: Unknown file type for file: \"{}\"\nFile type must be one of: 'tar', 'zip', 'inno', 'hfs', 'msi', 'icon', 'dir', 'plain', 'inline', 'blizzard-install', 'bnupdate'".format(os.path.basename(path)))
             sys.exit(1)
 
     # exclude filter
