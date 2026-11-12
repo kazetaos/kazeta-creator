@@ -411,7 +411,10 @@ subprocess.run(["mkfs.erofs", "-T", timestamp, "-U", uuid, "-zlz4"] + dedupe + [
 subprocess.run(["rm", "-rf", tmp_dir, game['id']])
 
 if 'xxh3sum' in game:
-    xxh3_check(kzp, game['xxh3sum'])
+    if xxh3_check(kzp, game['xxh3sum']):
+        print("OK: xxh3sum matches: {}".format(game['xxh3sum']))
+else:
+    print("WARNING: recipe has no xxh3sum; build not verified: {}".format(xxh3sum(kzp)))
 
 # carts name their runtime, so runtimes keep their plain name
 if is_runtime:
