@@ -411,10 +411,9 @@
    steam_app_id: 62000
    provider: steam
    platform: windows
-   xxh3sum: d62abd798c04bf41
+   xxh3sum: 9d5e61fd6c8f2660
    exec: flightControl_win32.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
      LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
      rm steam_api_original.dll
