@@ -532,8 +532,9 @@
    id: grapple-dogs-cosmic-canines
    provider: steam
    platform: windows
+   xxh3sum: 9c21930ed234f598
    exec: GrappleDogsCosmicCanines.exe
-   runtime: windows-1.0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2278790/581e75e34cbfc8b070eb16401689e1273e5ab224.ico"
        xxh3sum: 03bd7630b3e43e69
