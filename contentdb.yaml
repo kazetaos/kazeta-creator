@@ -5,6 +5,7 @@
    xxh3sum: 6642b965b74db19c
    exec: '"Animal Well.exe"'
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/813230/740eaab77c0c9e5eb68a320dd0f1b8e795a0c15a.ico"
        include: 1
@@ -142,6 +143,7 @@
    exec: Bioshock.exe -dx9
    path: Builds/Release
    runtime: windows
+   timestamp: 0
    gamescope: --force-grab-cursor
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/7670/2d90881c6067287da04259ec3c205061f270dd55.ico"
@@ -167,6 +169,7 @@
    xxh3sum: dedc789a81cba19b
    exec: BOMCAT.exe
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/3923130/5c66cf06ed486aec9de3327fca1e13499e345764.ico"
        xxh3sum: d225a466e25e8ca2
@@ -181,6 +184,7 @@
    xxh3sum: d26903a196988275
    exec: '"Boomerang Fu.exe"'
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/965680/8d8f8c40f211f3f04be6e6a075329613612461c7.ico"
        xxh3sum: 31ab49d036cb3677
@@ -195,6 +199,7 @@
    xxh3sum: 9e917a2bb8f2dc4d
    exec: '"Cat Quest.exe"'
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/593280/43f94561d5ddbb26a3c62b480df7db121861a96a.ico"
        xxh3sum: 24e7389e3dc41126
@@ -243,6 +248,7 @@
    xxh3sum: e9d265891566fada
    exec: Cuphead.exe
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/b6b265ec09d1d1b9ea935bd5d6b0f28a.ico"
        xxh3sum: 20843ee03cea3a76
@@ -278,6 +284,7 @@
    xxh3sum: 503a32df1316cd2e
    exec: dirt2.exe
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/12840/4fd0dc55f116ea2c8bc79c794b7bfe0e0a4fdff1.ico"
        xxh3sum: 6f404cb031cfe8a9
@@ -341,6 +348,7 @@
    xxh3sum: fd03d5ae63021b79
    exec: Morrowind.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/22320/6db49c87ce494fbc4115a8f1b21cfd177849ef78.ico"
        xxh3sum: 46e39f810b8cd7f1
@@ -364,6 +372,7 @@
    xxh3sum: abc6236354352ed6
    exec: ElecHead.exe
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1456880/0fe9b14577f1f5c30b183fb50e7954e0fae041e4.ico"
        xxh3sum: d2a7c2bb57815298
@@ -405,6 +414,7 @@
    xxh3sum: d62abd798c04bf41
    exec: flightControl_win32.exe
    runtime: windows-1.0
+   timestamp: 0
    post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
      LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
      rm steam_api_original.dll
@@ -439,6 +449,7 @@
    xxh3sum: d32be7c84fa757c4
    exec: Flower.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/f72a850f3c3cf816872370e6a6e583c2/32/32x32.png"
        xxh3sum: 1ffc7259f7ee8152
@@ -459,6 +470,7 @@
    xxh3sum: bc5f95e2fe67c42f
    exec: FP2.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/9cb6cb6e1c6a47b97aaf0f2a1ec3d2de/32/32x32.png"
        xxh3sum: 76092ae58cecc7c0
@@ -511,6 +523,7 @@
    xxh3sum: 236e35c09efa83fb
    exec: '"Grapple Dog.exe"'
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1345860/6538859b2416b508657bac751d697e142d002d5d.ico"
        xxh3sum: fb1c29b78ccde068
@@ -559,6 +572,7 @@
    xxh3sum: d3d17a8d9639be07
    exec: x64Vk/Hades.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1145360/c2af83dde08c0636a1cd511abd0f9290913e6249.ico"
        xxh3sum: 4a2c182785585d41
@@ -594,6 +608,7 @@
    xxh3sum: 5ff919bcce0ab7c0
    exec: HorizonChase2/Binaries/Win64/HorizonChase2-Win64-Shipping.exe -AUTH_LOGIN=unused -AUTH_PASSWORD= -AUTH_TYPE=exchangecode -epicapp=97991054c39843cba2e61d5347333433 -epicenv=Prod -EpicPortal -epicusername=Kazeta -epicuserid=00000000000000000000000000000000 -epiclocale=en -epicsandboxid=e24498202a7b4c80af7e3c18e63a0b34
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/6dac798522a6a849eb3ba746a9542a25/32/32x32.png"
        xxh3sum: 5a9ce77e9146612f
@@ -629,6 +644,7 @@
    xxh3sum: 09f5ef25f0a60419
    exec: '"Iron Nest Heavy Turret Simulator.exe"'
    runtime: windows-2.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2950790/9e5fd22a0678b6d1b82850f2f95a83f82f2a1c96.ico"
        xxh3sum: f37cb57174d8ce68
@@ -743,6 +759,7 @@
    platform: windows
    exec: LEGOStarWarsSaga.exe
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/32440/f808f62c96a6f95e825789e4edd76481ab9dab54.ico"
        xxh3sum: 17d476b7f10ca4d6
@@ -778,6 +795,7 @@
    xxh3sum: b0a916162ecb3c8a
    exec: '"Little Kitty, Big City.exe"'
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1177980/f44eb237ea7787fd963c6ef220c74a05afdb7440.ico"
        xxh3sum: ebe3c67bd2c0e224
@@ -792,6 +810,7 @@
    xxh3sum: 7318492edfd524ba
    exec: steamclient_loader.exe # goldberg's loader; Magicka checks the hash of steam_api.dll, so the original stays and talks to goldberg's steamclient
    runtime: windows-1.0
+   timestamp: 0
    post: |
      # xna 3.1 from the redist steam ships, unpacked instead of installed with msiexec, which writes the
      # build machine's hardware into the registry
@@ -865,6 +884,7 @@
    xxh3sum: ef402e69717f1932
    exec: TheMessenger.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/764790/ecff89a818b3c47ad2f8d271047ad1d57524f6c3.ico"
        xxh3sum: 8aedaa248e946364
@@ -967,6 +987,7 @@
    xxh3sum: be9ce82c7b7b4b9e
    exec: '"Monster Trampoline.exe"'
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/939560/f7748289b1f12cd2a5815c7c52027a09c9b657c3.zip"
        xxh3sum: 3556be7ff29e8065
@@ -982,6 +1003,7 @@
    xxh3sum: ee01f3b746200954
    exec: MKKE.exe
    runtime: windows-1.0
+   timestamp: 0
    post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
      LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
      rm steam_api_original.dll
@@ -1043,6 +1065,7 @@
    xxh3sum: af99d8271c57a6f4
    exec: Ooo.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2721890/8f09827eacf1315f537a1e67f874588d49e5f323.ico"
        xxh3sum: 68c34ac1aca807de
@@ -1191,6 +1214,7 @@
    xxh3sum: 7e6f772781d05add
    exec: bhd.exe
    runtime: windows-2.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/304240/6ff98f5489411e48f6aa191ba5b11c71e8d11101.ico"
        xxh3sum: da9be862f1b68e2c
@@ -1256,6 +1280,7 @@
    xxh3sum: 6b53bd7886659f03
    exec: RiverCityGirls.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1049320/d1a5e23b945f9c6eed029b5095ffcc3a909b5d1d.ico"
        xxh3sum: bbfa1ee097f171e9
@@ -1291,6 +1316,7 @@
    xxh3sum: 2fc7f682100cd1b8
    exec: ROLLERDROME.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1294420/9e2dd0bc2a892bca2ede7f41793000205a608845.ico"
        xxh3sum: d195b5ec83517eda
@@ -1312,6 +1338,7 @@
    xxh3sum: 776f3928059208a3
    exec: SeaOfStars.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1244090/436ea884e17a3a81d6d68d7cca19fae0312ff53d.zip"
        xxh3sum: 45d2b452a89aac40
@@ -1384,6 +1411,7 @@
    xxh3sum: 44e9ebebdf40f4de
    exec: Base/Binaries/Win64EOS/CivilizationVI.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/b2a223f097589a3682d3221d102fc52e/8/32x32.png"
        xxh3sum: 81caa638c921f31e
@@ -1413,6 +1441,7 @@
    xxh3sum: 205997185b85445c
    exec: SkydriftInfinity.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/827330/6879b90e5b41839ddb44496b994762accd893821.ico"
        xxh3sum: 35459cade9c57b8c
@@ -1434,6 +1463,7 @@
    xxh3sum: e28ae0d67acf2852
    exec: '"Snakebird Complete.exe"'
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/357300/eb867fcf9b304ce6e2a4afa39e354e347f211870.zip"
        xxh3sum: b10ec8404d3d867e
@@ -1508,6 +1538,7 @@
    xxh3sum: 3fd4fb7126edaab4
    exec: Spelunky.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/239350/5453ead5e9276bca0be1aa217053d3129b8fa221.ico"
        xxh3sum: 539c93c78559559c
@@ -1527,6 +1558,7 @@
    xxh3sum: a8167e0df7a6ba8d
    exec: StarCraft.exe
    runtime: windows-1.0
+   timestamp: 0
    gamescope: --filter pixel --scaler integer
    post: | # a placeholder CD key: the game needs the key files, but doesn't check the key offline
      rm bnupdate.exe BlizzardError.exe SystemSurvey.exe
@@ -1637,6 +1669,7 @@
    xxh3sum: a6053c64db917154
    exec: ThankYouBusDriver/Binaries/Win64/ThankYouBusDriver-Win64-Shipping.exe
    runtime: windows
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/5067360/3f7882f77425940cd691b37ede08b7bb5a91ecfa.ico"
        xxh3sum: 4a5f008764fe9f8a
@@ -1655,6 +1688,7 @@
    xxh3sum: 505b7ae9d159d539
    exec: TinyThor.exe
    runtime: windows-1.0
+   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/541310/308f1c3a03ed9ecf78ebb4d44b369cb0961e389e.ico"
        xxh3sum: 3fc41a6d11a63075
@@ -1709,7 +1743,6 @@
    xxh3sum: 67376c23b2ced439
    exec: TromboneChamp.exe
    runtime: windows-1.0
-   timestamp: 315532800 # mono fails to load assemblies with a zero mtime
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1059990/76b979640856f9936435a5d643538294b9130db6.ico"
        xxh3sum: 21cec54ba93de23c
@@ -1747,6 +1780,7 @@
    xxh3sum: 466371130f065277
    exec: SSFIV.exe
    runtime: windows-1.0
+   timestamp: 0
    post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
      LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
      rm steam_api_original.dll
@@ -1790,6 +1824,7 @@
    xxh3sum: 9c4a69f4044b4593
    exec: '"Warcraft II BNE.exe"'
    runtime: windows-1.0
+   timestamp: 0
    gamescope: --filter pixel --scaler integer
    sources:
     - uri: "https://cdn2.steamgriddb.com/icon/ef602a5ddfe0a4b860743ce934d2e87b/32/32x32.png"
