@@ -445,10 +445,9 @@
    id: flower
    provider: gog
    platform: windows
-   xxh3sum: d32be7c84fa757c4
+   xxh3sum: 2618b1009c0cf043
    exec: Flower.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/f72a850f3c3cf816872370e6a6e583c2/32/32x32.png"
        xxh3sum: 1ffc7259f7ee8152
