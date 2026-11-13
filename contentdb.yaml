@@ -465,10 +465,9 @@
    id: freedom-planet-2
    provider: steam
    platform: windows
-   xxh3sum: bc5f95e2fe67c42f
+   xxh3sum: c815209f7270325f
    exec: FP2.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/9cb6cb6e1c6a47b97aaf0f2a1ec3d2de/32/32x32.png"
        xxh3sum: 76092ae58cecc7c0
