@@ -517,10 +517,9 @@
    id: grapple-dog
    provider: steam
    platform: windows
-   xxh3sum: 236e35c09efa83fb
+   xxh3sum: 78bdb64048931487
    exec: '"Grapple Dog.exe"'
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1345860/6538859b2416b508657bac751d697e142d002d5d.ico"
        xxh3sum: fb1c29b78ccde068
