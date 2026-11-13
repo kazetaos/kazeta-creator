@@ -566,10 +566,9 @@
    id: hades
    provider: steam
    platform: windows
-   xxh3sum: d3d17a8d9639be07
+   xxh3sum: 61400eca3d5f34a9
    exec: x64Vk/Hades.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1145360/c2af83dde08c0636a1cd511abd0f9290913e6249.ico"
        xxh3sum: 4a2c182785585d41
