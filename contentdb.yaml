@@ -637,10 +637,9 @@
    id: iron-nest
    provider: gog
    platform: windows
-   xxh3sum: 09f5ef25f0a60419
+   xxh3sum: 858fce610d0fa653
    exec: '"Iron Nest Heavy Turret Simulator.exe"'
-   runtime: windows-2.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2950790/9e5fd22a0678b6d1b82850f2f95a83f82f2a1c96.ico"
        xxh3sum: f37cb57174d8ce68
