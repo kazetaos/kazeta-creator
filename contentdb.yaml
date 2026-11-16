@@ -873,6 +873,35 @@
        include: experimental_steamclient/steamclient64.dll # the loader refuses to start without it
        destination: goldberg_steamclient64.dll
 
+ - name: "MARVEL Cosmic Invasion"
+   id: marvel-cosmic-invasion
+   xxh3sum: c19c83e298cd11d9
+   provider: steam
+   platform: linux
+   exec: ./Game
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2753970/5fc7bafabd40845ea31a3ee354cc56c5ae6454ff.ico"
+       xxh3sum: 54d43b62286c15d7
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://MARVEL Cosmic Invasion"
+       exclude: # the windows build's native libraries, launcher, and files left over from running the game
+         - EOSSDK-Win64-Shipping.dll
+         - FAudio.dll
+         - fmod.dll
+         - fmodstudio.dll
+         - FNA3D.dll
+         - libpng16-16.dll
+         - libtheorafile.dll
+         - MojoShader.dll
+         - SDL2.dll
+         - SDL2_image.dll
+         - steam_api64.dll
+         - zlib1.dll
+         - Launcher.exe
+         - log.txt
+
  - name: "The Messenger"
    id: the-messenger
    provider: gog
