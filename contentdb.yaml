@@ -782,10 +782,9 @@
    id: little-kitty-big-city
    provider: steam
    platform: windows
-   xxh3sum: b0a916162ecb3c8a
+   xxh3sum: 31084b735f83ac78
    exec: '"Little Kitty, Big City.exe"'
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1177980/f44eb237ea7787fd963c6ef220c74a05afdb7440.ico"
        xxh3sum: ebe3c67bd2c0e224
