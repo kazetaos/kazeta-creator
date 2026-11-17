@@ -166,7 +166,7 @@
    id: bomcat
    provider: steam
    platform: windows
-   xxh3sum: dedc789a81cba19b
+   xxh3sum: e3cea8ddc96efd7e
    exec: BOMCAT.exe
    runtime: windows
    timestamp: 0
