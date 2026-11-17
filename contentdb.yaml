@@ -181,7 +181,7 @@
    id: boomerang-fu
    provider: steam
    platform: windows
-   xxh3sum: d26903a196988275
+   xxh3sum: 66a012eb87c8b0d0
    exec: '"Boomerang Fu.exe"'
    runtime: windows
    timestamp: 0
