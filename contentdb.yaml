@@ -460,7 +460,7 @@
    id: freedom-planet-2
    provider: steam
    platform: windows
-   xxh3sum: c815209f7270325f
+   xxh3sum: cde355e443b06ed7
    exec: FP2.exe
    runtime: windows
    sources:
