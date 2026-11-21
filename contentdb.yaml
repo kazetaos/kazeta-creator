@@ -284,6 +284,28 @@
      - uri: "steam://Cuphead"
        exclude: steam_api64.dll
 
+ - name: "Cursed to Golf"
+   id: cursed-to-golf
+   provider: gog
+   platform: windows
+   xxh3sum: 8ca276fc77d13df4
+   exec: '"Cursed to Golf.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1726120/0b564c6f5ec1a16db176c24d99666917d817d71e.ico"
+       xxh3sum: c3894cdeab2763ff
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_cursed_to_golf_2.0.1_(70308).exe"
+       xxh3sum: cd321bed8412a0d7
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler32.exe
+
  - name: "Cyber Shadow"
    id: cyber-shadow
    provider: humble
