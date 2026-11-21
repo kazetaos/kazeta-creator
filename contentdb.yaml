@@ -1172,6 +1172,30 @@
          - __redist
          - tmp
 
+ - name: "Little Nightmares II"
+   id: little-nightmares-ii
+   provider: gog
+   platform: windows
+   xxh3sum: 9cc5950924c5c4a7
+   exec: '"Helios/Binaries/Win64/Little Nightmares II.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/860510/d088c44f26cea361433d82d954e54d0b5c4793fd.ico"
+       xxh3sum: 6ab12f7c3cd4360e
+       include: 4
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_little_nightmares_ii_5.8_(64bit)_(50551)-1.bin"
+       xxh3sum: aa52d72df261ecb6
+       process: false
+     - uri: "file://setup_little_nightmares_ii_5.8_(64bit)_(50551).exe"
+       xxh3sum: 01fcceb423597d3a
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Lost in Play"
    id: lost-in-play
    provider: gog
