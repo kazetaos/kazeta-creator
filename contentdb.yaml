@@ -411,6 +411,27 @@
          - __redist
          - tmp
 
+ - name: "Evoland"
+   id: evoland
+   provider: gog
+   platform: windows
+   xxh3sum: 82fb039372314cd5
+   exec: Evoland.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1020470/e670ad7db3d21f4a8dbd803e5943c336660017e9.ico"
+       xxh3sum: 4052b34d36c9a2b8
+       include: 3
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_evoland_1.1.2490_(20677).exe"
+       xxh3sum: 1a73b27998989cbb
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "FEZ"
    id: fez
    provider: humble
