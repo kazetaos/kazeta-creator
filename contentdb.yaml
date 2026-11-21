@@ -1696,6 +1696,32 @@
          - __redist
          - tmp
 
+ - name: "Paradise Killer"
+   id: paradise-killer
+   provider: gog
+   platform: windows
+   xxh3sum: dc578790811bcf3a
+   exec: ParadiseKiller/Binaries/Win64/ParadiseKiller-Win64-Shipping.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1160220/551140cbf5bcc15276860e5c85639d4699b59282.ico"
+       xxh3sum: 01183b5a5f226897
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_paradise_killer_1.3.0_(85671)-1.bin"
+       xxh3sum: 59a039f714b7151a
+       process: false
+     - uri: "file://setup_paradise_killer_1.3.0_(85671).exe"
+       xxh3sum: b55704d032aed878
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - Engine/Extras/Redist
+         - Engine/Binaries/Win64/CrashReportClient.exe
+
  - name: "Pepper Grinder"
    id: pepper-grinder
    provider: gog
