@@ -804,6 +804,27 @@
          - x64
          - x86
 
+ - name: "Hero's Hour"
+   id: heros-hour
+   provider: gog
+   platform: windows
+   xxh3sum: 7d023ef3a12012e2
+   exec: '"Hero''s Hour.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1656780/9007b14800961a88b0f56c900f3987d86f0a6827.ico"
+       xxh3sum: c86fff10624384ba
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_heros_hour_2.8.3_(93180).exe"
+       xxh3sum: c3911a46400b0d79
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Hollow Knight"
    id: hollow-knight
    provider: gog
