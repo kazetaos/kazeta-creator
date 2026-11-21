@@ -1099,6 +1099,35 @@
        include: release/regular/x64/libsteam_api.so
        destination: JSB_Data/Plugins/
 
+ - name: "LEGO Batman: The Videogame"
+   id: lego-batman
+   provider: gog
+   platform: windows
+   xxh3sum: 43c6b49c428244f3
+   exec: LEGOBatman.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/21000/0b898140fef2dda205cc1a8c64aaa6bca11d0962.ico"
+       xxh3sum: bff796a94975e0d9
+       include: 3
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_lego_batmantm_the_videogame_1.0_gog_(79616)-1.bin"
+       xxh3sum: 1c62bb2dcfcfb87e
+       process: false
+     - uri: "file://setup_lego_batmantm_the_videogame_1.0_gog_(79616)-2.bin"
+       xxh3sum: 0288b921baef53a7
+       process: false
+     - uri: "file://setup_lego_batmantm_the_videogame_1.0_gog_(79616).exe"
+       xxh3sum: bf6ea9d62d022161
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - language_setup*
+         - webcache.zip
+
  - name: "LEGO Star Wars: The Complete Saga"
    id: lego-star-wars-complete-saga
    xxh3sum: 8c0786b62ba69729
