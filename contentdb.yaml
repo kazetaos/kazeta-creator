@@ -1469,6 +1469,61 @@
        destination: org.kazeta.icon.png
      - uri: "epic://SnakebirdCompletezp91Z"
 
+ - name: "Sonic Generations"
+   id: sonic-generations
+   provider: steam
+   platform: windows
+   xxh3sum: 2929d6c9088f3dfa
+   exec: SonicGenerations.exe
+   runtime: windows
+   gamescope: -w 1920 -h 1080 # the resolution in GraphicsConfig.cfg must be one of the screen's modes
+   post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
+     LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
+     rm steam_api_original.dll
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/71340/e9703c38648b6ac6fa1a06237292e0802c74c5b7.ico"
+       xxh3sum: ec78cf495fc5d85c
+       include: 5
+       destination: org.kazeta.icon.png
+     - uri: "steam://Sonic Generations"
+       exclude:
+         - redist
+         - installscript.vdf
+         - ConfigurationTool.exe
+         - steam_api.dll
+     - uri: "steam://Sonic Generations"
+       include: steam_api.dll
+       destination: steam_api_original.dll
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: steam_api.dll
+     # what Steam's install script writes; without the locale the game says its files are corrupt
+     - type: inline
+       destination: .kazeta/share/registry/system.reg.d/50-cart.reg
+       content: |
+         [Software\\Wow6432Node\\Sega\\Sonic Generations] 0
+         "exe_path"="X:\\SonicGenerations.exe"
+         "install_path"="X:\\"
+         "locale"="1033"
+         "SaveLocation"="My Games\\Sonic Generations\\Saved Games"
+     # the configuration tool's settings. The game checks the GPU name against the display devices
+     # (skipped when the monitor line is empty) and against D3D9's adapter description, which
+     # dxvk.conf sets, so the file works on any machine. After the resolution: FXAA, widescreen,
+     # high shadows, high reflections (1 each), V-Sync on (0)
+     - type: inline
+       destination: GraphicsConfig.cfg
+       content: "Do not manually edit this file, use the configuration tool.\r\nKazeta\r\n\\\\.\\DISPLAY1\r\n1920.1080.60\r\n1\r\n1\r\n1\r\n1\r\n0\r\n00000000-000b-0000-0000-000000000000\r\n\r\n1515474505\r\n"
+     # the audio device's name and DirectSound GUID (written by ConfigurationTool.exe); without it
+     # the game has no sound. DSDEVID_DefaultPlayback is the default output on any machine
+     - type: inline
+       destination: AudioConfig.cfg
+       content: "Kazeta\r\nDEF00000-9C6D-47ED-AAF1-4DDA8F2B5C03\r\n"
+     - type: inline
+       destination: dxvk.conf
+       content: |
+         d3d9.customDeviceDesc = "Kazeta"
+
  - name: "Sonic Mania"
    id: sonic-mania
    provider: steam
