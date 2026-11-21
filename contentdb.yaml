@@ -1313,6 +1313,28 @@
      - uri: "https://github.com/jorio/Nanosaur/releases/download/v1.4.4/Nanosaur-1.4.4-linux-x86_64.AppImage"
        xxh3sum: 9f588952e05fcd36
 
+ - name: "Neo Cab"
+   id: neo-cab
+   provider: gog
+   platform: windows
+   xxh3sum: 6743e92c5c3706d6
+   exec: com.chanceagency.neocab.store.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/794540/640600ec03c15ab941f5130190e8b7d8f689c81a.ico"
+       xxh3sum: 1b687433f23a8572
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_neo_cab_1.0_(89726).exe"
+       xxh3sum: ef8bc02b80f8981e
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "New Super Lucky's Tale"
    id: new-super-luckys-tale
    provider: steam
