@@ -1240,6 +1240,27 @@
      - uri: "https://github.com/jorio/OttoMatic/releases/download/4.0.1/OttoMatic-4.0.1-linux-x86_64.AppImage"
        xxh3sum: 3633498a84def4a1
 
+ - name: "Overcooked: Gourmet Edition"
+   id: overcooked
+   provider: gog
+   platform: windows
+   xxh3sum: c9383862d7eadf12
+   exec: Overcooked.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/448510/2337f2b9192f74b220bcbdc1c48d3d79b1ef7d60.ico"
+       xxh3sum: 16f0fe038a0c2a1d
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_overcooked_gourmet_edition_1.1_(28358).exe"
+       xxh3sum: 2e8cbf9be1137011
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Pepper Grinder"
    id: pepper-grinder
    provider: gog
