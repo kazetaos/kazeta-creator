@@ -338,11 +338,23 @@
    id: elder-scrolls-iii-goty
    provider: gog
    platform: windows
-   xxh3sum: fd03d5ae63021b79
+   xxh3sum: 31c5cde63602c0be
    exec: Morrowind.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
+   # 1024x768 as in the registry below: the game fails ("Could not match desired fullscreen mode") if
+   # the display lacks its resolution. 4:3 is also the aspect its field of view and splash screens are
+   # made for, and its menus and cursor aren't scaled
+   gamescope: -w 1024 -h 768 --force-grab-cursor
    sources:
+     # the display settings Morrowind's launcher writes; the game needs the key even with its
+     # default values (without it: "Font 0 not found in .\Morrowind.ini")
+     - type: inline
+       destination: .kazeta/share/registry/system.reg.d/50-cart.reg
+       content: |
+         [Software\\Wow6432Node\\Bethesda Softworks\\Morrowind] 0
+         "Screen Width"=dword:00000400
+         "Screen Height"=dword:00000300
+         "Screen Depth"=dword:00000020
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/22320/6db49c87ce494fbc4115a8f1b21cfd177849ef78.ico"
        xxh3sum: 46e39f810b8cd7f1
        include: 2
