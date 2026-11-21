@@ -2176,6 +2176,37 @@
        destination: org.kazeta.icon.png
      - uri: "steam://TMNT"
 
+ - name: "Thief Gold"
+   id: thief-gold
+   provider: gog
+   platform: windows
+   xxh3sum: 1b5c669037b65683
+   exec: thief-gold.bat
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/211600/efea00bac2e5299c3f5ccad9df877d81059e45c8.ico"
+       xxh3sum: d0933d7506366841
+       include: 3
+       destination: org.kazeta.icon.png
+     # GOG starts the game from Thief Gold
+     - type: inline
+       destination: thief-gold.bat
+       content: "cd Thief Gold\r\n\"THIEF.EXE\"\r\n"
+     - uri: "file://setup_thief_gold_1.27_gog_v2_(92828)-1.bin"
+       xxh3sum: add3565a44278784
+       process: false
+     - uri: "file://setup_thief_gold_1.27_gog_v2_(92828).exe"
+       xxh3sum: 57195f0aaa1c61a9
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - Launcher.exe
+         - Thief The Dark Project
+         - Thief Gold/OpenAL32.dll # Creative's OpenAL router, which finds no device in Wine; the runtime has OpenAL Soft
+
  - name: "Transistor"
    id: transistor
    provider: steam
