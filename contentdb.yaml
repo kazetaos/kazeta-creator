@@ -1690,10 +1690,9 @@
    id: tiny-thor
    provider: gog
    platform: windows
-   xxh3sum: 505b7ae9d159d539
+   xxh3sum: dc13cb0288d728e0
    exec: TinyThor.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/541310/308f1c3a03ed9ecf78ebb4d44b369cb0961e389e.ico"
        xxh3sum: 3fc41a6d11a63075
