@@ -293,6 +293,43 @@
          - tmp
          - UnityCrashHandler64.exe
 
+ - name: "Deus Ex GOTY Edition"
+   id: deus-ex-goty
+   provider: gog
+   platform: windows
+   xxh3sum: ae96fb17ff89f897
+   exec: deusex.bat
+   runtime: windows
+   ini:
+     # what the game writes after its setup wizard (renderer choice), which it runs otherwise; GOG's
+     # DeusEx.ini already has the renderer (nGlide)
+     System/DeusEx.ini:
+       FirstRun: {FirstRun: 1100}
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/6910/f6b79a089396957a96e06d6a46da59bbe8d6fe60.ico"
+       xxh3sum: 5d871e2f42d82868
+       include: 1
+       destination: org.kazeta.icon.png
+     # Unreal Engine 1 finds its data relative to the working directory
+     - type: inline
+       destination: deusex.bat
+       content: "cd System\r\nDeusEx.exe\r\n"
+     # what GOG's installer writes (goggame-1207658995.script), with the cart as the game's folder
+     - type: inline
+       destination: .kazeta/share/registry/system.reg.d/50-cart.reg
+       content: |
+         [Software\\Wow6432Node\\Unreal Technology\\Installed Apps\\Deus Ex] 0
+         "Folder"="X:\\"
+         "Version"="1112fm"
+     - uri: "file://setup_deus_ex_goty_1.112fm(revision_1.6.3.0)_(51757).exe"
+       xxh3sum: 47b458abca4ce510
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "DiRT 2"
    id: dirt-2
    provider: steam
