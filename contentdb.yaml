@@ -178,10 +178,9 @@
    id: boomerang-fu
    provider: steam
    platform: windows
-   xxh3sum: 66a012eb87c8b0d0
+   xxh3sum: b95a71e396a77241
    exec: '"Boomerang Fu.exe"'
    runtime: windows
-   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/965680/8d8f8c40f211f3f04be6e6a075329613612461c7.ico"
        xxh3sum: 31ab49d036cb3677
