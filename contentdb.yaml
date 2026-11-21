@@ -1325,10 +1325,9 @@
    id: rollerdrome
    provider: gog
    platform: windows
-   xxh3sum: 2fc7f682100cd1b8
+   xxh3sum: 522052807b3a0535
    exec: ROLLERDROME.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1294420/9e2dd0bc2a892bca2ede7f41793000205a608845.ico"
        xxh3sum: d195b5ec83517eda
