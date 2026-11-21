@@ -1716,6 +1716,34 @@
          - data/noarch/game/icon.bmp
          - data/noarch/game/run.sh
 
+ - name: "Planet of Lana"
+   id: planet-of-lana
+   provider: gog
+   platform: windows
+   xxh3sum: 9ef1503260417a14
+   exec: '"Planet of Lana.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1608230/b95db26a2659af0dc728fb1800fa762afcf0fe5e.ico"
+       xxh3sum: 3704694babf8e75e
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_planet_of_lana_1.1.1.0_gog_v1_(92530)-1.bin"
+       xxh3sum: 0abac47b3a95c447
+       process: false
+     - uri: "file://setup_planet_of_lana_1.1.1.0_gog_v1_(92530)-2.bin"
+       xxh3sum: 1f36c1552872abf9
+       process: false
+     - uri: "file://setup_planet_of_lana_1.1.1.0_gog_v1_(92530).exe"
+       xxh3sum: eae875a6a0c05e05
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "Portal"
    id: portal
    steam_app_id: 400
