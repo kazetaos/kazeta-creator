@@ -3223,6 +3223,28 @@
        include: linux/x86_64/libsteam_api.so
        destination: VampireSurvivors_Data/Plugins/
 
+ - name: "Venba"
+   id: venba
+   provider: gog
+   platform: windows
+   xxh3sum: 01fe6ad80b4e0612
+   exec: Venba.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1491670/ec8713b09908331752395516b356fa55b230be1b.ico"
+       xxh3sum: c138de7166bbc3f3
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_venba_2025.10.06_(85625).exe"
+       xxh3sum: dc4947425d063372
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler32.exe
+
  - name: "World of Goo"
    id: world-of-goo
    provider: gog
