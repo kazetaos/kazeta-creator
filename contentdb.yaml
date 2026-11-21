@@ -1881,6 +1881,21 @@
        include: data/noarch/game/*
        exclude: data/noarch/game/goggame*
 
+ - name: "Untitled Goose Game"
+   id: untitled-goose-game
+   provider: steam
+   platform: windows
+   xxh3sum: 90f1f9aacc3fbbdf
+   exec: Untitled.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/837470/46aeb3c0966fa0922f32ebfafbf8f8b1e9103df3.ico"
+       xxh3sum: e362749f38f7f434
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "steam://Untitled Goose Game"
+       exclude: UnityCrashHandler64.exe
+
  - name: "Warcraft II: Battle.net Edition"
    id: warcraft-ii-bne
    provider: gog
