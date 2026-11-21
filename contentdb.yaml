@@ -801,6 +801,28 @@
          - app/__support
          - app/webcache.zip
 
+ - name: "Ghost Song"
+   id: ghost-song
+   provider: gog
+   platform: windows
+   xxh3sum: a279a870f3d69ae5
+   exec: GhostSong.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/347800/6988c28122663926c943af693c0c944b33cb69b7.ico"
+       xxh3sum: ea48ce5bbd30bccc
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_ghost_song_1.2.12b_(69123).exe"
+       xxh3sum: b4ae4648fa21ab56
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "Grapple Dog"
    id: grapple-dog
    provider: steam
