@@ -271,6 +271,28 @@
          - CyberShadow/icon.bmp
          - CyberShadow/run.sh
 
+ - name: "Death Squared"
+   id: death-squared
+   provider: gog
+   platform: windows
+   xxh3sum: afaebc038a5c7846
+   exec: DeathSquared.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/471810/8de5e65e666b321271fc4e67dbc9ed5a77fffcc6.ico"
+       xxh3sum: 78d04ead3c184ced
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_death_squared_1.8.5_(81942).exe"
+       xxh3sum: f41b05b82924abde
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "DiRT 2"
    id: dirt-2
    provider: steam
