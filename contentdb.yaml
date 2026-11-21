@@ -2556,6 +2556,40 @@
      - uri: "steam://Sega Classics"
        include: "uncompressed ROMs/STREETS2_U.68K"
 
+ - name: "The Talos Principle: Gold Edition"
+   id: talos-principle
+   provider: gog
+   platform: windows
+   xxh3sum: c95be35aa718e996
+   exec: Bin/x64/Talos.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/257510/0518809d7fc702807d7b3ee0b7f4bc351be7bfae.ico"
+       xxh3sum: 08a508208b79a3f9
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_the_talos_principle_gold_edition_1.01_(64bit)_(42512)-1.bin"
+       xxh3sum: a3e06e5b7541ad9c
+       process: false
+     - uri: "file://setup_the_talos_principle_gold_edition_1.01_(64bit)_(42512)-2.bin"
+       xxh3sum: 9850b6e9470a366c
+       process: false
+     - uri: "file://setup_the_talos_principle_gold_edition_1.01_(64bit)_(42512).exe"
+       xxh3sum: 303361a2158ebc6c
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+     # the game's display driver check fails under Wine (it can't read the driver version) and stops
+     # at a dialog; this requires no version, as the script does for GPUs other than AMD's and NVIDIA's
+     - type: inline
+       destination: Content/Talos/Config/CheckDriver.lua
+       content: |
+         gfx_iReqDriverVersion = 0;
+         gfx_bWrongDriver = 0;
+
  - name: "Terraria"
    id: terraria
    provider: gog
