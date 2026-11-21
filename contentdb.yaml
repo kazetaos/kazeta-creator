@@ -1747,6 +1747,34 @@
          - __redist
          - tmp
 
+ - name: "Panzer Dragoon: Remake"
+   id: panzer-dragoon-remake
+   provider: gog
+   platform: windows
+   xxh3sum: f6930b2987d9ce5b
+   exec: '"Panzer Dragoon Remake.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1178880/249e51fcf2ce2899326b87c6b6abfa4e1f67f9c3.ico"
+       xxh3sum: 3e47f9d825e7a83c
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_panzer_dragoon_remake_1.4.2_(42116)-1.bin"
+       xxh3sum: 9a81f1a4275728e4
+       process: false
+     - uri: "file://setup_panzer_dragoon_remake_1.4.2_(42116)-2.bin"
+       xxh3sum: 53802f3c05850498
+       process: false
+     - uri: "file://setup_panzer_dragoon_remake_1.4.2_(42116).exe"
+       xxh3sum: 6d20d54cbbc5d881
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "Paradise Killer"
    id: paradise-killer
    provider: gog
