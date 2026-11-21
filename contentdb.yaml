@@ -120,6 +120,27 @@
          - data/noarch/game/Bastion.bmp
          - data/noarch/game/lib
 
+ - name: "Berserk Boy"
+   id: berserk-boy
+   provider: gog
+   platform: windows
+   xxh3sum: a9301dac304eb3bc
+   exec: '"BERSERK BOY.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1561340/8c69e3daa6cf9e4162369382ead359faebfcc2c0.ico"
+       xxh3sum: 1d78784222f0fa3e
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_berserk_boy_1.0.6_(75441).exe"
+       xxh3sum: 0da77b37226c5ed9
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Beyond Oasis"
    id: beyond-oasis
    provider: steam
