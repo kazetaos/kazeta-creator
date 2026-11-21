@@ -1889,6 +1889,30 @@
          - app/Spelunky.exe
          - app/fmodex.dll
 
+ - name: "STAR WARS: Rogue Squadron 3D"
+   id: rogue-squadron-3d
+   provider: gog
+   platform: windows
+   xxh3sum: 785ce7d29a224ec6
+   exec: rogue-squadron-3d.bat
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/455910/0504422ff2a66cc7e36febd20b80470486d337c0.ico"
+       xxh3sum: feda987c4f569b77
+       include: 1
+       destination: org.kazeta.icon.png
+     # GOG starts the game from ROGUE
+     - type: inline
+       destination: rogue-squadron-3d.bat
+       content: "cd ROGUE\r\n\"Rogue Squadron.EXE\"\r\n"
+     - uri: "file://setup_sw_rogue_squadron3d_2.0.0.3.exe"
+       xxh3sum: 34e22af8c30582e3
+       include: app/*
+       exclude:
+         - app/goggame*
+         - app/__support
+         - app/webcache.zip
+
  - name: "StarCraft: Brood War"
    id: starcraft-brood-war
    provider: disc
