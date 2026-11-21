@@ -1,3 +1,24 @@
+ - name: "ABZU"
+   id: abzu
+   provider: gog
+   platform: windows
+   xxh3sum: 4a89d17f03ee27ec
+   exec: AbzuGame/Binaries/Win64/AbzuGame-Win64-Shipping.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/384190/1e7cb1106f9948b8c758a98295d3fe8ac1d97c94.ico"
+       xxh3sum: 1fd1e3983f95a7d6
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_abzu_1.0_(19143).exe"
+       xxh3sum: da0cf326fc36fdcd
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Animal Well"
    id: animal-well
    provider: steam
