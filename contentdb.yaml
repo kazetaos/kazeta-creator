@@ -1619,6 +1619,31 @@
          fi
          bash "$1"
 
+ - name: "OCTOPATH TRAVELER"
+   id: octopath-traveler
+   provider: gog
+   platform: windows
+   xxh3sum: f1b3bc3781892a13
+   exec: Octopath_Traveler/Binaries/Win64/Octopath_Traveler-Win64-Shipping.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/921570/2ca0b9dc6ddb7b91adcc3ef74ae8477bcb1c9abe.ico"
+       xxh3sum: 27e1741628f202e7
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_octopath_traveler_1.0_gog_v1_(90872)-1.bin"
+       xxh3sum: c6bd225c101853f7
+       process: false
+     - uri: "file://setup_octopath_traveler_1.0_gog_v1_(90872).exe"
+       xxh3sum: 43e87739af5b507a
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - Engine/Extras/Redist
+
  - name: "Ooo"
    id: ooo
    provider: steam
