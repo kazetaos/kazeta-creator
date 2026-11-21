@@ -2913,6 +2913,35 @@
          - data/noarch/game/WorldOfGoo.desktop
          - data/noarch/game/WorldOfGoo.png
 
+ - name: "Worms Armageddon"
+   id: worms-armageddon
+   provider: gog
+   platform: windows
+   xxh3sum: 5b28e07de3a9a83b
+   exec: WA.exe
+   runtime: windows
+   sources:
+     # the game asks on its first start under Wine whether to use windowed mode; this is the answer
+     # "yes" (gamescope scales the window, and the game needs no fullscreen mode change)
+     - type: inline
+       destination: .kazeta/share/registry/user.reg.d/50-cart.reg
+       content: |
+         [Software\\Team17SoftwareLTD\\WormsArmageddon\\Options] 0
+         "WineCompatibilitySuggested"=dword:00000001
+         "WindowedMode"=dword:00000001
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/217200/fb638fa31397002929f1466b2cfd757b7dbbb6bc.ico"
+       xxh3sum: 254959780caa6759
+       include: 3
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_worms_armageddon_gog-3.8.1_(43454).exe"
+       xxh3sum: 8f1edd27fbccd017
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Xeno Crisis"
    id: xeno-crisis
    provider: gog
