@@ -899,10 +899,9 @@
    id: the-messenger
    provider: gog
    platform: windows
-   xxh3sum: ef402e69717f1932
+   xxh3sum: df75d4f9751e50c7
    exec: TheMessenger.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/764790/ecff89a818b3c47ad2f8d271047ad1d57524f6c3.ico"
        xxh3sum: 8aedaa248e946364
