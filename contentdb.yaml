@@ -1542,10 +1542,9 @@
    id: spelunky
    provider: gog
    platform: windows
-   xxh3sum: 3fd4fb7126edaab4
+   xxh3sum: 047d6758860f1996
    exec: Spelunky.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/239350/5453ead5e9276bca0be1aa217053d3129b8fa221.ico"
        xxh3sum: 539c93c78559559c
