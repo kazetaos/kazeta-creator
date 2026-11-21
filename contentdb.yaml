@@ -1148,6 +1148,30 @@
        destination: org.kazeta.icon.png
      - uri: "steam://LittleKittyBigCity"
 
+ - name: "Little Nightmares"
+   id: little-nightmares
+   provider: gog
+   platform: windows
+   xxh3sum: a484d117eeae7386
+   exec: Atlas/Binaries/Win64/LittleNightmares.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/424840/65700c89a4b15eebdda18eafa5e92bac152f6373.ico"
+       xxh3sum: c5eba0e92c06a849
+       include: 10
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_little_nightmares_1.0.43.1_(18471)-1.bin"
+       xxh3sum: 113072db5dbab516
+       process: false
+     - uri: "file://setup_little_nightmares_1.0.43.1_(18471).exe"
+       xxh3sum: 90ef3873b46f9176
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Lost in Play"
    id: lost-in-play
    provider: gog
