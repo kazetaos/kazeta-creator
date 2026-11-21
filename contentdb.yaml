@@ -1016,10 +1016,9 @@
    id: mortal-kombat-komplete-edition
    provider: steam
    platform: windows
-   xxh3sum: ee01f3b746200954
+   xxh3sum: 88c0bd392de32e30
    exec: MKKE.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
      LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
      rm steam_api_original.dll
