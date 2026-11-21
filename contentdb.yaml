@@ -2685,6 +2685,33 @@
          - tmp
          - UnityCrashHandler64.exe
 
+ - name: "Tomb Raider I-III Remastered Starring Lara Croft"
+   id: tomb-raider-i-iii-remastered
+   provider: gog
+   platform: windows
+   xxh3sum: 174ecb15ddb96aee
+   exec: tomb123.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2478970/e14b4aeacc268b94ef064f5f6b7ffb9f8a115c20.ico"
+       xxh3sum: 94ce1aaaef8a431a
+       include: 3
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_tomb_raider_i-iii_remastered_starring_lara_croft_day_90_(64bit)_(94358)-1.bin"
+       xxh3sum: ef9705b149186f11
+       process: false
+     - uri: "file://setup_tomb_raider_i-iii_remastered_starring_lara_croft_day_90_(64bit)_(94358)-2.bin"
+       xxh3sum: 11894f8654d79f24
+       process: false
+     - uri: "file://setup_tomb_raider_i-iii_remastered_starring_lara_croft_day_90_(64bit)_(94358).exe"
+       xxh3sum: 3e04b030b502cb30
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Transistor"
    id: transistor
    provider: steam
