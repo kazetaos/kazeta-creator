@@ -1273,6 +1273,31 @@
      - uri: "file://Monster Trampoline 29.4 (DRM-Free Windows).zip"
        xxh3sum: cc8771c7e976f3c9
 
+ - name: "Moonscars"
+   id: moonscars
+   provider: gog
+   platform: windows
+   xxh3sum: eda91cf743d0265a
+   exec: Moonscars.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1374970/c2832425b9a211a16dcb6c62db0c118e4152d1c2.ico"
+       xxh3sum: de060cdec8966b20
+       include: 4
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_moonscars_1.6.009_(64bit)_(65684)-1.bin"
+       xxh3sum: 60521f9dee681d30
+       process: false
+     - uri: "file://setup_moonscars_1.6.009_(64bit)_(65684).exe"
+       xxh3sum: e87e39b7a16aa789
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "Mortal Kombat Komplete Edition"
    id: mortal-kombat-komplete-edition
    provider: steam
