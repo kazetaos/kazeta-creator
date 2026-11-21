@@ -1500,6 +1500,47 @@
          - data/noarch/game/RogueLegacy
          - data/noarch/game/RogueLegacy.bin.x86
 
+ - name: "RollerCoaster Tycoon Deluxe"
+   id: rollercoaster-tycoon-deluxe
+   provider: gog
+   platform: windows
+   xxh3sum: e5d3c0087838c2db
+   exec: RCT.EXE
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/285310/a7be9c58edaeee1a154596747740d814d3c15e16.ico"
+       xxh3sum: b2c0b11b7402e40c
+       include: 0
+       destination: org.kazeta.icon.png
+     # what GOG's installer writes (goggame-1207658945.script), with the cart as the game's path
+     - type: inline
+       destination: .kazeta/share/registry/user.reg.d/50-cart.reg
+       content: |
+         [Software\\Fish Technology Group\\RollerCoaster Tycoon Setup] 0
+         "AddOn"=dword:00000001
+         "CancelPrompt"="Cancel"
+         "CDKey"=dword:00000000
+         "CharSet"=dword:00000000
+         "Executable"="rct.exe"
+         "FontFaceName"="MS Sans Serif"
+         "FontPointSize"=dword:0000000c
+         "Language"=dword:00000000
+         "OKPrompt"="OK"
+         "Path"="X:\\"
+         "SetupPath"="X:\\"
+         "Title"="Roll"
+     - uri: "file://setup_rollercoaster_tycoon_deluxe_1.20_gog_v5_(94869)-1.bin"
+       xxh3sum: 75ab6179359abd40
+       process: false
+     - uri: "file://setup_rollercoaster_tycoon_deluxe_1.20_gog_v5_(94869).exe"
+       xxh3sum: b7f9f91032d15635
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Rollerdrome"
    id: rollerdrome
    provider: gog
