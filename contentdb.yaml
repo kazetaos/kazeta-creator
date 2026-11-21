@@ -138,11 +138,10 @@
    id: bioshock
    provider: gog
    platform: windows
-   xxh3sum: 3584b52b41f693dc
+   xxh3sum: 2b75629cedbf03bf
    exec: Bioshock.exe -dx9
    path: Builds/Release
    runtime: windows
-   timestamp: 0
    gamescope: --force-grab-cursor
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/7670/2d90881c6067287da04259ec3c205061f270dd55.ico"
