@@ -2575,6 +2575,31 @@
          - Thief The Dark Project
          - Thief Gold/OpenAL32.dll # Creative's OpenAL router, which finds no device in Wine; the runtime has OpenAL Soft
 
+ - name: "Tinykin"
+   id: tinykin
+   provider: gog
+   platform: windows
+   xxh3sum: fcc5bd6ad691df32
+   exec: Tinykin.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1599020/d0a93bc7f753cf9cf0f6164fe87ba817b821b7f6.ico"
+       xxh3sum: 93f26a629d7b4db6
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_tinykin_1.1.0_(61137)-1.bin"
+       xxh3sum: 5e09a41ae28f0ae7
+       process: false
+     - uri: "file://setup_tinykin_1.1.0_(61137).exe"
+       xxh3sum: 6494a23b7a34ce6d
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "Transistor"
    id: transistor
    provider: steam
