@@ -1561,10 +1561,9 @@
    id: starcraft-brood-war
    provider: disc
    platform: windows
-   xxh3sum: a8167e0df7a6ba8d
+   xxh3sum: 86d0112f6a366f34
    exec: StarCraft.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    gamescope: --filter pixel --scaler integer
    post: | # a placeholder CD key: the game needs the key files, but doesn't check the key offline
      rm bnupdate.exe BlizzardError.exe SystemSurvey.exe
