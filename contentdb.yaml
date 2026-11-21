@@ -3381,3 +3381,25 @@
        include:
          - data/noarch/game/Xeno Crisis.x86_64
          - data/noarch/game/Xeno Crisis_Data
+ - name: "Yes, Your Grace"
+   id: yes-your-grace
+   provider: gog
+   platform: windows
+   xxh3sum: 523be05ac85c2424
+   exec: '"Yes, Your Grace.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1115690/d2555b595d31c2c6914724ab8df1d903a885cfe0.ico"
+       xxh3sum: c95cdef02c8c3a94
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_yes_your_grace_v1.0.21_(85765).exe"
+       xxh3sum: b88329340f7f1ce8
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler32.exe
+
