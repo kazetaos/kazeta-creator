@@ -454,6 +454,27 @@
          - __redist
          - tmp
 
+ - name: "Exit the Gungeon"
+   id: exit-the-gungeon
+   provider: gog
+   platform: windows
+   xxh3sum: 94a1d571c3a7005e
+   exec: XTG.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1209490/e95026a142227c16aeba21c61cbe2beaea5bc641.ico"
+       xxh3sum: ab588374f3a5fc89
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_exit_the_gungeon_2.1.3_(64bit)_(42933).exe"
+       xxh3sum: 87177c217b7d336d
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "FEZ"
    id: fez
    provider: humble
