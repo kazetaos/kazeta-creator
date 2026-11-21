@@ -965,9 +965,16 @@
    id: mirrors-edge
    provider: gog
    platform: windows
+   xxh3sum: 18e664a285f5ff54
    exec: Binaries/MirrorsEdge.exe
-   runtime: windows-1.0
-   tricks: physx
+   runtime: windows
+   gamescope: --force-grab-cursor
+   patches:
+     Binaries/MirrorsEdge.exe:
+       # the game keeps its window minimized while it loads; gamescope ignores that and shows wine's
+       # minimized title bar as a white rectangle in the corner, so hide the window instead
+       # (push SW_SHOWMINIMIZED -> SW_HIDE before ShowWindow; the restore after loading shows it)
+       - 0xcf0637 6a02 6a00
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/17410/fc0e6be63050c9e35ff5e7d257e99cc299fed997.ico"
        xxh3sum: 63426f5b91327df6
@@ -994,6 +1001,15 @@
          - __support
          - tmp
          - TdGame/Splash/PC/Splash.bmp
+     # the game's PhysXLoader.dll (2.8.0) loads PhysXCore.dll from the engine directory in the registry,
+     # which needs cudart32_41_22.dll from the directory the MSI adds to PATH (WINEPATH in the cart).
+     # 9.12.1031 is the last PhysX System Software that is an MSI (later ones, also in the GOG
+     # installer's __redist, are NVIDIA's own package format)
+     - uri: "https://us.download.nvidia.com/Windows/9.12.1031/PhysX-9.12.1031-SystemSoftware.msi"
+       xxh3sum: be9998ea0f6d6840
+       features: [F_Common32, F_GPU_DLLS]
+       skip:
+         - Add64Bit_Reg # a VBScript writing the keys for 64-bit games (in the 64-bit registry view)
 
  - name: "Monster Trampoline"
    id: monster-trampoline
