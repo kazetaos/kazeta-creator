@@ -160,6 +160,39 @@
          - __redist
          - tmp
 
+ - name: "Blood Omen: Legacy of Kain"
+   id: blood-omen
+   provider: gog
+   platform: windows
+   xxh3sum: 6fa2792ea4b8c1d7
+   exec: Kain.exe
+   runtime: windows
+   post: | # the game isn't on Steam; use the icon from the GOG installer
+     magick 'goggame-1837805079.ico[2]' -strip org.kazeta.icon.png
+     rm goggame-1837805079.ico
+   sources:
+     - type: inline
+       destination: .kazeta/share/registry/user.reg.d/50-cart.reg
+       content: |
+         [Software\\LegacyOfKain] 0
+         @=""
+         "InstallPath"=".\\"
+         "JAMPath"=".\\KAIN"
+         "BIGPath"=".\\KAIN"
+         "SAVPath"=".\\SAVES"
+     - uri: "file://setup_blood_omen_legacy_of_kain_1.0_hotfix_(50548).exe"
+       xxh3sum: 4fc1a119ec1981c0
+       include: app/goggame-1837805079.ico
+     # what GOG's installer writes (goggame-1837805079.script), with the cart as the game's path
+     - uri: "file://setup_blood_omen_legacy_of_kain_1.0_hotfix_(50548).exe"
+       xxh3sum: 4fc1a119ec1981c0
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "BOMCAT"
    id: bomcat
    provider: steam
