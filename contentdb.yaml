@@ -1346,10 +1346,9 @@
    id: sea-of-stars
    provider: gog
    platform: windows
-   xxh3sum: 776f3928059208a3
+   xxh3sum: e805f6bf541abcf3
    exec: SeaOfStars.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1244090/436ea884e17a3a81d6d68d7cca19fae0312ff53d.zip"
        xxh3sum: 45d2b452a89aac40
