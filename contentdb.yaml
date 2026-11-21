@@ -1418,10 +1418,9 @@
    id: civilization-vi
    provider: epic
    platform: windows
-   xxh3sum: 44e9ebebdf40f4de
+   xxh3sum: b8466e32229da6ad
    exec: Base/Binaries/Win64EOS/CivilizationVI.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://cdn2.steamgriddb.com/icon/b2a223f097589a3682d3221d102fc52e/8/32x32.png"
        xxh3sum: 81caa638c921f31e
