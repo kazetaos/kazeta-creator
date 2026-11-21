@@ -1447,10 +1447,9 @@
    id: skydrift-infinity
    provider: gog
    platform: windows
-   xxh3sum: 205997185b85445c
+   xxh3sum: 8eb1ef5400495e32
    exec: SkydriftInfinity.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/827330/6879b90e5b41839ddb44496b994762accd893821.ico"
        xxh3sum: 35459cade9c57b8c
