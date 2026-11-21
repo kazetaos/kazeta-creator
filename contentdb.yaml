@@ -1589,6 +1589,27 @@
        include: linux/x86/libsteam_api.so
        destination: bin/linux32/
 
+ - name: "Prison City"
+   id: prison-city
+   provider: gog
+   platform: windows
+   xxh3sum: 4dcd92816b377970
+   exec: PrisonCity.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2179860/d71a92f0a66c84080807f658ab169bee2647963d.ico"
+       xxh3sum: a9da86f5ad18267d
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_prison_city_1.0.4.0_(64bit)_(88173).exe"
+       xxh3sum: 0572627190fd4de1
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Rayman 2: The Great Escape"
    id: rayman-2
    provider: gog
