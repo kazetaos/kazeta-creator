@@ -652,6 +652,28 @@
          - __redist
          - tmp
 
+ - name: "The Falconeer"
+   id: falconeer
+   provider: gog
+   platform: windows
+   xxh3sum: f2683429f081fbbe
+   exec: TheFalconeer.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1135260/2f006d547e376bef4fb640d09539bdfbdb743854.ico"
+       xxh3sum: e46e523297bd9f30
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_the_falconeer_1.4.29.1_(48879).exe"
+       xxh3sum: 95165e3042f79128
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler32.exe
+
  - name: "FEZ"
    id: fez
    provider: humble
