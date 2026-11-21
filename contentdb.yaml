@@ -1662,10 +1662,9 @@
    id: thank-you-bus-driver
    provider: humble
    platform: windows
-   xxh3sum: a6053c64db917154
+   xxh3sum: 4633abf1502c4601
    exec: ThankYouBusDriver/Binaries/Win64/ThankYouBusDriver-Win64-Shipping.exe
    runtime: windows
-   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/5067360/3f7882f77425940cd691b37ede08b7bb5a91ecfa.ico"
        xxh3sum: 4a5f008764fe9f8a
