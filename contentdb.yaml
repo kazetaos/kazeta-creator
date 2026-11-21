@@ -1967,6 +1967,31 @@
          - __redist
          - tmp
 
+ - name: "Pumpkin Jack"
+   id: pumpkin-jack
+   provider: gog
+   platform: windows
+   xxh3sum: 3fd659dabdb1306f
+   exec: PumpkinJack/Binaries/Win64/PumpkinJack-Win64-Shipping.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1186640/7ad4b83ac34539f4089fe2129aff67207b569e1d.ico"
+       xxh3sum: 5bb1c47d34e852b9
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_pumpkin_jack_1.4.6_(43191)-1.bin"
+       xxh3sum: d8c4136b41263acc
+       process: false
+     - uri: "file://setup_pumpkin_jack_1.4.6_(43191).exe"
+       xxh3sum: 89161e8714da8685
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - Engine/Extras/Redist
+
  - name: "Rayman 2: The Great Escape"
    id: rayman-2
    provider: gog
