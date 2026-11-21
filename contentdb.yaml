@@ -3833,6 +3833,31 @@
          - tmp
          - UnityCrashHandler32.exe
 
+ - name: "Wavetale"
+   id: wavetale
+   provider: gog
+   platform: windows
+   xxh3sum: 172150cf1f0cd28e
+   exec: Wavetale.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1823930/ba5206b31f617ca264cebe8336883b8ae7b14b55.ico"
+       xxh3sum: 703ded5cc10964b8
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_wavetale_1.0_(60446)-1.bin"
+       xxh3sum: 12c9eb58a5063cbf
+       process: false
+     - uri: "file://setup_wavetale_1.0_(60446).exe"
+       xxh3sum: 89dec05a32496eb6
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "World of Goo"
    id: world-of-goo
    provider: gog
