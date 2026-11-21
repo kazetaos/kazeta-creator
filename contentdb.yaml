@@ -1225,10 +1225,9 @@
    id: resident-evil-hd-remaster
    provider: gog
    platform: windows
-   xxh3sum: 7e6f772781d05add
+   xxh3sum: a7e10cee4c0dd477
    exec: bhd.exe
-   runtime: windows-2.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/304240/6ff98f5489411e48f6aa191ba5b11c71e8d11101.ico"
        xxh3sum: da9be862f1b68e2c
