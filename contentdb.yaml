@@ -937,6 +937,26 @@
      - uri: "https://github.com/love2d/love/releases/download/11.5/love-11.5-x86_64.AppImage"
        xxh3sum: 905ef6ac23cb6603
 
+ - name: "Gurumin: A Monstrous Adventure"
+   id: gurumin
+   provider: gog
+   platform: windows
+   xxh3sum: 788a1ce06020afd3
+   exec: gurumin.exe /skip # without it the game opens its settings dialog (fsetup.dll) first
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/322290/4beec169a4865517adde4c249f25ff6c67cf2c0c.ico"
+       xxh3sum: f53607f94670a534
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_gurumin_-_a_monstrous_adventure_1.4_(18466).exe"
+       xxh3sum: ed1453b882e79f6b
+       include: app/*
+       exclude:
+         - app/goggame*
+         - app/__support
+         - app/webcache.zip
+
  - name: "Hades"
    id: hades
    provider: steam
