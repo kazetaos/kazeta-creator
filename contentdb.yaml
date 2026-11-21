@@ -1001,10 +1001,9 @@
    id: monster-trampoline
    provider: itch
    platform: windows
-   xxh3sum: be9ce82c7b7b4b9e
+   xxh3sum: cbc2e21b53079870
    exec: '"Monster Trampoline.exe"'
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/939560/f7748289b1f12cd2a5815c7c52027a09c9b657c3.zip"
        xxh3sum: 3556be7ff29e8065
