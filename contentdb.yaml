@@ -1915,6 +1915,51 @@
          - app/Spelunky.exe
          - app/fmodex.dll
 
+ - name: "STAR WARS Episode I: Racer"
+   id: star-wars-episode-i-racer
+   provider: gog
+   platform: windows
+   xxh3sum: 313048c0e5fd8daa
+   exec: SWEP1RCR.EXE
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/808910/f3cee328cbfe43b69a27e3e3b9bb02c0e03c603d.ico"
+       xxh3sum: f1617b336308a863
+       include: 0
+       destination: org.kazeta.icon.png
+     # what GOG's installer writes (goggame-1288119483.script), with the cart as the game's path
+     - type: inline
+       destination: .kazeta/share/registry/system.reg.d/50-cart.reg
+       content: |
+         [Software\\Wow6432Node\\LucasArts Entertainment Company LLC\\Star Wars: Episode I Racer\\v1.0] 0
+         "Executable"="X:\\SWEP1RCR.EXE"
+         "Install Path"="X:\\"
+         "Source Path"="X:\\"
+         "CD Path"="."
+         "Analyze Path"=".\\SysCheck.exe"
+         "Source Dir"="X:\\"
+         "JoystickID"="1"
+         "Display"="Primary Display Driver"
+         "3D Device"="Direct3D HAL"
+         "GUID"="{00000000-0000-0000-0000-000000000000}"
+         "InstallType"=dword:00000009
+         "FullScreen"=dword:00000000
+         "Fix Flicker"=dword:00000000
+         "DevMode"=dword:00000000
+         "UseFett"=dword:00000000
+         "Display Width"=dword:00000280
+         "Display Height"=dword:000001e0
+         [Software\\Wow6432Node\\LucasArts Entertainment Company LLC\\Star Wars: Episode I Racer] 0
+         @=""
+     - uri: "file://setup_star_warstm_episode_i_-_racertm_1.0_hotfix3_(20791).exe"
+       xxh3sum: 225b1dcd5ed76497
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "STAR WARS: Rogue Squadron 3D"
    id: rogue-squadron-3d
    provider: gog
