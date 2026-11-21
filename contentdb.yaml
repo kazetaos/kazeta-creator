@@ -1805,6 +1805,22 @@
        include: steam_api64.dll
        destination: TromboneChamp_Data/Plugins/x86_64/
 
+ - name: "TUNIC"
+   id: tunic
+   provider: steam
+   platform: windows
+   xxh3sum: 86caae56ee0221b9
+   exec: Tunic.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/553420/0762b2c0bb024947acdf7acaef2146c71e7b1634.ico"
+       xxh3sum: ec854584bb8d02c2
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "steam://TUNIC"
+       exclude:
+         - UnityCrashHandler64.exe
+
  - name: "Turok"
    id: turok
    provider: gog
