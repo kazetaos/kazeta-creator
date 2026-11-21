@@ -192,10 +192,9 @@
    id: cat-quest
    provider: epic
    platform: windows
-   xxh3sum: 9e917a2bb8f2dc4d
+   xxh3sum: 6c479df36df78f9f
    exec: '"Cat Quest.exe"'
    runtime: windows
-   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/593280/43f94561d5ddbb26a3c62b480df7db121861a96a.ico"
        xxh3sum: 24e7389e3dc41126
