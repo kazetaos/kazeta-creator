@@ -1824,10 +1824,9 @@
    id: warcraft-ii-bne
    provider: gog
    platform: windows
-   xxh3sum: 9c4a69f4044b4593
+   xxh3sum: 630357be8aaccf76
    exec: '"Warcraft II BNE.exe"'
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    gamescope: --filter pixel --scaler integer
    sources:
     - uri: "https://cdn2.steamgriddb.com/icon/ef602a5ddfe0a4b860743ce934d2e87b/32/32x32.png"
