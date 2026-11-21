@@ -275,10 +275,9 @@
    id: dirt-2
    provider: steam
    platform: windows
-   xxh3sum: 503a32df1316cd2e
+   xxh3sum: 6c34ce5eeb52347f
    exec: dirt2.exe
    runtime: windows
-   timestamp: 0
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/12840/4fd0dc55f116ea2c8bc79c794b7bfe0e0a4fdff1.ico"
        xxh3sum: 6f404cb031cfe8a9
