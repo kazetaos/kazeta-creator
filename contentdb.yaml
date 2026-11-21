@@ -654,6 +654,35 @@
          - __redist
          - tmp
 
+ - name: "Ghost Master"
+   id: ghost-master
+   provider: gog
+   platform: windows
+   xxh3sum: 63ff0ca4c90aae23
+   exec: ghost.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/6200/060bfe036af085ecddd99f8bd562729b5bd727e5.ico"
+       xxh3sum: 03821bcae3138c48
+       include: 1
+       destination: org.kazeta.icon.png
+     # what GOG's installer writes (goggame-1207658687.script), with the cart as the game's path
+     - type: inline
+       destination: .kazeta/share/registry/system.reg.d/50-cart.reg
+       content: |
+         [Software\\Wow6432Node\\Empire Interactive\\GhostMaster\\1.00.000] 0
+         "Install Path"="X:\\"
+         "Source Path"="c:"
+         "Language"=dword:00000009
+         "Windwalker"=dword:00000000
+     - uri: "file://setup_ghost_master_20171020_(15806).exe"
+       xxh3sum: 486f8a620a12b7be
+       include: app/*
+       exclude:
+         - app/goggame*
+         - app/__support
+         - app/webcache.zip
+
  - name: "Grapple Dog"
    id: grapple-dog
    provider: steam
