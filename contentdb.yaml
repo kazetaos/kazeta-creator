@@ -411,6 +411,27 @@
          - CyberShadow/icon.bmp
          - CyberShadow/run.sh
 
+ - name: "Dark Deity: Complete Edition"
+   id: dark-deity
+   provider: gog
+   platform: windows
+   xxh3sum: 6dbd5c32dbcda8de
+   exec: DarkDeity.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1374840/ca15ca1cee3c4bcc72d22be8c6cd9e8bde465653.ico"
+       xxh3sum: e9237c2a5c35c8d6
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_dark_deity_complete_edition_1.58_(70977).exe"
+       xxh3sum: 42cde250f18baac9
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Death Squared"
    id: death-squared
    provider: gog
