@@ -1,3 +1,25 @@
+ - name: "9 Years of Shadows"
+   id: 9-years-of-shadows
+   provider: gog
+   platform: windows
+   xxh3sum: 5897c3511e2061c3
+   exec: '"9 Years of Shadows.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1402120/f19eac602695e8219b534b5a43e65e3cc8d82812.ico"
+       xxh3sum: 3229026b8b1faff6
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_9_years_of_shadows_v1.0.41_(64bit)_(82340).exe"
+       xxh3sum: c971d557bd65be7e
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "ABZU"
    id: abzu
    provider: gog
