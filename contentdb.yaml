@@ -1468,10 +1468,9 @@
    id: snakebird-complete
    provider: epic
    platform: windows
-   xxh3sum: e28ae0d67acf2852
+   xxh3sum: ce8ffe9cfba63abb
    exec: '"Snakebird Complete.exe"'
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/357300/eb867fcf9b304ce6e2a4afa39e354e347f211870.zip"
        xxh3sum: b10ec8404d3d867e
