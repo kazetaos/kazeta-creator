@@ -3057,6 +3057,29 @@
          - data/noarch/game/WorldOfGoo.desktop
          - data/noarch/game/WorldOfGoo.png
 
+ - name: "Worms 2"
+   id: worms-2
+   provider: gog
+   platform: windows
+   xxh3sum: 036aa2dccc2906fd
+   exec: frontend.exe
+   runtime: windows
+   post: | # Worms 2 isn't on Steam; use the icon from the GOG installer
+     magick 'gfw_high.ico[7]' -strip org.kazeta.icon.png
+     rm gfw_high.ico
+   sources:
+     - uri: "file://setup_worms2_2.0.0.23.exe"
+       xxh3sum: eb160dfad06b5505
+       include: app/*
+       exclude:
+         - app/GameuxInstallHelper.dll
+         - app/goggame.dll
+         - app/GOGLauncher.exe
+         - app/gog.ico
+         - app/start.exe
+         - app/Support.ico
+         - app/webcache.zip
+
  - name: "Worms Armageddon"
    id: worms-armageddon
    provider: gog
