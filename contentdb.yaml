@@ -1781,10 +1781,9 @@
    steam_app_id: 45760
    provider: steam
    platform: windows
-   xxh3sum: 466371130f065277
+   xxh3sum: b153e3982183d411
    exec: SSFIV.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    post: | # goldberg needs the interface versions of the original steam_api.dll for old SDKs
      LC_ALL=C grep -a -o -E '(Steam|STEAM)[A-Za-z_]*[0-9]{3}' steam_api_original.dll | LC_ALL=C sort -u > steam_interfaces.txt
      rm steam_api_original.dll
