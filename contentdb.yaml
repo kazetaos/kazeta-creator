@@ -1545,6 +1545,26 @@
          - __redist
          - tmp
 
+ - name: "Shantae and the Pirate's Curse"
+   id: shantae-and-the-pirates-curse
+   provider: gog
+   platform: windows
+   xxh3sum: be5eccab5800d1c4
+   exec: '"Shantae and the Pirate''s Curse.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/345820/5ac254459df8f7d50cdd1a0e96b8979fa2e00d1c.ico"
+       xxh3sum: 1f2667c82520ba64
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_shantae_and_the_pirates_curse_1.04g_(18994).exe"
+       xxh3sum: 0ab1960c4e7f2af5
+       include: app/*
+       exclude:
+         - app/goggame*
+         - app/__support
+         - app/webcache.zip
+
  - name: "A Short Hike"
    id: a-short-hike
    provider: gog
