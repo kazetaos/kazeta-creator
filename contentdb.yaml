@@ -1077,10 +1077,9 @@
    id: ooo
    provider: steam
    platform: windows
-   xxh3sum: af99d8271c57a6f4
+   xxh3sum: eaef807241ac9e54
    exec: Ooo.exe
-   runtime: windows-1.0
-   timestamp: 0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/2721890/8f09827eacf1315f537a1e67f874588d49e5f323.ico"
        xxh3sum: 68c34ac1aca807de
