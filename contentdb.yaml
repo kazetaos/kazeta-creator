@@ -1083,6 +1083,28 @@
        destination: org.kazeta.icon.png
      - uri: "steam://LittleKittyBigCity"
 
+ - name: "Lost in Play"
+   id: lost-in-play
+   provider: gog
+   platform: windows
+   xxh3sum: 844489d4ed461832
+   exec: LostInPlay.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1328840/8d21a16ad628985aebc7066141329431efa0bb63.ico"
+       xxh3sum: 06cc08af05113538
+       include: 4
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_lost_in_play_1.0.45_(57871).exe"
+       xxh3sum: 36e4270dc879bf86
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler32.exe
+
  - name: "Magicka"
    id: magicka
    provider: steam
