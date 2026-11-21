@@ -1115,6 +1115,28 @@
        skip:
          - Add64Bit_Reg # a VBScript writing the keys for 64-bit games (in the 64-bit registry view)
 
+ - name: "Monster Train"
+   id: monster-train
+   provider: gog
+   platform: windows
+   xxh3sum: 56cf96c5868a6f05
+   exec: MonsterTrain.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1102190/656d8bb309bb25e4f20171b7e8b4de47e7376efc.ico"
+       xxh3sum: 05e4a9508294266e
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_monster_train_build-12924-production_(64bit)_(51215).exe"
+       xxh3sum: 9fad9a0bdc436bcc
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler64.exe
+
  - name: "Monster Trampoline"
    id: monster-trampoline
    provider: itch
