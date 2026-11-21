@@ -1744,9 +1744,9 @@
    steam_app_id: 1059990
    provider: steam
    platform: windows
-   xxh3sum: 67376c23b2ced439
+   xxh3sum: 34b35372c76c0959
    exec: TromboneChamp.exe
-   runtime: windows-1.0
+   runtime: windows
    sources:
      - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1059990/76b979640856f9936435a5d643538294b9130db6.ico"
        xxh3sum: 21cec54ba93de23c
