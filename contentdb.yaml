@@ -1914,6 +1914,37 @@
          - __redist
          - tmp
 
+ - name: "Rayman Origins"
+   id: rayman-origins
+   provider: gog
+   platform: windows
+   xxh3sum: 6adbfa7fb477b502
+   exec: '"Rayman Origins.exe"'
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/207490/e882b2bb691d5f96f472a801f5b1ba6d5ae80265.ico"
+       xxh3sum: 833fc8378a01d29e
+       include: 2
+       destination: org.kazeta.icon.png
+     # what GOG's installer writes (goggame-1207659234.script), with the cart as the game's path
+     - type: inline
+       destination: .kazeta/share/registry/system.reg.d/50-cart.reg
+       content: |
+         [Software\\Wow6432Node\\Ubisoft\\RaymanOrigins\\Settings] 0
+         "Language"=dword:00000000
+     - uri: "file://setup_rayman_origins_1.0.32504_(18757)-1.bin"
+       xxh3sum: 0ab6a7a76a945b1f
+       process: false
+     - uri: "file://setup_rayman_origins_1.0.32504_(18757).exe"
+       xxh3sum: a393360baf2a2567
+       include: app/*
+       exclude:
+         - app/goggame*
+         - app/__support
+         - app/webcache.zip
+         - app/language_setup*
+         - app/Support
+
  - name: "Resident Evil HD Remaster"
    id: resident-evil-hd-remaster
    provider: gog
