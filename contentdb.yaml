@@ -533,6 +533,26 @@
        xxh3sum: c843adc50e257886
        include: NoDRM-Linux/Builds/NoDRM/Linux/Release/*
 
+ - name: "Gato Roboto"
+   id: gato-roboto
+   provider: gog
+   platform: windows
+   xxh3sum: 4d38706f5c11855e
+   exec: GatoRoboto.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/916730/eb58a2a3dd7cfbcb4148a12982c111f834f78845.ico"
+       xxh3sum: 3c8673cc2436e924
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_gato_roboto_1.0.4_(31845).exe"
+       xxh3sum: 29f428ef3553cd0c
+       exclude:
+         - app
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Grapple Dog"
    id: grapple-dog
    provider: steam
