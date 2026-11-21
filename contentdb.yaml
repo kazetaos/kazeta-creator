@@ -334,6 +334,26 @@
      - uri: "https://github.com/pkgforge-dev/Crispy-Doom-AppImage/releases/download/7.1-2@2026-08-01_1785586239/Crispy_Doom-7.1-2-anylinux-x86_64.AppImage"
        xxh3sum: 8a4acfea70a3a5cb
 
+ - name: "Downwell"
+   id: downwell
+   provider: gog
+   platform: windows
+   xxh3sum: dae9f73ed4b960e2
+   exec: Downwell.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/360740/22ef471459c049927a2a32b564026a9a9bc5fc67.ico"
+       xxh3sum: 4ab7d8b18686ebe3
+       include: 5
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_downwell_1.0.0.65_(40480).exe"
+       xxh3sum: 38d29791450bd5b0
+       exclude:
+         - app
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "The Elder Scrolls III: Morrowind GOTY Edition"
    id: elder-scrolls-iii-goty
    provider: gog
