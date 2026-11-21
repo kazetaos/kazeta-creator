@@ -1437,6 +1437,32 @@
        include: linux/x86/libsteam_api.so
        destination: bin/linux32/
 
+ - name: "Rayman 2: The Great Escape"
+   id: rayman-2
+   provider: gog
+   platform: windows
+   xxh3sum: 455f16c5f89f47f1
+   exec: Rayman2.exe
+   runtime: windows
+   post: | # the game isn't on Steam; use the icon from the GOG installer
+     magick 'goggame-1207658940.ico[2]' -strip org.kazeta.icon.png
+     rm goggame-1207658940.ico
+   sources:
+     - uri: "file://setup_rayman_2_-_the_great_escape_1.0_gog_v2_(86383)-1.bin"
+       xxh3sum: f2d2047e5d58e30f
+       process: false
+     - uri: "file://setup_rayman_2_-_the_great_escape_1.0_gog_v2_(86383).exe"
+       xxh3sum: d65a58e71b9ebc04
+       include: app/goggame-1207658940.ico
+     - uri: "file://setup_rayman_2_-_the_great_escape_1.0_gog_v2_(86383).exe"
+       xxh3sum: d65a58e71b9ebc04
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Resident Evil HD Remaster"
    id: resident-evil-hd-remaster
    provider: gog
