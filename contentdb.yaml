@@ -290,6 +290,27 @@
      - uri: "https://github.com/EXOK/Celeste64/releases/download/v1.1.1/Celeste64-v1.1.1-Linux-x64.zip"
        xxh3sum: aabafab1f5ba8e69
 
+ - name: "Colt Canyon"
+   id: colt-canyon
+   provider: gog
+   platform: windows
+   xxh3sum: d0c0bec9658e1152
+   exec: ColtCanyon.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/940710/04b4d71f20724c59bbf0dcf75653ac0ba429906a.ico"
+       xxh3sum: a64667385607cf13
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_colt_canyon_1.3.1.4-6_(64bit)_(86351).exe"
+       xxh3sum: 7a0516574adaf9d0
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+
  - name: "Cuphead"
    id: cuphead
    provider: steam
