@@ -1444,6 +1444,28 @@
      - uri: "https://github.com/jorio/Nanosaur/releases/download/v1.4.4/Nanosaur-1.4.4-linux-x86_64.AppImage"
        xxh3sum: 9f588952e05fcd36
 
+ - name: "Narita Boy"
+   id: narita-boy
+   provider: gog
+   platform: windows
+   xxh3sum: 8c8eb49e4fb97298
+   exec: NaritaBoy.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/1069530/6e063f26c50c246997c875a9cf44cdcfa0c253a7.ico"
+       xxh3sum: 4200b46d21351b58
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_narita_boy_nb_release.v1.0.1.61_release_build.1_(85497).exe"
+       xxh3sum: 97a8ec6766a193ae
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - tmp
+         - UnityCrashHandler32.exe
+
  - name: "Neo Cab"
    id: neo-cab
    provider: gog
