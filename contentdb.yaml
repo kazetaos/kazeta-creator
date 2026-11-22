@@ -491,6 +491,28 @@
          - __redist
          - tmp
 
+ - name: "Costume Quest"
+   id: costume-quest
+   xxh3sum: 6e7b9b7345291986
+   provider: gog
+   platform: linux
+   # its SDL 2 (2014) predates the Xbox Series pad that InputPlumber presents, so it needs a mapping
+   exec: SDL_GAMECONTROLLERCONFIG='030000005e040000120b000001000000,Xbox Series Controller,a:b0,b:b1,x:b2,y:b3,back:b6,guide:b8,start:b7,leftstick:b9,rightstick:b10,leftshoulder:b4,rightshoulder:b5,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a3,righty:a4,lefttrigger:a2,righttrigger:a5,' ./Cq.bin.x86
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/115100/364bad1181d67c414577f7275a70b5ae28518f6c.ico"
+       xxh3sum: f3c49a99e155c36b
+       include: 0
+       destination: org.kazeta.icon.png
+     - uri: "file://gog_costume_quest_2.0.0.3.sh"
+       xxh3sum: b06d2488b20bad08
+       include: data/noarch/game/*
+     # 32-bit libGLU (found through the game's RPATH, $ORIGIN/lib) that Kazeta doesn't have
+     - uri: "https://repo.steampowered.com/steamrt-images-scout/snapshots/1.0.20260714.251828/steam-runtime.tar.xz"
+       xxh3sum: 694855d80edbaf99
+       include: steam-runtime/usr/lib/i386-linux-gnu/libGLU.so.1*
+       destination: lib/
+
  - name: "Cuphead"
    id: cuphead
    provider: steam
