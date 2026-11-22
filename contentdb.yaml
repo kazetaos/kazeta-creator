@@ -392,6 +392,36 @@
        destination: org.kazeta.icon.png
      - uri: "steam://Boomerang Fu"
 
+ - name: "Broken Age"
+   id: broken-age
+   xxh3sum: a653a3df05c5381d
+   provider: gog
+   platform: linux
+   # its SDL 2 predates the Xbox Series pad that InputPlumber presents, so it needs a mapping
+   exec: SDL_GAMECONTROLLERCONFIG='030000005e040000120b000001000000,Xbox Series Controller,a:b0,b:b1,x:b2,y:b3,back:b6,guide:b8,start:b7,leftstick:b9,rightstick:b10,leftshoulder:b4,rightshoulder:b5,dpup:h0.1,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,leftx:a0,lefty:a1,rightx:a3,righty:a4,lefttrigger:a2,righttrigger:a5,' ./BrokenAge
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/232790/02b3c17c1efd246c27377d7724b2c932d934f2d9.ico"
+       xxh3sum: 1b7e77595b29589b
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "file://gog_broken_age_2.5.0.11.sh"
+       xxh3sum: 61c57bd6da790a8f
+       include: data/noarch/game/*
+       exclude: data/noarch/game/runWindowed.sh
+     # 32-bit X11 extensions that the game's SDL loads and Kazeta doesn't have: without XRandR it gets
+     # the screen size wrong and the picture is zoomed and cropped (found through the RPATH, $ORIGIN/lib)
+     - uri: "https://repo.steampowered.com/steamrt-images-scout/snapshots/1.0.20260714.251828/steam-runtime.tar.xz"
+       xxh3sum: 694855d80edbaf99
+       include:
+         - steam-runtime/usr/lib/i386-linux-gnu/libXcursor.so.1*
+         - steam-runtime/usr/lib/i386-linux-gnu/libXi.so.6*
+         - steam-runtime/usr/lib/i386-linux-gnu/libXinerama.so.1*
+         - steam-runtime/usr/lib/i386-linux-gnu/libXrandr.so.2*
+         - steam-runtime/usr/lib/i386-linux-gnu/libXrender.so.1*
+         - steam-runtime/usr/lib/i386-linux-gnu/libXss.so.1*
+       destination: lib/
+
  - name: "Cat Quest"
    id: cat-quest
    provider: epic
