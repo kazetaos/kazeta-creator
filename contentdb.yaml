@@ -163,6 +163,62 @@
          - data/noarch/game/Bastion.bmp
          - data/noarch/game/lib
 
+ - name: "Batman: Arkham Asylum GOTY Edition"
+   id: batman-arkham-asylum-goty
+   provider: gog
+   platform: windows
+   xxh3sum: 192384f2471b8d2d
+   exec: ShippingPC-BmGame.exe -nosplash
+   path: Binaries
+   gamescope: --force-grab-cursor
+   runtime: windows
+   ini:
+     # the game starts BmLauncher (a settings launcher) and quits until the launcher has written a language
+     BmGame/Config/UserEngine.ini:
+       Engine.Engine:
+         Language: int
+     # the launcher would write these too; without it the game starts in a 1024x768 window. The game
+     # reads its settings from a copy in Documents (Square Enix\Batman Arkham Asylum GOTY), made from
+     # DefaultEngine.ini on the first start, and again whenever its [IniVersion] timestamps don't match
+     # the default files' (all 0 in a cart), so the defaults are changed rather than a copy shipped
+     BmGame/Config/DefaultEngine.ini:
+       SystemSettings: {Fullscreen: "True", ResX: 1920, ResY: 1080}
+     Engine/Config/BaseEngine.ini:
+       SystemSettings: {UseVsync: "True"}
+     BmGame/Config/BmEngine.ini:
+       SystemSettings: {Fullscreen: "True", UseVsync: "True", ResX: 1920, ResY: 1080}
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/35140/4369809f0185411ac5a71049b65bf28591b784d1.ico"
+       xxh3sum: 6e32078795cb2877
+       include: 8
+       destination: org.kazeta.icon.png
+     - uri: "file://setup_batman_arkham_asylum_goty_1.1_(38915)-1.bin"
+       xxh3sum: e946bf696b5286e8
+       process: false
+     - uri: "file://setup_batman_arkham_asylum_goty_1.1_(38915)-2.bin"
+       xxh3sum: 51edfad0ee9264b0
+       process: false
+     - uri: "file://setup_batman_arkham_asylum_goty_1.1_(38915).exe"
+       xxh3sum: c6506c92c83c09ef
+       exclude:
+         - app
+         - commonappdata
+         - goggame*
+         - __redist
+         - redist # DirectX, VC++ 2005 and PhysX 9.09 (an MSI in a Wise installer; the 9.12 MSI below is easier to install)
+         - tmp
+         - BmGDFBinary.dll
+         - FirewallInstallHelper.dll
+         - GameuxInstallHelper.dll
+     # the game's PhysX 2.8.1: PhysXLoader.dll and PhysXDevice.dll (found through the cart's WINEPATH, as
+     # cudart32_41_22.dll, which the engine needs) load PhysXCore.dll from the directory in the registry.
+     # 9.12.1031 is the last PhysX System Software that is an MSI
+     - uri: "https://us.download.nvidia.com/Windows/9.12.1031/PhysX-9.12.1031-SystemSoftware.msi"
+       xxh3sum: be9998ea0f6d6840
+       features: [F_Common32, F_GPU_DLLS]
+       skip:
+         - Add64Bit_Reg # a VBScript writing the keys for 64-bit games (in the 64-bit registry view)
+
  - name: "Berserk Boy"
    id: berserk-boy
    provider: gog
