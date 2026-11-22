@@ -313,6 +313,23 @@
          - __redist
          - tmp
 
+ - name: "Bloodstained: Ritual of the Night"
+   id: bloodstained-ritual-of-the-night
+   xxh3sum: 6d4c7fabf78d65d3
+   provider: steam
+   platform: windows
+   exec: BloodstainedRotN.exe
+   runtime: windows
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/692850/486ef93750c79653f5cd776b8fda04be4b65e2c9.ico"
+       xxh3sum: 89d33e66d94e1715
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "steam://Bloodstained Ritual of the Night"
+       exclude:
+         - _CommonRedist
+         - BloodstainedRotN/Plugins/EOS/Bin/EpicOnlineServicesInstaller.exe
+
  - name: "BOMCAT"
    id: bomcat
    provider: steam
