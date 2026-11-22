@@ -781,26 +781,149 @@ for name, settings in game.get('ini', {}).items():
         sys.exit(1)
     set_ini(target, settings)
 
+def lz4_block(src, size):
+    """Decompresses an LZ4 block (no frame) of `size` bytes."""
+    dst = bytearray()
+    i = 0
+    while i < len(src):
+        token = src[i]
+        i += 1
+        n = token >> 4
+        if n == 15:
+            while True:
+                b = src[i]
+                i += 1
+                n += b
+                if b != 255:
+                    break
+        dst += src[i:i + n]
+        i += n
+        if i >= len(src):
+            break
+        off = src[i] | src[i + 1] << 8
+        i += 2
+        m = token & 15
+        if m == 15:
+            while True:
+                b = src[i]
+                i += 1
+                m += b
+                if b != 255:
+                    break
+        m += 4
+        s = len(dst) - off
+        if off >= m:
+            dst += dst[s:s + m]
+        else:
+            for k in range(m):
+                dst.append(dst[s + k])
+    if len(dst) != size:
+        raise ValueError('bad LZ4 block')
+    return dst
+
+
+def patch_unityfs(path, patches):
+    """Applies (offset, original, new) patches to a UnityFS bundle, with the offsets into its
+    uncompressed data. Only the blocks holding a patch are unpacked, and they're stored uncompressed
+    (unpacking the whole bundle can make it many GB). Returns an error message or None."""
+    import struct
+
+    def cstr(d, p):
+        e = d.index(b'\0', p)
+        return d[p:e], e + 1
+
+    patches = list(patches)
+    d = open(path, 'rb').read()
+    sig, p = cstr(d, 0)
+    fmt, = struct.unpack_from('>I', d, p)
+    p += 4
+    ver, p = cstr(d, p)
+    rev, p = cstr(d, p)
+    _, ci_size, ui_size, flags = struct.unpack_from('>QIII', d, p)
+    p += 20
+    if fmt >= 7:
+        p = (p + 15) & ~15
+    if flags & 0x80: # blocks info at the end of the file
+        ci, pos = d[len(d) - ci_size:], p
+    else:
+        ci, pos = d[p:p + ci_size], p + ci_size
+    if flags & 0x3f not in (0, 2, 3):
+        return 'unsupported compression of the blocks info ({})'.format(flags & 0x3f)
+    info = ci if flags & 0x3f == 0 else bytes(lz4_block(ci, ui_size))
+    nb, = struct.unpack_from('>I', info, 16)
+    q = 20
+    blocks = []
+    for _ in range(nb):
+        blocks.append(struct.unpack_from('>IIH', info, q))
+        q += 10
+    nodes = info[q:]
+    newblocks, chunks, ustart = [], [], 0
+    for usize, csize, bf in blocks:
+        raw = d[pos:pos + csize]
+        pos += csize
+        mine = [x for x in patches if ustart <= x[0] < ustart + usize]
+        if mine:
+            if bf & 0x3f not in (0, 2, 3):
+                return 'unsupported compression of the block at {:#x} ({})'.format(ustart, bf & 0x3f)
+            data = bytearray(raw if bf & 0x3f == 0 else lz4_block(raw, usize))
+            for x in mine:
+                offset, original, new = x
+                r = offset - ustart
+                if r + len(original) > usize:
+                    return 'the patch at {:#x} crosses a block boundary'.format(offset)
+                if data[r:r + len(original)] != original:
+                    return 'unexpected bytes at {:#x}'.format(offset)
+                data[r:r + len(new)] = new
+                patches.remove(x)
+            raw, csize, bf = bytes(data), usize, bf & ~0x3f
+        newblocks.append((usize, csize, bf))
+        chunks.append(raw)
+        ustart += usize
+    if patches:
+        return 'offsets beyond the data: {}'.format(', '.join(hex(x[0]) for x in patches))
+    info = info[:16] + struct.pack('>I', nb) + b''.join(struct.pack('>IIH', *b) for b in newblocks) + nodes
+    head = sig + b'\0' + struct.pack('>I', fmt) + ver + b'\0' + rev + b'\0'
+    pad = (((len(head) + 20 + 15) & ~15) - (len(head) + 20)) if fmt >= 7 else 0
+    body = b''.join(chunks)
+    flags = flags & ~0x3f & ~0x80 # uncompressed blocks info right after the header
+    head += struct.pack('>QIII', len(head) + 20 + pad + len(info) + len(body), len(info), len(info), flags)
+    with open(path, 'wb') as file:
+        file.write(head + b'\0' * pad + info + body)
+    return None
+
+
 # byte patches, {file: ["offset original-bytes new-bytes", ...]} (hex), applied before `post`; the
-# original bytes are checked first, so a different version of the file stops the build
+# original bytes are checked first, so a different version of the file stops the build. In a UnityFS
+# bundle (Unity's .unity3d/.bundle files) the offsets are into its uncompressed data
 for name, patches in game.get('patches', {}).items():
     target = os.path.join(dst_dir, name)
     if not os.path.isfile(target):
         print("ERROR: patches: {} not found".format(name))
         sys.exit(1)
+    parsed = []
+    for patch in patches:
+        fields = str(patch).split()
+        try:
+            offset, original, new = int(fields[0], 0), bytes.fromhex(fields[1]), bytes.fromhex(fields[2])
+        except (ValueError, IndexError):
+            fields = None
+        if not fields or len(fields) != 3 or len(original) != len(new):
+            print("ERROR: patches: {}: '{}' isn't 'offset original new' with bytes of the same length".format(name, patch))
+            sys.exit(1)
+        parsed.append((offset, original, new))
+    with open(target, 'rb') as file:
+        unityfs = file.read(8) == b'UnityFS\0'
+    if unityfs:
+        error = patch_unityfs(target, parsed)
+        if error:
+            print("ERROR: patches: {}: {}".format(name, error))
+            sys.exit(1)
+        continue
     with open(target, 'r+b') as file:
-        for patch in patches:
-            fields = str(patch).split()
-            try:
-                offset, original, new = int(fields[0], 0), bytes.fromhex(fields[1]), bytes.fromhex(fields[2])
-            except (ValueError, IndexError):
-                fields = None
-            if not fields or len(fields) != 3 or len(original) != len(new):
-                print("ERROR: patches: {}: '{}' isn't 'offset original new' with bytes of the same length".format(name, patch))
-                sys.exit(1)
+        for offset, original, new in parsed:
             file.seek(offset)
             if file.read(len(original)) != original:
-                print("ERROR: patches: {}: unexpected bytes at {}".format(name, fields[0]))
+                print("ERROR: patches: {}: unexpected bytes at {:#x}".format(name, offset))
                 sys.exit(1)
             file.seek(offset)
             file.write(new)
