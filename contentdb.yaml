@@ -280,6 +280,40 @@
          - __redist
          - tmp
 
+ - name: "Blasphemous"
+   id: blasphemous
+   xxh3sum: 60598e221d76e846
+   steam_app_id: 774361
+   provider: steam
+   platform: linux
+   exec: ./Blasphemous.x86_64
+   runtime: none
+   # Rewired (the game's input library) doesn't know InputPlumber's Xbox Series pad and gives it a
+   # generic map (wrong buttons, no Xbox icons). Make the Linux matching criteria of its Xbox One map
+   # accept it, as in Just Shapes & Beats. The offsets are into the bundle's uncompressed data
+   patches:
+     Blasphemous_Data/data.unity3d:
+       # buttonCount 11 -> 16
+       - 0x602d51 0b000000 10000000
+       # systemName "Microsoft X-Box One S pad.*" -> "Microsoft Xbox Series S.X.*"
+       - 0x602dad 4d6963726f736f667420582d426f78204f6e652053207061642e2a 4d6963726f736f66742058626f782053657269657320532e582e2a
+       # productGUID DEEF045E -> 0B12045E
+       - 0x602df5 4445454630343545 3042313230343545
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/774361/566ae07473b877f0450bef7193ae08dedb00108a.ico"
+       xxh3sum: d889a998f795ff95
+       include: 2
+       destination: org.kazeta.icon.png
+     - uri: "steam://Blasphemous"
+       exclude:
+         - "Blasphemous - Wallpapers"
+         - Blasphemous_Data/Plugins/x86_64/libsteam_api.so
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: linux/x86_64/libsteam_api.so
+       destination: Blasphemous_Data/Plugins/x86_64/
+
  - name: "Blood Omen: Legacy of Kain"
    id: blood-omen
    provider: gog
