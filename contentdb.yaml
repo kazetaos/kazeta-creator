@@ -718,6 +718,33 @@
          - __redist
          - tmp
 
+ - name: "Diablo"
+   id: diablo
+   provider: gog
+   platform: windows
+   xxh3sum: 82845c1c38ecbf33
+   exec: LD_LIBRARY_PATH=. ./devilutionx
+   runtime: none
+   sources:
+     - uri: "file://setup_diablo_1.09_hellfire_v4_(78466).exe"
+       xxh3sum: 19a3b98ae2d34067
+       include:
+         - DIABDAT.MPQ
+     - uri: https://cdn2.steamgriddb.com/icon/ca8155f4d27f205953f9d3d7974bdd70/4/32x32.png
+       xxh3sum: 0f6fa24b09a80b6b
+       destination: org.kazeta.icon.png
+     - uri: "https://github.com/diasurgical/DevilutionX/releases/download/1.5.5/devilutionx-linux-x86_64.tar.xz"
+       xxh3sum: 6c13ddd98d14356a
+       include:
+         - devilutionx
+         - devilutionx.mpq
+         - discord_game_sdk.so
+     - uri: "https://repo.steampowered.com/steamrt-images-scout/snapshots/1.0.20260714.251828/steam-runtime.tar.xz"
+       xxh3sum: 694855d80edbaf99
+       include:
+         - steam-runtime/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0*
+         - steam-runtime/usr/lib/x86_64-linux-gnu/libSDL2_image-2.0.so.0*
+
  - name: "DiRT 2"
    id: dirt-2
    provider: steam
