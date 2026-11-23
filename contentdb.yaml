@@ -109,9 +109,15 @@
    id: baba-is-you
    provider: steam
    platform: linux
-   xxh3sum: dc8e404ff3d0bff1
+   xxh3sum: ab46e9361f463738
    exec: ./bin64/Chowdren
    runtime: none
+   patches:
+     bin64/Chowdren:
+       # exiting from the menu aborted (heap corruption): main returned while one of the game's threads
+       # still ran, and it locked a mutex the static destructors had freed. After the game's main loop
+       # returns, flush stdio and _exit instead (the saves are written by then)
+       - 0x21b655 89ef4889de4883c4085b5de90bce0000662e0f1f840000000000 89ef4889dee811ce000089c331ffe8d8bb5e0089dfe861c35e00
    sources:
      - uri: "steam://Baba Is You"
        exclude:
