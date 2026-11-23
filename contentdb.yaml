@@ -613,6 +613,52 @@
          - __redist
          - tmp
 
+ - name: "Dead Cells"
+   id: dead-cells
+   steam_app_id: 588650
+   xxh3sum: a9342e4cd88cd842
+   provider: steam
+   platform: linux
+   exec: ./deadcells.sh
+   runtime: none
+   patches:
+     hlboot.dat:
+       # the title screen shows news fetched from the game's server at each start (an ad for
+       # Windblown); request /lastNewz instead of /lastNews, which fails and leaves the panel out.
+       # The daily challenge and leaderboards use other paths
+       - 0x9b603 2f6c6173744e657773 2f6c6173744e65777a
+     res.pak:
+       # hide the "The End Is Near" update badge under the title logo: in atlas/titleScreen.atlas,
+       # move title/updateBanner (605x188 at 1,2173) to a transparent area of the atlas (1,3000)
+       - 0x31eac7dc 01007d08 0100b80b
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/588650/4937672451bb8f5abedd20852eed355fd82ec1a3.ico"
+       xxh3sum: dee2ce90bb63a845
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://Dead Cells"
+       exclude:
+         - libsteam_api.so
+     - uri: "https://gitlab.com/Mr_Goldberg/goldberg_emulator/-/jobs/4247811310/artifacts/download"
+       xxh3sum: 51df1917330ed5a7
+       type: zip
+       include: linux/x86_64/libsteam_api.so
+     # libraries Kazeta doesn't have: the bundled libSDL2 needs libXinerama and libXss, libsndio
+     # (the bundled OpenAL's backend) needs libbsd, which needs libmd; deadcells.sh adds . to the
+     # library path
+     - uri: "https://archive.archlinux.org/packages/l/libxinerama/libxinerama-1.1.6-1-x86_64.pkg.tar.zst"
+       xxh3sum: e5e0b44d43e8a180
+       include: usr/lib/libXinerama.so.1*
+     - uri: "https://archive.archlinux.org/packages/l/libxss/libxss-1.2.5-1-x86_64.pkg.tar.zst"
+       xxh3sum: dbf5c13bae95ba3f
+       include: usr/lib/libXss.so.1*
+     - uri: "https://archive.archlinux.org/packages/l/libbsd/libbsd-0.12.2-2-x86_64.pkg.tar.zst"
+       xxh3sum: eda3c2624329a630
+       include: usr/lib/libbsd.so.0*
+     - uri: "https://archive.archlinux.org/packages/l/libmd/libmd-1.3.0-1-x86_64.pkg.tar.zst"
+       xxh3sum: 22112af04c0819b0
+       include: usr/lib/libmd.so.0*
+
  - name: "Death Squared"
    id: death-squared
    provider: gog
