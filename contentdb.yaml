@@ -286,6 +286,22 @@
          - __redist
          - tmp
 
+ - name: "Birdsketball"
+   id: birdsketball
+   xxh3sum: 5d20419590b29db4
+   provider: steam
+   platform: linux
+   exec: ./Birdsketball
+   runtime: none
+   sources:
+     - uri: "https://shared.fastly.steamstatic.com/community_assets/images/apps/470470/4a69a6e087414b89dbfa9c5d7d9647ab13b2ab62.ico"
+       xxh3sum: b67960d3410d6205
+       include: 1
+       destination: org.kazeta.icon.png
+     - uri: "steam://Birdsketball"
+       exclude:
+         - .DS_Store
+
  - name: "Blasphemous"
    id: blasphemous
    xxh3sum: 60598e221d76e846
