@@ -7,6 +7,7 @@ import glob
 import uuid
 import shutil
 import fnmatch
+import atexit
 import yaml
 import subprocess
 
@@ -535,17 +536,120 @@ def with_base(game, seen):
 
 game = with_base(game, (game['id'],))
 
+# `extends: <id>`: the recipe is DLC for another recipe's game (same matching as the command line,
+# `id[:provider[:platform]]`), mounted on top of it by Kazeta. The base game's cart has to be built
+# first, and is checked against its recipe's hash, which the DLC's cart info names
+def find_base_game(game):
+    parts = str(game['extends']).split(':')
+    base_provider = parts[1] if len(parts) >= 2 else '.*'
+    base_platform = parts[2] if len(parts) >= 3 else '.*'
+    bases = [g for g in games if g['id'] == parts[0] and g.get('kind') != 'runtime' and 'extends' not in g
+             and re.fullmatch(base_provider, g.get('provider', '')) and re.fullmatch(base_platform, g.get('platform', ''))]
+    if len(bases) > 1:
+        # the DLC's own provider and platform, e.g. Steam DLC for the Steam version of the game
+        bases = [g for g in bases if g.get('provider') == game.get('provider') and g.get('platform') == game.get('platform')]
+    if len(bases) != 1:
+        print('ERROR: extends: \'{}\' must match one game, add the provider and/or platform, e.g. game-name:steam:linux'.format(game['extends']))
+        sys.exit(1)
+    return with_base(bases[0], (bases[0]['id'],))
+
+base_game = None
+if 'extends' in game:
+    if game.get('kind') == 'runtime':
+        print('ERROR: runtimes can\'t extend a game')
+        sys.exit(1)
+    if 'tricks' in game:
+        print('ERROR: tricks: not supported for DLC, which is built without its base game')
+        sys.exit(1)
+    base_game = find_base_game(game)
+    if 'xxh3sum' not in base_game:
+        print('ERROR: the base game {} has no xxh3sum; confirm its cart works and record its hash first'.format(base_game['id']))
+        sys.exit(1)
+    base_cart = '{}_{}.kzp'.format(base_game['id'], base_game['xxh3sum'][:5])
+    if not os.path.isfile(base_cart):
+        print('ERROR: base game cart not found: {}; build it first with ./kazeta-creator {}:{}:{}'.format(
+            base_cart, base_game['id'], base_game.get('provider', ''), base_game.get('platform', '')))
+        sys.exit(1)
+    print('Checking base game cart {}'.format(base_cart), flush=True)
+    if not xxh3_check(base_cart, base_game['xxh3sum']):
+        sys.exit(1)
+
 dst_dir = game['id']
 download_dir = dst_dir + '_download'
 staging_dir = dst_dir + '_staging'
 
+# DLC is built on top of its base game, the same way Kazeta mounts it: the base cart is mounted
+# below the cart directory with the kernel's overlayfs, so sources, `ini`, `patches` and `post` see
+# the game's files, and only what they add, change or delete goes in the DLC cart (`layer_dir`), as
+# overlayfs writes it (whiteouts for deleted files, an opaque attribute for replaced directories).
+# Mounting needs root, and so does making the image, as the opaque attribute is a trusted.* one
+base_mount = dst_dir + '_base'
+work_dir = dst_dir + '_work'
+layer_dir = dst_dir + '_layer' if base_game is not None else dst_dir
+
+def as_root(command, **kwargs):
+    if os.geteuid() != 0:
+        command = ["sudo"] + command
+    return subprocess.run(command, **kwargs)
+
+def unmount_base_game():
+    for mount in (dst_dir, base_mount):
+        if os.path.ismount(mount):
+            as_root(["umount", "-l", mount])
+
+# a build that was killed may have left them mounted, and rm would delete through them; overlayfs'
+# work directory and whiteouts belong to root
+unmount_base_game()
+if any(os.path.lexists(d) for d in (base_mount, work_dir, dst_dir + '_layer')):
+    as_root(["rm", "-rf", base_mount, work_dir, dst_dir + '_layer'])
 subprocess.run(["rm", "-rf", dst_dir])
 subprocess.run(["mkdir", dst_dir])
 
-# a runtime can be made entirely in `post` (the none runtime)
-if 'sources' not in game and game.get('kind') != 'runtime':
-    print('No sources found, exiting')
+if base_game is not None:
+    subprocess.run(["mkdir", base_mount, work_dir, layer_dir])
+    atexit.register(unmount_base_game)
+    print('Mounting the base game {} (needs root)'.format(base_cart), flush=True)
+    if as_root(["mount", "-t", "erofs", "-o", "ro,loop", base_cart, base_mount]).returncode != 0:
+        print('ERROR: Failed to mount the base game cart {}'.format(base_cart))
+        sys.exit(1)
+    # as Kazeta mounts carts, but without metacopy, which would leave files in the DLC that need
+    # the game's copy, and without redirect_dir, so renaming a game's directory copies it
+    options = 'lowerdir={},upperdir={},workdir={},xino=off,metacopy=off,redirect_dir=off,index=off'.format(
+        *(os.path.abspath(d) for d in (base_mount, layer_dir, work_dir)))
+    if as_root(["mount", "-t", "overlay", "overlay", "-o", options, dst_dir]).returncode != 0:
+        print('ERROR: Failed to mount the DLC on top of its base game')
+        sys.exit(1)
+
+# overlayfs' bookkeeping attributes are left out of the DLC, except opaque, which Kazeta's overlayfs
+# reads to hide the game's files in a directory the DLC replaced
+# (`strip`), and checked for (`check`) right before the image is made: the build fails if any are left
+OVERLAY_XATTRS = """
+import os, sys
+action, top = sys.argv[1], sys.argv[2]
+left = []
+for root, dirs, files in os.walk(top):
+    for path in [root] + [os.path.join(root, f) for f in files]:
+        if os.path.islink(path):
+            continue
+        for attr in os.listxattr(path, follow_symlinks=False):
+            if attr.startswith('trusted.overlay.') and attr != 'trusted.overlay.opaque':
+                if action == 'strip':
+                    os.removexattr(path, attr, follow_symlinks=False)
+                else:
+                    left.append('{}: {}={!r}'.format(os.path.relpath(path, top), attr,
+                                                      os.getxattr(path, attr, follow_symlinks=False)))
+if left:
+    print('ERROR: overlayfs attributes left in the DLC:', file=sys.stderr)
+    print('\\n'.join(left), file=sys.stderr)
     sys.exit(1)
+"""
+
+def finish_dlc_layer():
+    if as_root(["umount", dst_dir]).returncode != 0:
+        print('ERROR: Failed to unmount the DLC, is something still using it?')
+        sys.exit(1)
+    as_root(["umount", base_mount])
+    as_root([sys.executable, "-I", "-c", OVERLAY_XATTRS, "strip", layer_dir], check=True)
 
 blizzard_media = [] # the blizzard-install sources so far, which patches may need originals from
 for source in game.get('sources', []):
@@ -713,15 +817,30 @@ subprocess.run(["rm", "-rf", staging_dir])
 is_runtime = game.get('kind') == 'runtime'
 
 if not is_runtime:
-    icon_path=os.path.join(game['id'], 'org.kazeta.icon.png')
-    if not os.path.exists(icon_path):
+    # DLC only has an icon of its own if it added one, not the base game's
+    icon_path=os.path.join(layer_dir, 'org.kazeta.icon.png')
+    has_icon = os.path.exists(icon_path)
+    # DLC without `exec` isn't shown on its own, as it is played with its base game
+    if not has_icon and (base_game is None or 'exec' in game):
         print("WARNING: no icon found")
 
     with open(os.path.join(game['id'], 'org.kazeta.cart.kzi'), 'w', encoding='utf-8') as file:
         file.write('Name={}\n'.format(game['name']))
-        file.write('Id={}\n'.format(game['id']))
-        file.write('Exec={}\n'.format(game['exec']))
-        file.write('Icon={}\n'.format('org.kazeta.icon.png'))
+        if base_game is None:
+            file.write('Id={}\n'.format(game['id']))
+            file.write('Exec={}\n'.format(game['exec']))
+            file.write('Icon={}\n'.format('org.kazeta.icon.png'))
+        else:
+            # Kazeta finds the base game by its id; the hash is only an annotation
+            file.write('Extends={}:{}\n'.format(base_game['id'], base_game['xxh3sum']))
+            # DLC with an Id gets save data of its own, otherwise it uses the base game's
+            if game.get('own_saves'):
+                file.write('Id={}\n'.format(game['id']))
+            # DLC with an Exec is a game of its own, offered next to the base game
+            if 'exec' in game:
+                file.write('Exec={}\n'.format(game['exec']))
+            if has_icon:
+                file.write('Icon={}\n'.format('org.kazeta.icon.png'))
         if 'path' in game:
             file.write('Path={}\n'.format(game['path']))
         if 'gamescope' in game:
@@ -996,6 +1115,9 @@ if 'tricks' in game and 'runtime' in game and 'windows' in game['runtime']:
         # unmount overlay and runtime
         subprocess.run(["pkexec", "kazeta-mount", "--unmount", targetdir, runtimedir])
 
+if base_game is not None:
+    finish_dlc_layer()
+
 # create kzp (or kzr)
 kzp = game['id'] + ('.kzr' if is_runtime else '.kzp')
 subprocess.run(["rm", "-rf", kzp])
@@ -1003,7 +1125,8 @@ uuid=str(uuid.uuid5(uuid.NAMESPACE_DNS, 'org.kazeta.' + game['id']))
 # Windows carts default to 1980-01-01, the DOS/FAT epoch: Windows programs don't expect files
 # from 1970 (Unity's Mono refuses to load assemblies with a zero mtime); other carts to 0
 timestamp = '0'
-if not is_runtime and str(game.get('runtime', '')).startswith('windows'):
+# DLC goes with its base game's files, and so its runtime
+if not is_runtime and str((base_game or game).get('runtime', '')).startswith('windows'):
     timestamp = '315532800'
 if 'timestamp' in game:
     timestamp = str(game['timestamp'])
@@ -1013,9 +1136,19 @@ subprocess.run(["mkdir", tmp_dir])
 # runtimes repeat a lot of data (Proton ships many DLLs several times); dedupe stores it once
 # (needs Linux 6.1+). Not for carts, as it would change their hashes
 dedupe = ["-Ededupe"] if is_runtime else []
-subprocess.run(["mkfs.erofs", "-T", timestamp, "-U", uuid, "-zlz4"] + dedupe + [kzp, game['id']],
-               env={**os.environ, 'TMPDIR': os.path.abspath(tmp_dir)})
-subprocess.run(["rm", "-rf", tmp_dir, game['id']])
+mkfs = ["mkfs.erofs", "-T", timestamp, "-U", uuid, "-zlz4"] + dedupe + [kzp, layer_dir]
+if base_game is None:
+    subprocess.run(mkfs, env={**os.environ, 'TMPDIR': os.path.abspath(tmp_dir)})
+    subprocess.run(["rm", "-rf", tmp_dir, game['id']])
+else:
+    if as_root([sys.executable, "-I", "-c", OVERLAY_XATTRS, "check", layer_dir]).returncode != 0:
+        sys.exit(1)
+    # as root, to read the opaque attributes; the cart is then handed back. When the DLC deletes
+    # anything, mkfs.erofs gives the image's root an empty trusted.overlay.origin of its own, as it
+    # does for any image with whiteouts (its --ovlfs-strip would remove the whiteouts instead)
+    as_root(["env", "TMPDIR=" + os.path.abspath(tmp_dir)] + mkfs)
+    as_root(["chown", "{}:{}".format(os.getuid(), os.getgid()), kzp])
+    as_root(["rm", "-rf", tmp_dir, game['id'], layer_dir, base_mount, work_dir])
 
 if 'xxh3sum' in game:
     if xxh3_check(kzp, game['xxh3sum']):

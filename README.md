@@ -66,6 +66,10 @@ To generate a cart for Mina the Hollower from Steam:
  - `./kazeta-creator mina-the-hollower:steam`
 
 
+### Create a DLC cart
+DLC is built the same way, with `./kazeta-creator <dlc id>`. Build the base game's cart first: Kazeta Creator looks for it in the current directory and checks its hash, then builds the DLC on top of it (this mounts the base game, so it asks for your sudo password). Put the DLC cart on the same media as the base game, or any other inserted media, and Kazeta plays the two together.
+
+
 ## Future work
  - Documenting the cart definition format
  - Add the ability to directly flash carts to SD cards, flash media, and burn to CD/DVDs
